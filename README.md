@@ -1,3 +1,5 @@
+![logo](./logo.png) 
+
 # CarbonScript
 
 **CarbonScript** is a simple, flexible programming language inspired by C. It is designed for developers of all skill levels, with an easy-to-understand syntax and powerful features for building a variety of applications.

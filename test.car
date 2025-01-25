@@ -1,6 +1,0 @@
-
-func;void main $void {
-  stdout hello world
-}
-
-@main

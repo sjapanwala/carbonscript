@@ -220,7 +220,7 @@ def func_caller(tokens):
         return error_code
     else:
         if file_mode:
-            print(f"\033[91mstatment:syntax error: \033[0m \033[93m{file_line}\033[0m: '{user_input}' is not recognized.")
+            print(f"\033[91mstatment:syntax error: \033[0m\033[93m On Line {file_line}\033[0m: '{user_input}' is not recognized.")
         else:
             print(f"\033[91mstatment:syntax error: \033[0m'{user_input}' is not recognized.")
         return 4

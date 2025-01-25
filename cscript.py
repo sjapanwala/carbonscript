@@ -174,7 +174,10 @@ def open_file(filename):
     run_file(file_contents)
 
 def run_file(file_contents):
+    global file_line
+    file_line = 0
     for codeline in file_contents:
+        file_line += 1
         tokenizer = tokenization(codeline)
         if codeline in func_ignore:
             continue
@@ -198,9 +201,7 @@ def func_caller(tokens):
     if user_input == "{":
         return 2
     if isinstance(user_input, str):
-        if user_input[0] == "!":
-            quick_commands(user_input)
-            return 0
+        pass
     if isinstance(user_input, str):
         if user_input[0:5] == "func;":
             # this calls for function making
@@ -219,9 +220,9 @@ def func_caller(tokens):
         return error_code
     else:
         if file_mode:
-            print(f"\033[91mstatment:syntax error: \033[0mthe command '{user_input}' is not recognized on line")
+            print(f"\033[91mstatment:syntax error: \033[0m \033[93m{file_line}\033[0m: '{user_input}' is not recognized.")
         else:
-            print(f"\033[91mstatment:syntax error: \033[0mthe command '{user_input}' is not recognized")
+            print(f"\033[91mstatment:syntax error: \033[0m'{user_input}' is not recognized.")
         return 4
 
 def type_check(value):
@@ -403,6 +404,8 @@ def construct_functions(tokens):
                 
             for line in lines:
                 line = line.strip()
+                func_ignore.append(line)
+
                 
                 # Start collecting when we find the function header
                 if line == func_header.strip():
@@ -1071,6 +1074,8 @@ def main(returncode):
             file_path = sys.argv[1]
             global file_mode
             file_mode = True
+            global file_line
+            file_line = 1  
 
             open_file(file_path)
             if envriornment_config["print_error_code"] == True:

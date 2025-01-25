@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
-from sys import exception
-import subprocess, getpass, os, time
-from os import error, sys
-from os import system
+import sys
+import getpass, os
 import operator
 import random
-import time
 
 global allowed_types
 allowed_types = ["str","int","flt","bool","arr","void"]
@@ -112,6 +109,8 @@ def tokenization(user_input):
         token_array = user_input.split(" ")
         if "increm" in token_array[0]:
             increm(token_array[1:])
+        if "decrem" in token_array[0]:
+            decrem(token_array[1:])
         for i,token in enumerate(token_array):
             # check for precedence
             if token == "quit":
@@ -132,12 +131,23 @@ def tokenization(user_input):
 
 
 def increm(tokens):
-    print(tokens)
     for pos_var in tokens:
-        if pos_var[0] == "?" and pos_var[1:] in variables:
-            increm_variable = pos_var[1:]
-            if variables[increm_variable]['type'] == "int":
-                variables[increm_variable]['value'] += 1
+        if not isinstance(pos_var, int):
+            if pos_var[0] == "?" and pos_var[1:] in variables:
+                increm_variable = pos_var[1:]
+                if variables[increm_variable]['type'] == "int":
+                        variable_value = variables[increm_variable]['value']
+                        variables[increm_variable]['value'] = int(variable_value) + 1
+
+def decrem(tokens):
+    for pos_var in tokens:
+        if not isinstance(pos_var, int):
+            if pos_var[0] == "?" and pos_var[1:] in variables:
+                increm_variable = pos_var[1:]
+                if variables[increm_variable]['type'] == "int":
+                        variable_value = variables[increm_variable]['value']
+                        variables[increm_variable]['value'] = int(variable_value) - 1
+
 
 
 # --- START OF THE FILE READING SYSTEM, READING ".car" FILES ONLY ---
@@ -288,6 +298,7 @@ def run_func(funcname, params):
     if len(params) != method["params"]:
         print(f"\033[91mparameter:syntax error: \033[0mexpected {method['params']}; given {len(params)}")
         return 4, None
+
     
     # Create parameter hash map
     param_hash = {}
@@ -814,6 +825,8 @@ def const(tokens):
         else:
             return 1
     """
+
+
     allowed_types = ["str","int","flt","bool","arr"]
     if "=" not in tokens:
         return 0
@@ -1069,7 +1082,7 @@ def main(returncode):
         try:
             print(f"""
     Welcome To CarbonScript \033[92m{variables['version']['value']}\033[0m
-    to exit session press ctrl+c
+    to exit session press ctrl+c or type "quit"
     Created by: \033[94msjapanwala\033[0m
             """)
             while True:

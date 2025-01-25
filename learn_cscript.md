@@ -47,12 +47,27 @@ there are already some predefined variables that are used in system running, or 
 CarbonScript supports several commonly found data types
 
 `int`:  A whole number intiger
+
 `flt`:  A floating point number 
+
 `str`:  A string / chars
+
 `bool`: Boolean Values (True/False)
+
 `void`: No Value
 
 Since CarbonScript is *on the verge* of being *fully* statically typed, you can define a data-type to what ever variable / function / etc...
+
+## Incrementing And Decrementing
+
+In CarbonScript, the `increm` and `decrem` operators are used to increment and decrement a variable.
+
+You can `increm` or `decrem` a more than one variable in one line
+
+```car
+set x = 10;int
+decrem ?x 
+```
 
 ## Standard I/O
 

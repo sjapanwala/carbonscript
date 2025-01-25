@@ -73,24 +73,36 @@ methods = {
             "param_order": ["$a","$b"],
             'content': ['return ( $a + $b )', '}']  
             },
-        "sub": {
+        "subtract": {
             "returntype": "int",
             "params": 2,
             "param_order": ["$a","$b"],
             'content': ['return ( $a - $b )', '}']
         },
-        "mult": {
+        "multiply": {
             "returntype": "int",
             "params": 2,
             "param_order": ["$a","$b"],
             'con/tent': ['return ( $a * $b )', '}']
         },
-        "div": {
+        "divide": {
             "returntype": "int",
             "params": 2,
             "param_order": ["$a","$b"],
             'content': ['return ( $a / $b )', '}']
-        }
+        },
+        "square": {
+            "returntype": "int",
+            "params": 1,
+            "param_order": ["$a"],
+            'content': ['return ( $a * $a )', '}']
+        },
+        "cube": {
+            "returntype": "int",
+            "params": 1,
+            "param_order": ["$a"],
+            'content': ['return ( $a * $a * $a )', '}']
+        },
     }
 
 

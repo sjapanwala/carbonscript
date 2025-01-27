@@ -1,0 +1,31 @@
+{
+  "name": "carbon-language",
+  "displayName": "Carbon Language",
+  "description": "Carbon language support for VSCode",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.0.0"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "carbon",
+        "aliases": [
+          "Carbon",
+          "carbon"
+        ],
+        "extensions": [
+          ".car"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "carbon",
+        "scopeName": "source.carbon",
+        "path": "./syntaxes/carbon.tmLanguage.json"
+      }
+    ]
+  }
+}

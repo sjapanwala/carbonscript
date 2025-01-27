@@ -1,0 +1,43 @@
+// Keywords
+set         // sets mutable variable
+const       // sets an immutable variable
+let         // sets a blank varable
+func        // defining a function
+end         // returning a 
+fi          // if statement
+elsefi      // else if statement
+default     // else statement
+repeat      // for loop
+do          // while loop
+return      // returing a value from a function
+iteration   // iteration number for loops
+
+// PreDefined / Variables
+varlist     // lists all defined variables and information
+clear       // clears console
+errorlevel  // shows the exit code
+uname       // users username
+version     // version number
+pi          // 3.14
+eu          //2.72
+?anyvar     // calling a variable
+
+// Functions
+rand        // random number (rand min max)
+stdout      // print to the console
+stdin       // takes variables from console
+increm      // incrementing a value
+decrem      // decrementing a value
+numceil     // rounding floats
+
+// Types
+;int, ;void, ;str, ;arr, ;flt
+$int, $void, $str, $arr, $flt
+// blank semi colons are highlighted red; they arent operators tho
+;
+
+// Logic and Math
+True
+False
+( + - * / )
+

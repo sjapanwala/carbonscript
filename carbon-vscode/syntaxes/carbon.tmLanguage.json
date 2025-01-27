@@ -1,0 +1,107 @@
+{
+  "name": "Carbon",
+  "scopeName": "source.carbon",
+  "patterns": [
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#variables"
+    },
+    {
+      "include": "#functions"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#operators"
+    },
+    {
+      "include": "#types"
+    }
+  ],
+  "repository": {
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.carbon",
+          "match": "\\b(end|func|set|const|let|fi|elsefi|default|repeat|do|return|iteration)\\b"
+        },
+        {
+          "name": "support.function.builtin.carbon",
+          "match": "\\b(varlist|funclist|clear)\\b"
+        },
+        {
+          "name": "support.function.carbon",
+          "match": "\\b(increm|decrem|rand|numceil|stdout|stdin)\\b"
+        },
+        {
+          "name": "constant.language.carbon",
+          "match": "\\b(errorlevel|uname|version|pi|eu|True|False)\\b"
+        }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.carbon",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.carbon",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "comments": {
+      "name": "comment.line.double-slash.carbon",
+      "match": "//.*$"
+    },
+    "variables": {
+      "patterns": [
+        {
+          "name": "variable.other.carbon",
+          "match": "\\?[_a-zA-Z][_a-zA-Z0-9]*"
+        },
+        {
+          "name": "variable.parameter.carbon",
+          "match": "\\$[_a-zA-Z][_a-zA-Z0-9]*(?:;(?:int|str|flt|arr|void))?"
+        }
+      ]
+    },
+    "functions": {
+      "name": "entity.name.function.carbon",
+      "match": "@[_a-zA-Z][_a-zA-Z0-9]*"
+    },
+    "numbers": {
+      "name": "constant.numeric.carbon",
+      "match": "\\b\\d+\\b"
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.arithmetic.carbon",
+          "match": "[+\\-*/]"
+        },
+        {
+          "name": "keyword.operator.comparison.carbon",
+          "match": "[<>!=]=|[<>]"
+        }
+      ]
+    },
+    "types": {
+      "match": ";(int|str|flt|arr|void)",
+      "captures": {
+        "0": {
+          "name": "storage.type.carbon"
+        }
+      }
+    }
+  }
+}

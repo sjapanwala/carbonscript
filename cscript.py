@@ -83,7 +83,7 @@ methods = {
             "returntype": "int",
             "params": 2,
             "param_order": ["$a","$b"],
-            'con/tent': ['return ( $a * $b )', '}']
+            'content': ['return ( $a * $b )', '}']
         },
         "divide": {
             "returntype": "int",
@@ -212,6 +212,10 @@ def func_caller(tokens):
         return 2
     if user_input == "{":
         return 2
+    if user_input == "increm":
+        return 0
+    if user_input == "decrem":
+        return 0
     if isinstance(user_input, str):
         pass
     if isinstance(user_input, str):
@@ -603,6 +607,105 @@ def repeat(tokens):
     except Exception as e:
         print(f"\033[91mrepeat:execution error: \033[0m{str(e)}")
         return 1
+
+def do(tokens):
+    """
+    do {benchmarker} {operation} {comparison} {
+    // code
+    }
+    """
+    operators = {
+        "<": lambda x, y: x < y,
+        ">": lambda x, y: x > y,
+        "==": lambda x, y: x == y,
+        "<=": lambda x, y: x <= y,
+        ">=": lambda x, y: x >= y
+    }
+
+    if len(tokens) < 4:
+        print("\033[91mdo:arguments: \033[0mNot enough arguments given")
+        return 1
+
+    bench_marker, op, compare, opener = tokens[0], tokens[1], tokens[2], tokens[-1]
+
+    # Validate arguments
+    try:
+        bench_marker = int(bench_marker)
+    except ValueError:
+        print("\033[91mdo:value: \033[0mBenchmarker must be an integer")
+        return 1
+
+    try:
+        compare = int(compare)
+    except ValueError:
+        print("\033[91mdo:value: \033[0mComparison must be an integer")
+        return 1
+
+    if op not in operators:
+        print("\033[91mdo:value: \033[0mInvalid operator provided")
+        return 1
+
+    if opener != "{":
+        print("\033[91mdo:opener: \033[0mNo opening brace defined")
+        return 1
+
+    # Parse instructions
+    do_instructions = []
+
+    if file_mode:  # File-based input
+        
+        with open(file_path, 'r') as readFile:
+            func_header = f"do {bench_marker} {op} {compare} {{"
+            brace_count = 0
+            capturing = False
+
+            for line in readFile:
+                line = line.strip()
+
+                if line == func_header:
+                    capturing = True
+                    brace_count += 1
+                    continue
+
+                if capturing:
+                    if line == "{":
+                        brace_count += 1
+                    elif line == "}":
+                        brace_count -= 1
+
+                    if brace_count == 0:
+                        break  # Exit when the block is fully parsed
+
+                    do_instructions.append(line)
+    else:  # Manual input mode
+        while True:
+            line_input = input("do loop> ").strip()
+            if line_input == "}":
+                break
+            do_instructions.append(line_input)
+
+    if file_mode:
+        while operators[op](bench_marker+1, compare):
+            for command in do_instructions:
+                minitoke = tokenization(command)
+                func_caller(minitoke)
+            bench_marker += 1  
+            variables["iteration"]['value'] += 1
+    else:
+        while operators[op](bench_marker, compare):
+            for command in do_instructions:
+                minitoke = tokenization(command)
+                func_caller(minitoke)
+            bench_marker += 1  
+            variables["iteration"]['value'] += 1
+    
+    variables["iteration"]['value'] = 0
+    return 0
+
+
+
+
+
 
 
 def rand(tokens):
@@ -1072,6 +1175,7 @@ def run(tokens):
     else:
         print('\033[91mrun:file error: \033[0mnot a valid file')
         return 1
+
 
 
 def help():

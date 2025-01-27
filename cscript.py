@@ -11,8 +11,11 @@ allowed_types = ["str","int","flt","bool","arr","void"]
 # this is where the "envriornmental rules are stored; can be modified with args"
 envriornment_config = {
         "showtokens": False,
-        "print_error_code": False
+        "print_error_code": False,
+        "show_error_msgs": True
         }
+
+in_file_args = ("RULE show-tokens","RULE hide-errors","RULE show-ec")
 
 
 
@@ -183,6 +186,12 @@ def open_file(filename):
         for line in file:
             file_contents.append(line.strip())
             raw_files.append(line)
+            if line.strip() == "RULE hide-errors":
+                envriornment_config['show_error_msgs'] = False
+            if line.strip() == "RULE show-ec":
+                envriornment_config['print_error_code'] = True
+            if line.strip() == "RULE show-tk":
+                envriornment_config['showtokens'] = True
     run_file(file_contents)
 
 def run_file(file_contents):
@@ -202,6 +211,8 @@ def func_caller(tokens):
     if tokens == None:
         return 1
     user_input = tokens[0]
+    if user_input == "RULE":
+        return 0
     if user_input == "return":
         return 0
     if user_input == "void":
@@ -215,6 +226,8 @@ def func_caller(tokens):
     if user_input == "increm":
         return 0
     if user_input == "decrem":
+        return 0
+    if user_input in in_file_args:
         return 0
     if isinstance(user_input, str):
         pass
@@ -236,7 +249,10 @@ def func_caller(tokens):
         return error_code
     else:
         if file_mode:
-            print(f"\033[91mstatment:syntax error: \033[0m\033[93m On Line {file_line}\033[0m: '{user_input}' is not recognized.")
+            if envriornment_config['show_error_msgs']:
+                print(f"\033[91mstatment:syntax error: \033[0m\033[93m On Line {file_line}\033[0m: '{user_input}' is not recognized.")
+                return 4
+            return 4
         else:
             print(f"\033[91mstatment:syntax error: \033[0m'{user_input}' is not recognized.")
         return 4

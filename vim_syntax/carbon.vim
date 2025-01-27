@@ -7,7 +7,7 @@ if exists("b:current_syntax")
 endif
 
 " Keyword groups
-syntax keyword carbonKeyword end func set const let fi elsefi default repeat do return iteration
+syntax keyword carbonKeyword end func set const let fi elsefi default repeat do return iteration RULE
 syntax keyword carbonBuiltin varlist funclist clear 
 syntax keyword carbonFunction increm decrem rand numceil stdout stdin
 syntax keyword carbonPredefined errorlevel uname version pi eu 
@@ -19,7 +19,7 @@ syntax match carbonVariable /?[_a-zA-Z][_a-zA-Z0-9]*/
 syntax match carbonSemicolon /;/
 
 " Type definitions
-syntax match carbonType /;\(int\|str\|flt\|arr\|void\)/ contains=carbonTypeDelimiter
+syntax match carbonType /;\(int\|str\|flt\|arr\|void\|bool\)/ contains=carbonTypeDelimiter
 syntax match carbonTypeDelimiter /;/ contained
 
 " In your highlight group section:

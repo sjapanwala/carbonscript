@@ -4,7 +4,7 @@
 - CarbonScript is a toy scripting language developed by Saaim Japanwala as a neat fun little project
 - built as an interpretor, by no means is it a useful language, take it as 'something built to fuel dumbassery'
 
-You can either follow along in this Markdown file, or look through the [`examples`](examples/)
+You can either follow along in this Markdown file, or look through the [`demonstrations`](./demonstrations/) or the [`programs`](./programs/)
 
 ## Basic Concepts
 
@@ -131,17 +131,45 @@ default stdout x is between 5 and 10
 
 ## Loops
 
-currently, the only loop available is the `repeat` loop. which is equivalent to `for loop` which iterates throught a number, a range of a number.
+currently, the only loop available is the `repeat` and `do` loop. which is equivalent to `for loop` which iterates throught a number, a range of a number. and a while loop
 
 the `?iteration` variable is reserved to be the enumeration value of the loop
 
 ```car
 repeat 5 {
-    stdout ?iteration
+  stdout ?iteration
 }
 ```
 
 this will print out every number from 0-4 inclusive
+
+```car
+do 0 < 5 {
+  stdout This Will Repeat 5 Times
+  // do loops will automatically increment
+}
+
+```
+
+## Incrementations
+
+### Increm
+
+`increm` is the same as if we had `i++`
+
+```car
+set x = 1;int
+increm ?x
+stdout ?x     // will print 2
+```
+
+`decrem` is the same as if we had `i--`
+
+```car
+set x = 1;int
+decrem ?x
+stdout ?x     // will print 0
+```
 
 ## Functions
 
@@ -167,4 +195,16 @@ set ans = @addition 2 2
 
 since we are returning a value, we need to store it in a value
 
+Usually writing a main function is a good idea...
+
+```car
+func;int main {
+  //code
+  return 0
+}
+
+```
+
 # End
+
+![easy_game](./code.png) 

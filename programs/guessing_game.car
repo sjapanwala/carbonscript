@@ -1,0 +1,36 @@
+RULE hide-errors
+
+// This is a simple guessing game, writtin in CarbonScript!
+
+
+func;void prompt $void {
+  stdout Welcome To Guessing Game! Guess a Number Between 1-100. Try To Guess It Correctly!
+}
+
+func;int quiz $UserGuess;int {
+  const RandomNum = ?rand
+  // sets a random number from (1-100)
+  fi ( $UserGuess > ?RandomNum ) stdout Your Guess Was Too High!
+  elsefi ( $UserGuess < ?RandomNum ) stdout Your Guess Was Too Low!
+  default stdout You Got It!
+  return ?RandomNum
+}
+
+
+
+func;int main {
+  @prompt
+  stdout
+  stdin guess;int What Is Your Guess?
+  stdout
+  const correctAnswer = @quiz ?guess
+  stdout The Correct Guess Was: ?correctAnswer
+  fi ( ?guess != ?ans ) stdout Better Luck Next Time!
+  return 0
+}
+
+set ec = @main
+
+
+
+

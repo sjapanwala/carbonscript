@@ -11,6 +11,7 @@ repeat      // for loop
 do          // while loop
 return      // returing a value from a function
 iteration   // iteration number for loops
+RULE        // describe a file rule (hide-errors,show-ec,...)
 
 // PreDefined / Variables
 varlist     // lists all defined variables and information
@@ -31,8 +32,8 @@ decrem      // decrementing a value
 numceil     // rounding floats
 
 // Types
-;int, ;void, ;str, ;arr, ;flt
-$int, $void, $str, $arr, $flt
+;int, ;void, ;str, ;arr, ;flt, ;bool
+$int, $void, $str, $arr, $flt, $bool
 // blank semi colons are highlighted red; they arent operators tho
 ;
 

@@ -1,4 +1,5 @@
-![logo](./logo.png) 
+
+<img src=".assets/logo.png" height="250" length="250">
 
 ## Installation
 

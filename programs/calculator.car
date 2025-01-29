@@ -1,0 +1,45 @@
+RULE hide-errors
+
+func;int prompt {
+  // this is the prompt section, ask the user what operations they want to use
+  // input  - none
+  // return - x (int) = value of choice
+
+  stdout "Welcome To Calculator, Please Choose Your Operation"
+  stdout "---------------------------------------------------"
+  stdout "1)  +    Addition"
+  stdout "2)  -    Subtraction"
+  stdout "3)  *    Multiplication"
+  stdout "4)  /    Division"
+  stdout " "
+  stdin c;int "Choose Your Operation (1-4)"
+  set x = 9;int
+  fi ( ?c > 4 or ?c < 1 ) stdout Invalid Option
+  default set x = ?c
+  return ?x
+}
+
+func;int do_operations $op;int {
+  // this is the operation section
+  // input  - $op (int) the operation choice
+  // return - ?ans (int) the answer of the operation and numbers
+  
+  stdin num1;int Num1:
+  stdin num2;int Num2:
+  set ans = 0;int
+  fi ( $op == 1 ) set ans = @add ?num1 ?num2
+  elsefi ( $op == 2 ) set ans = @subtract ?num1 ?num2
+  elsefi ( $op == 3 ) set ans = @multiply ?num1 ?num2
+  elsefi ( $op == 4 ) set ans = @divide ?num1 ?num2
+  default set ans = 0
+  return ?ans
+}
+
+// main code
+
+set ch = @prompt
+set answer = @do_operations ?ch
+stdout " "
+stdout ?answer
+
+// EOF

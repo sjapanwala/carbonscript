@@ -1160,8 +1160,6 @@ def stdout(tokens):
     ["hello","world"] -> helloworld
     """
     phrase = ""
-    print(tokens[0])
-    return 0
     try:
         for i in tokens:
             if len(phrase) > 1:

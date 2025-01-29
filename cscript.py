@@ -54,7 +54,17 @@ variables = {
             "cat": "preset",
             "type": "randint",
             "value": f"randval(1-100)"
-            }
+            },
+        "true": {
+            "cat": "preset",
+            "type": "int",
+            "value": 1
+        },
+        "false": {
+                "cat": "preset",
+                "type": "int",
+                "value": 0
+            },
     }
 
 methods = {
@@ -121,7 +131,8 @@ def tokenization(user_input):
     try:
         if not user_input:
             return None
-        token_array = user_input.split(" ")
+        token_array = aggregate(user_input.split(" "))
+        token_array = [word.replace('"', '') for word in token_array]
         if "increm" in token_array[0]:
             increm(token_array[1:])
         if "decrem" in token_array[0]:
@@ -129,7 +140,8 @@ def tokenization(user_input):
         for i,token in enumerate(token_array):
             # check for precedence
             if token == "quit":
-                exit()
+                print("\r'quit' Detected; Session Ended")
+                exit(1)
             if "?" in token[0]:
                 recovered = deVar(token)
                 token_array[i] = recovered
@@ -144,13 +156,42 @@ def tokenization(user_input):
     except Exception as e:
         return ["undefined"]
 
+def aggregate(tokens):
+    """
+    Merges words enclosed in quotes into a single string without returning quotes.
 
+    :param input_list: List of strings
+    :return: Modified list with merged quoted strings, without quotes
+    """
+    result = []
+    in_quotes = False
+    quoted_string = []
+
+    for item in tokens:
+        if item.startswith('"') and not in_quotes:  
+            in_quotes = True
+            quoted_string.append(item.lstrip('"'))
+        elif item.endswith('"') and in_quotes: 
+            quoted_string.append(item.rstrip('"'))
+            result.append(" ".join(quoted_string))
+            in_quotes = False
+            quoted_string = []
+        elif in_quotes:  
+            quoted_string.append(item)
+        else:  
+            result.append(item)
+
+    if in_quotes:
+        result.append(" ".join(quoted_string))
+
+    return result
 def increm(tokens):
     for pos_var in tokens:
         if not isinstance(pos_var, int):
             if pos_var[0] == "?" and pos_var[1:] in variables:
                 increm_variable = pos_var[1:]
                 if variables[increm_variable]['type'] == "int":
+                    if variables[increm_variable]['cat'] == "assigned":
                         variable_value = variables[increm_variable]['value']
                         variables[increm_variable]['value'] = int(variable_value) + 1
 
@@ -160,6 +201,7 @@ def decrem(tokens):
             if pos_var[0] == "?" and pos_var[1:] in variables:
                 increm_variable = pos_var[1:]
                 if variables[increm_variable]['type'] == "int":
+                    if variables[increm_variable]['cat'] == "assigned":
                         variable_value = variables[increm_variable]['value']
                         variables[increm_variable]['value'] = int(variable_value) - 1
 
@@ -230,8 +272,6 @@ def func_caller(tokens):
     if user_input in in_file_args:
         return 0
     if isinstance(user_input, str):
-        pass
-    if isinstance(user_input, str):
         if user_input[0:5] == "func;":
             # this calls for function making
             error_code = construct_functions(tokens)
@@ -289,7 +329,7 @@ def deVar(variable):
         elif var_type == "flt":
             return float(var_val)
         elif var_type == "bool":
-            return bool(var_val)
+            return int(var_val)
         elif var_type == "randint":
             return random.randint(random_min,random_max)
         else:
@@ -727,18 +767,18 @@ def do(tokens):
 def rand(tokens):
     if len(tokens) < 2:
         print("\033[91mrandint:params error:\033[0mnot enough params given")
-        return 1
+        return 1,0
     else:
         try:
             random_min = int(tokens[0])
         except:
-            return 1
+            return 1,0
         try:
             random_max = int(tokens[1])
         except:
-            return 1
-        print(random.randint(random_min,random_max))
-        return 0
+            return 1,0
+        random_val = (random.randint(random_min,random_max))
+        return 0,random_val
 
 
 
@@ -911,27 +951,63 @@ def set(tokens):
                 print("\033[91mset:const error: \033[0mvariable cannot be rewritten")
                 return 1
         var_valueraw = tokens[eq_place+1]
-        
+
+
+               
         # Check if there is a semicolon and process accordingly
         if isinstance(var_valueraw, int):
             var_val = var_valueraw
             var_type = "int"
+
         
         elif isinstance(var_valueraw, float):
             var_val = var_valueraw
             var_type = "flt"
 
+        
+
         elif var_valueraw.find(";") > -1:
             semi_idx = var_valueraw.find(";")
             var_val = var_valueraw[:semi_idx]
             var_type = var_valueraw[semi_idx+1:]
+
+            if var_type == "bool":
+                if var_val in ("true","false"):
+                    if var_val == "true":
+                        var_val = 1
+                    elif var_val == "false":
+                        var_val = 0
+                else:
+                    try:
+                        var_val = int(var_val)
+                        if var_val > 1 or var_val < 0:
+                            print("\033[91mconst:assignment error: \033[0mbool has to be 0/1 or true/false")
+                            return 1
+                    except:
+                        print("\033[91mset:assignment error: \033[0mbool has to be 0/1 or true/false")
+                        return 1
+                    
         else:
             var_val = var_valueraw
             var_type = type_check(var_val)
 
+
+    
         if var_type not in allowed_types:
             print("\033[91mset:type error: \033[0minvalid type")
             return 3
+
+        
+        if var_key in variables:
+            if variables[var_key]['value'] == "undefined":
+                if variables[var_key]['type'] != var_type:
+                    print(f"\033[91mset:type error: \033[0mexpecting {variables[var_key]['type']}, provided {var_type}")
+                    return 1
+                else:
+                    variables[var_key]['value'] = var_val
+                    return 0
+
+
 
         cat_val = "assigned"
 
@@ -984,10 +1060,28 @@ def const(tokens):
             var_val = var_valueraw
             var_type = type_check(var_val)
 
+
         elif var_valueraw.find(";") > -1:
             semi_idx = var_valueraw.find(";")
             var_val = var_valueraw[:semi_idx]
             var_type = var_valueraw[semi_idx+1:]
+
+            if var_type == "bool":
+                if var_val in ("true","false"):
+                    if var_val == "true":
+                        var_val = 1
+                    elif var_val == "false":
+                        var_val = 0
+                else:
+                    try:
+                        var_val = int(var_val)
+                        if var_val > 1 or var_val < 0:
+                            print("\033[91mconst:assignment error: \033[0mbool has to be 0/1 or true/false")
+                            return 1
+                    except:
+                        print("\033[91mconst:assignment error: \033[0mbool has to be 0/1 or true/false")
+                        return 1
+
         else:
             var_val = var_valueraw
             var_type = type_check(var_val)
@@ -997,6 +1091,15 @@ def const(tokens):
             return 3
 
         cat_val = "preset"
+
+        if var_key in variables:
+            if variables[var_key]['value'] == "undefined":
+                if variables[var_key]['type'] != var_type:
+                    print(f"\033[91mconst:type error: \033[0mexpecting {variables[var_key]['type']}, provided {var_type}")
+                    return 1
+                else:
+                    variables[var_key]['value'] = var_val
+                    return 0
 
         variables[var_key] = {
             "cat": cat_val,
@@ -1034,6 +1137,10 @@ def let(tokens):
         print("\033[91mlet:exists error: \033[0mvariable already has value")
         return 1
     var_type = var_key_raw[semi_idx+1:]
+    if var_type not in allowed_types:
+        print("\033[91mlet:type error: \033[0minvalid type")
+        return 3
+
     cat_val = "assigned"
     variables[var_key] = {
         "cat": cat_val,
@@ -1106,13 +1213,39 @@ def stdin(tokens):
                 str(var_val)
             except:
                 print(f"\033[91mstdin:type error: \033[0minvalid type provided, expected {var_type}")
-                exit(1)
+                return 1
         elif var_type == "int":
             try:
                 int(var_val)
             except:
                 print(f"\033[91mstdin:type error: \033[0minvalid type provided, expected {var_type}")
-                exit(1)
+                return 1
+        elif var_type == "flt":
+            try:
+                float(var_val)
+            except:
+                print(f"\033[91mstdin:type error: \033[0minvalid type provided, expected {var_type}")
+                return 1
+        elif var_type == "bool":
+            try:
+                if var_val.lower() in ("true","false"):
+                    if var_val == "true":
+                        var_val = 1
+                    elif var_val == "false":
+                        var_val = 0
+                else:
+                    try:
+                        var_val = int(var_val)
+                        if var_val > 1 or var_val < 0:
+                            print(f"\033[91mstdin:assignment error: \033[0mbool has to be either 0/1 or true/false")
+                            return 1
+                    except:
+                        print(f"\033[91mstdin:assignment error: \033[0mbool has to be either 0/1 or true/false")
+                        return 1
+            except:
+                print(f"\033[91mstdin:type error: \033[0minvalid type provided, expected {var_type}")
+                return 1
+
         if not var_val:
             var_val = "not specified"
         variables[var_key] = {
@@ -1238,22 +1371,22 @@ def main(returncode):
                 command = ""
                 while command.lower() != "exit":
                     if returncode == 0:
-                        rc = "\033[92m➜\033[0m"
+                        rc = "\033[92m>>\033[0m"
                     elif returncode == 2:
-                        rc = "\033[90m➜\033[0m"
+                        rc = "\033[90m>>\033[0m"
                     else:
-                        rc = "\033[91m➜\033[0m"
-                    command = input(f"\n\033[0mCarbonScript {rc}\033[0m ")
+                        rc = "\033[91m>>\033[0m"
+                    command = input(f"\n\033[0m{rc}\033[0m ")
                     tokens = tokenization(command)
                     returncode = func_caller(tokens)
-                    set(["errorlevel","=",f"{returncode}"])
+                    variables["errorlevel"]['value'] = returncode
                     if envriornment_config["print_error_code"] == True:
                         if returncode != 0:
                             print(f"\033[97mExit Code: \033[91m{returncode}\033[0m")
                         else:
                             print(f"\033[97mExit Code: \033[92m{returncode}\033[0m")
         except KeyboardInterrupt:
-            print("\rCarbonScript Session Ended Successful; Goodbye")
+            print("\rSession Ended Successfully; Goodbye")
             exit(1)
 
 

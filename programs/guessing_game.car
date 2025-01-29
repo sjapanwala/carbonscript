@@ -1,4 +1,4 @@
-RULE hide-errors
+RULE hide-error
 
 // This is a simple guessing game, writtin in CarbonScript!
 

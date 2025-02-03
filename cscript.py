@@ -65,6 +65,16 @@ variables = {
                 "type": "int",
                 "value": 0
             },
+        "pop": {
+            "cat": "preset",
+            "type": "int",
+            "value": 0,
+        },
+        "length": {
+            "cat": "preset",
+            "type": "int",
+            "value": 0,
+        },
     }
 
 methods = {
@@ -986,6 +996,10 @@ def set(tokens):
                     except:
                         print("\033[91mset:assignment error: \033[0mbool has to be 0/1 or true/false")
                         return 1
+
+            if var_type == "arr":
+                var_val = var_val.split(',')
+
                     
         else:
             var_val = var_valueraw
@@ -1081,6 +1095,8 @@ def const(tokens):
                     except:
                         print("\033[91mconst:assignment error: \033[0mbool has to be 0/1 or true/false")
                         return 1
+            if var_type == "arr":
+                var_val = var_val.split(',')
 
         else:
             var_val = var_valueraw
@@ -1141,14 +1157,122 @@ def let(tokens):
         print("\033[91mlet:type error: \033[0minvalid type")
         return 3
 
+    if var_type == "arr":
+        var_value = []
+    else:
+        var_value = "void"
+
     cat_val = "assigned"
     variables[var_key] = {
         "cat": cat_val,
         "type": var_type,
-        "value": "undefined"
+        "value": var_value
     }
     return 0 
 
+
+
+
+def push(tokens):
+    if len(tokens) < 2:
+        print("\033[91mpush:params error: \033[0mnot enough params provided")
+        return 1
+
+    if tokens[0] not in variables:
+        print("\033[91mpush:error : \033[0marray not initialized")
+        return 1 
+
+    if variables[tokens[0]]['type'] != "arr":
+        print("\033[91mpush:type error: \033[0mvariable is not an array")
+        return 3
+
+    for item in tokens[1:]:
+        # Ensure item is a string before checking ";"
+        if isinstance(item, str) and ";" in item:
+            type_idx = item.find(";")
+            value = item[:type_idx]
+            item_type = item[type_idx + 1:]
+
+            if item_type in allowed_types:
+                # Convert value based on type
+                if item_type == "int":
+                    value = int(value)
+                elif item_type == "flt":
+                    value = float(value)
+                elif item_type == "str":
+                    value = str(value)
+            else:
+                print(f"\033[91mpush:type error: \033[0minvalid type '{item_type}'")
+                return 4
+        else:  # No type provided, try to infer it
+            value = str(item).strip()  # Ensure item is a string before conversion
+            # Try to infer the type
+            try:
+                value = int(value)  # Try converting to int
+            except ValueError:
+                try:
+                    value = float(value)  # Try converting to float
+                except ValueError:
+                    value = str(value)  # Default to string if both fail
+
+        variables[tokens[0]]['value'].append(value)
+
+    return 0
+
+def pop(tokens):
+    if len(tokens) < 1:
+        print("\033[91mpop:params error: \033[0mnot enough params provided")
+        return 1
+    if tokens[0] not in variables:
+        print("\033[91mpop:exist error: \033[0marray does not exist")
+        return 1
+    if variables[tokens[0]]['type'] != "arr":
+        print("\033[91mpop:type error: \033[0mvariable is not an array")
+        return 3
+    if len(variables[tokens[0]]['value']) <= 0:
+        print("\033[91mpop:content error: \033[0marray is empty")
+        return 3
+    temp_array = variables[tokens[0]]['value']
+    item = temp_array[-1]
+    item_type = ""
+    try:
+        item = int(item) 
+        item_type = "int"
+    except ValueError:
+        try:
+            item = float(item)
+            item_type = "flt"
+        except ValueError:
+            item_type = "str"
+    temp_array = temp_array[:-1]
+    variables['pop'] = {
+        "cat": "preset",
+        "type": item_type,
+        "value": item
+    }
+    variables[tokens[0]]['value'] = temp_array
+    return 0
+
+
+def length(tokens):
+    """
+    Expects exactly one token and stores its length in 'variables'.
+    """
+    if len(tokens) != 1:
+        print("\033[91mlength:params error: \033[0mexpects 1 token")
+        return 1 
+
+    target = tokens[0]
+
+    variables['length'] = {
+        "cat": "preset",
+        "type": "int",
+        "value": len(target)
+    }
+    return 0
+
+    
+    
 
     
 def stdout(tokens):

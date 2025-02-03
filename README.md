@@ -196,6 +196,44 @@ func;void main {
   x             False        str         Greetings!
   ```
 
+- ## Topic 6. Arrays
+
+  setting arrays is pretty simple in CarbonScript
+  
+  arrays can be set with a bunch of different ways, using `set`,`const`,`let`
+
+  array contents are seperated using `,` (commas)
+
+  ```car
+  set a = 1,"CarbonScript";arr
+  // output
+  // [1,"CarbonScript"]
+  ```
+
+  ### Push
+  to append to an array, we use `push` which appends the item(s) to the end of the array
+  
+  ```car
+  push a 5 10
+  // new form of ?a
+  //[1,"CarbonScript",5,10]
+  ```
+
+  ### Pop
+  to read the elements of the array, we use `pop` which "pops" the last element of the array
+
+  stores the element popped into a special variable called `?pop`
+
+  ```car
+  pop a
+  // new form of ?a
+  // [1,"CarbonScript",5]
+
+  stdout ?pop
+  // 10
+  ```
+
+
 - ## Topic 6. Logic and Math
 
   all logical operators are the same as any other operators.

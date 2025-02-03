@@ -7,7 +7,7 @@ if exists("b:current_syntax")
 endif
 
 " Keyword groups
-syntax keyword carbonKeyword end func set const let fi elsefi default repeat do return iteration RULE
+syntax keyword carbonKeyword end func set const let fi elsefi default repeat do return iteration RULE pop push length
 syntax keyword carbonBuiltin varlist funclist clear 
 syntax keyword carbonFunction increm decrem rand numceil stdout stdin
 syntax keyword carbonPredefined errorlevel uname version pi eu 

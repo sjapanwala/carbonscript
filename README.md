@@ -56,8 +56,7 @@ CarbonScript is licensed under **MIT License**. Visit [License](./LICENSE) For M
 
 <img align=center src="./assets/runtime_js_cs.png" height="250" height="400">
 
-> Running the same functions
-
+> Running the same functions.
 > On Average CarbonScript was 0.285 Seconds Faster Than JavaScript (350 Iterations)
 
 ## 🏃 Lets Get Started!

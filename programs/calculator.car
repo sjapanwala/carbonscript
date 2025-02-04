@@ -1,3 +1,7 @@
+// Simple calculator for 4 operators (+,-,*,/)
+// written by github.com/sjapanwala
+// 01/28/25
+
 RULE hide-errors
 
 func;int prompt {

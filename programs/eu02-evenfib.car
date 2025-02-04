@@ -1,0 +1,39 @@
+// generating a fibonacci sequence
+// adds all the even numbers to a sum
+// part of q2 for eulars problems
+// written by github.com/sjapanwala
+// 02/03/25
+
+func;void generateFibonacci $n;int {
+    set a = 0;int
+    set b = 1;int
+    let sequence;arr
+
+    push sequence ?a
+    push sequence ?b
+
+    repeat 8 {
+        set next = ( ?a + ?b )
+        push sequence ?next
+        set a = ?b
+        set b = ?next
+    }
+    
+    let evenarr;arr
+    repeat 10 {
+        pop sequence
+        fi ( ?pop % 2 == 0 ) push evenarr ?pop
+    }
+    
+    set sum = 0;int
+
+    repeat 4 {
+        pop evenarr
+        set sum = ( ?sum + ?pop )
+
+    }
+
+    stdout ?sum
+}
+
+@generateFibonacci 10 

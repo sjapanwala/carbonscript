@@ -1,0 +1,23 @@
+// generating a fibonacci sequence
+// written by github.com/sjapanwala
+// 02/03/25
+
+func;void generateFibonacci $n;int {
+    set a = 0;int
+    set b = 1;int
+    let sequence;arr
+
+    push sequence ?a
+    push sequence ?b
+
+    repeat 8 {
+        set next = ( ?a + ?b )
+        push sequence ?next
+        set a = ?b
+        set b = ?next
+    }
+
+    stdout "Fibonacci Sequence:" ?sequence
+}
+
+@generateFibonacci 10 

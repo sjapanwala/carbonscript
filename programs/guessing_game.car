@@ -1,3 +1,7 @@
+// Play A game where you have to guess a random number
+// written by github.com/sjapanwala
+// 01/28/25
+
 RULE hide-error
 
 // This is a simple guessing game, writtin in CarbonScript!

@@ -21,7 +21,7 @@ in_file_args = ("RULE show-tokens","RULE hide-errors","RULE show-ec")
 
 variables = {
         "errorlevel" : {
-            "cat": "assigned",
+            "cat": "preset",
             "type": "int",
             "value": 0
             },
@@ -33,7 +33,7 @@ variables = {
         "version": {
             "cat": "preset",
             "type": "str",
-            "value": "v01.2/25"
+            "value": "v02/25"
             },
         "pi": {
             "cat": "preset",
@@ -46,14 +46,14 @@ variables = {
             "value": 2.72
             },
         "iteration" : {
-            "cat" : "assigned",
+            "cat" : "preset",
             "type": "int",
             "value": 0
             },
         "rand": {
             "cat": "preset",
-            "type": "randint",
-            "value": f"randval(1-100)"
+            "type": "int",
+            "value": 0
             },
         "true": {
             "cat": "preset",
@@ -64,7 +64,7 @@ variables = {
                 "cat": "preset",
                 "type": "int",
                 "value": 0
-            },
+        },
         "pop": {
             "cat": "preset",
             "type": "int",
@@ -125,6 +125,12 @@ methods = {
             "params": 1,
             "param_order": ["$a"],
             'content': ['return ( $a * $a * $a )', '}']
+        },
+        "reverse": {
+            "returntype": "arr",
+            "params": 1,
+            "param_order": ["$a"],
+            "content": ['length $a','let reversed;arr','repeat ?length {','pop $a','push reversed ?pop','}','return ?reversed'] 
         },
     }
 
@@ -788,7 +794,12 @@ def rand(tokens):
         except:
             return 1,0
         random_val = (random.randint(random_min,random_max))
-        return 0,random_val
+        variables['rand'] = {
+            "cat": "preset",
+            "type": "int",
+            "value": random_val
+        }
+        return 0
 
 
 

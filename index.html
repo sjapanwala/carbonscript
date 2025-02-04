@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CarbonScript Webdocs</title>
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 16px;
+      /* Base font size for rem calculations */
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 75rem;
+      /* 1200px */
+      min-width: 20rem;
+      /* 320px - typical minimum mobile width */
+      margin: 0 auto;
+      display: flex;
+    }
+
+    /* Sidebar navigation */
+    #sidebar {
+      width: 15.625rem;
+      /* 250px */
+      background-color: #f4f4f4;
+      padding: 1.25rem;
+      /* 20px */
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      overflow-y: auto;
+    }
+
+    #sidebar h2 {
+      border-bottom: 0.125rem solid #333;
+      /* 2px */
+      padding-bottom: 0;
+      margin-bottom: 0.9375rem;
+      /* 15px */
+    }
+
+    #sidebar #logo {
+      width: 3.125rem;
+      /* 50px */
+      height: 3.125rem;
+      /* 50px */
+      margin-right: 0;
+    }
+
+    #sidebar nav ul {
+      list-style-type: none;
+    }
+
+    #sidebar nav ul li {
+      margin-bottom: 0.625rem;
+      /* 10px */
+    }
+
+    #sidebar nav ul li a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    #sidebar nav ul li a:hover {
+      color: #0066cc;
+    }
+
+    /* Main content area */
+    #main-content {
+      flex-grow: 1;
+      padding: 1.25rem;
+      /* 20px */
+      background-color: white;
+      max-width: 60rem;
+      /* 960px - prevents excessive stretching */
+    }
+
+    /* Syntax highlighting */
+    pre {
+      background-color: #f4f4f4;
+      padding: 0.9375rem;
+      /* 15px */
+      border-radius: 0.3125rem;
+      /* 5px */
+      overflow-x: auto;
+      margin: 0.9375rem 0;
+      /* 15px */
+    }
+
+    code {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: #f1f1f1;
+      padding: 0.125rem 0.25rem;
+      /* 2px 4px */
+      border-radius: 0.1875rem;
+      /* 3px */
+    }
+
+    /* Syntax comparison */
+    .syntax-comparison {
+      display: flex;
+      margin: 1.25rem 0;
+      /* 20px */
+      flex-wrap: wrap;
+      /* Allow wrapping on smaller screens */
+      gap: 1rem;
+      /* Consistent spacing when wrapped */
+    }
+
+    .syntax-comparison>div {
+      flex: 1;
+      min-width: 15rem;
+      /* Minimum width before wrapping */
+      padding: 0.625rem;
+      /* 10px */
+      background-color: #f4f4f4;
+      border-radius: 0.3125rem;
+      /* 5px */
+    }
+
+    /* Playground styles */
+    #syntax-playground {
+      margin-top: 1.875rem;
+      /* 30px */
+      border: 0.0625rem solid #ddd;
+      /* 1px */
+      padding: 1.25rem;
+      /* 20px */
+      border-radius: 0.3125rem;
+      /* 5px */
+    }
+
+    #custom-syntax-input,
+    #transpiled-output {
+      width: 100%;
+      min-height: 12.5rem;
+      /* 200px */
+      margin-bottom: 0.9375rem;
+      /* 15px */
+      padding: 0.625rem;
+      /* 10px */
+      font-family: monospace;
+    }
+
+    /* Media query for smaller screens */
+    @media (max-width: 48rem) {
+
+      /* 768px */
+      body {
+        flex-direction: column;
+      }
+
+      #sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+      }
+
+      #main-content {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <aside id="sidebar">
+    <h2><img src="./assets/logo.png" alt="CarbonScript Logo" id="logo"> CarbonScript</h2>
+    <nav>
+      <ul>
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#Installation">Installation</a></li>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#getting-started">Getting Started</a></li>
+        <li><a href="#standard-outputs">&nbsp;&nbsp;&nbsp;&nbsp;Standard Outputs</a></li>
+        <li><a href="#data-types">&nbsp;&nbsp;&nbsp;&nbsp;Data Types</a></li>
+        <li><a href="#assign-vars">&nbsp;&nbsp;&nbsp;&nbsp;Assigning Variables</a></li>
+        <li><a href="#standard-inputs">&nbsp;&nbsp;&nbsp;&nbsp;Standard Inputs</a></li>
+        <li><a href="#calling-vars">&nbsp;&nbsp;&nbsp;&nbsp;Calling Variables</a></li>
+
+
+
+      </ul>
+    </nav>
+  </aside>
+
+  <main id="main-content">
+    <section id="introduction">
+      <h1>CarbonScript</h1>
+      <p>
+        Welcome to CarbonScript—a modern programming language designed with one goal in mind: simplicity without
+        sacrificing power. Whether you’re a beginner or an experienced developer, CarbonScript is built to help you get
+        things done quickly and clearly.
+        <br><br>
+        The syntax is clean and straightforward, making it easy to write code that’s easy to read. Forget about dealing
+        with cryptic syntax or complicated rules. With CarbonScript, you can focus on solving problems and building cool
+        stuff, not wrestling with your code.
+        <br><br>
+        At its core, CarbonScript combines the flexibility you need for complex tasks with a level of simplicity that
+        makes even large projects feel approachable. It's perfect for everything from small scripts to big applications,
+        and the best part? You’ll spend less time debugging and more time building.
+        <br><br>
+        If you're looking for a language that's powerful, readable, and fun to use, you're in the right place!
+      </p>
+    </section>
+    <section id="Installation">
+      <h2><br>Installation</h2>
+      <p>
+        Install the latest version of CarbonScript by pasting these commands into your terminal
+        <br>
+        <strong>Sudo Access Is Required</strong>
+      </p>
+      <h3><br>Latest Version: <a href="#whats-new" <span style="color: #2e8b57;">v02/25</span></a></h3>
+      <p>
+        Released 02/03/2025
+      <p>
+      <pre><code>git clone git@github.com:sjapanwala/carbonscript.git<br> cd carbonscript/<br>sudo ./install.sh
+        </code></pre>
+    </section>
+
+
+    <section id="overview">
+      <h2><br>Overview</h2>
+      <p>Highlight the unique syntactical features of your language.</p>
+
+      <div class="syntax-comparison">
+        <div>
+          <h3>JavaScript Syntax</h3>
+          <pre><code>function add(a, b) {<br>&nbsp;&nbsp;return a + b;<br>}</code></pre>
+        </div>
+        <div>
+          <h3>CarbonScript Syntax</h3>
+          <pre><code>func;int function $a;int $b;int {<br>&nbsp;&nbsp;return ( $a + $b )<br>}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="getting-started">
+      <h2><br>Getting Started With CarbonScript</h2>
+      <p>
+        The syntax of CarbonScript is designed to be intuitive and approachable. If you're already familiar with other
+        programming languages, you'll find that the learning curve is pretty shallow.
+        <br><br>CarbonScript borrows familiar
+        concepts from languages you might know, but it simplifies them to make coding faster and less error-prone.
+        Whether you're coming from Python, JavaScript, or another language, you'll feel right at home as you start
+        writing code in CarbonScript.
+      </p>
+      <section id="standard-outputs">
+        <h3><br>Standard Outputs</h3>
+        <p>
+          CarbonScript follows <code>Standard I/O</code> protocols to input and output to the console. Use
+          <code>stdout</code> to output to the console.
+        </p>
+        <pre><code>stdout "Hello World"</code></pre>
+      </section>
+      <section id="data-types">
+        <h3><br>Data Types</h3>
+        <p>
+          As of <a href="#whats-new" <span style="color: #2e8b57;">v02/25</span></a></h3>, CarbonScript has 6
+          Datatypes,
+        </p>
+        <h4><br>Intigers</h4>
+        <p>
+          Intigers are whole natural numbers, positive or negative including 0. Intigers do not contain fractions or
+          decimals
+          <br>
+          Intigers are known as <code>int</code>, define them by using this keyword.
+        </p>
+        <h4><br>Strings</h4>
+        <p>
+          Strings are words/charachers, sequence of characthers.
+          <br>
+          Strings are known as <code>str</code>, define them by using this keyword.
+        </p>
+
+        <h4><br>Floats</h4>
+        <p>
+          Floats are numbers that can have decimal points.
+          <br>
+          Floats are known as <code>flt</code>, define them by using this keyword.
+        </p>
+
+        <h4><br>Arrays</h4>
+        <p>
+          Arrays are collections of multiple values stored together.
+          <br>
+          Arrays are defined using the <code>arr</code> keyword, followed by a list of values.
+        </p>
+
+        <h4><br>Void</h4>
+        <p>
+          The <code>void</code> type is used for functions that do not return a value.
+          <br>
+          Functions with the <code>void</code> return type are used when no result is needed from the function.
+        </p>
+
+        <h4><br>Booleans</h4>
+        <p>
+          Booleans represent true or false values.
+          <br>
+          Booleans are known as <code>bool</code>, define them by using this keyword.
+        </p>
+      </section>
+      <section id="assign-vars">
+        <h3><br>Assigning Variables</h3>
+        <p>Varibles are Assigned with one of 3 assignemnet keywords. <code>set</code>, <code>const</code> and
+          <code>let</code>.
+          <br>
+          <br>
+          <strong><code>set</code></strong> is used to define mutable variables. You can change the value of a
+          variable
+          once it's assigned.
+          <br>
+          <strong><code>const</code></strong> is used for immutable variables. Once a value is assigned to a
+          <code>const</code> variable, it cannot be changed.
+          <br>
+          <strong><code>let</code></strong> is used for temporary mutable variables, typically used in short-term
+          calculations or loops.
+        </p>
+        <pre><code>const name = "John Doe";str<br>set age = 25;int<br>set graduated = false;bool</code></pre>
+      </section>
+      <section id="standard-inputs">
+        <h3><br>Standard Inputs</h3>
+        <p>
+          CarbonScript follows <code>Standard I/O</code> protocols to input and output to the console. Use
+          <code>stdin</code> to read a value from the console, and store it in a variable.
+        </p>
+        <pre><code>stdin name;str "Whats Users Name?"</code></pre>
+        <p>In the code block above, we ask the user thier name, storing into the variable <code>name</code>, expecting
+          the user to submit a <code>str</code>.
+      </section>
+      <section id="calling-vars">
+        <h3><br>Calling Variables</h3>
+        <p>Variables are called with the prefix <code>?</code>.</p>
+        <pre><code>stdout ?name</code></pre>
+      </section>
+      <section id="math-logic">
+        <h3><br>Math And Logic</h3>
+        <p>
+          All mathematical and logical expressions need to be encased inside of parenthesis.
+          <br>
+          True and False statements are expressed as boolean values <code>0 = false</code>,<code>1 = true</code>. Or use
+          the provided variables <code>?true, ?false</code> to help navigate in a more readable way.
+          <br>
+        </p>
+        <pre><code>stdout ( 100 + ?x )<br><i>// assuming x is already a preset variable</i></code></pre>
+      </section>
+      <section id="conditions">
+        <h3><br>Conditional Statements</h3>
+        <p>Conditional statements are used to observe according to conditions.
+          <br><br>
+          Use <code>fi</code> statement to open you conditional analysis<br>
+          Use <code>elsefi</code> statements as a response to the initial statement<br>
+          Use <code>default</code> statement to respond if no condition is reached
+        </p>
+        <pre><code>set x = 10;int<br>set y = 5;int<br>fi ( ?x > ?y ) stdout x is larger than y<br>elsefi ( ?x < ?y ) stdout x is smaller than y<br>default stdout x and y are the same value</code></pre>
+      </section>
+      <section id="loops">
+        <h3><br>Loops</h3>
+        <p>
+          As of <a href="#whats-new" <span style="color: #2e8b57;">v02/25</span></a></h3>, CarbonScript has 2 loops.
+          <code>repeat</code> and <code>do</code>
+          <br>
+          <br>
+        <h4>Repeat Loops</h4>
+        Repeat loops are very similiar to for loops, they will iterate a given number of times, not until a codition is met (do loops)
+        <br>
+        Use <code>?iteration</code> to keep track of the iterations of the loop
+        <pre><code>repeat 5 {<br><i>// code will loop 5 times</i><br>}</code></pre>
+        <h4>Do Loop</h4>
+        Do loops run until a condition is met, comparing 2 values together, if the first one less than or equal to the second one (respectively). Values are incremented themselfs
+        <br>
+        Use <code>?iteration</code> to keep track of the loop iteration
+        <pre><code>do 0 < 5 {<br><i>// code will loop 5 times, or unless the first values incrementation is interrupted</i><br>}</code></pre>
+      </section>
+      <section id="arrays">
+        <h3><br>Arrays</h3>
+        <p>
+          Arrays are used as like stacks (follow a FILO order). items can be <code>push</code>ed into the stack and
+          <code>pop</code>ped out of the stack.
+          <br>
+        <h4>Pushing Into The Array</h4>
+        Using the keyword <code>push</code> followed by the name of the array, then assigning the values, we can add to
+        the array.
+        <pre><code><i>// assuming x is an array</i><br>push a 1 2 3</code></pre>
+        <h4>Popping Out of The Array</h4>
+        Using the keyword <code>pop</code> followed by the name of the array, we can remove the last item of the array,
+        and store it in an immutable (for the user) variable called <code>?pop</code> which contains the item that was
+        popped.
+        <pre><code><i>// assuming x is the same array as last example</i><br>pop x<br>stdout ?pop<br><i>// output of 3</i></code></pre>
+        </p>
+      </section>
+      <section id="creating-functions">
+        <h3><br>Creating Functions</h3>
+        <p>Functions follow a similiar approach to C, where you need to define in the header, what type of value will be
+          returned, void if none.
+          <br>
+        <pre><code> func;{return_type} {function_name} {variables;type} {<br><i>// function code</i> <br>return statement if needed<br>}</code></pre>
+        </p>
+      </section>
+
+    </section>
+
+  </main>
+</body>
+
+</html>

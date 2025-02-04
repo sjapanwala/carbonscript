@@ -186,11 +186,19 @@
         <li><a href="#Installation">Installation</a></li>
         <li><a href="#overview">Overview</a></li>
         <li><a href="#getting-started">Getting Started</a></li>
-        <li><a href="#standard-outputs">&nbsp;&nbsp;&nbsp;&nbsp;Standard Outputs</a></li>
-        <li><a href="#data-types">&nbsp;&nbsp;&nbsp;&nbsp;Data Types</a></li>
-        <li><a href="#assign-vars">&nbsp;&nbsp;&nbsp;&nbsp;Assigning Variables</a></li>
-        <li><a href="#standard-inputs">&nbsp;&nbsp;&nbsp;&nbsp;Standard Inputs</a></li>
-        <li><a href="#calling-vars">&nbsp;&nbsp;&nbsp;&nbsp;Calling Variables</a></li>
+        <li><a href="#standard-outputs">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Standard Outputs</a></li>
+        <li><a href="#data-types">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Data Types</a></li>
+        <li><a href="#assign-vars">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Assigning Variables</a></li>
+        <li><a href="#standard-inputs">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Standard Inputs</a></li>
+        <li><a href="#calling-vars">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Calling Variables</a></li>
+        <li><a href="#math-logic">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Math & Logic</a></li>
+        <li><a href="#conditions">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Conditionals</a></li>
+        <li><a href="#loops">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Loops</a></li>
+        <li><a href="#arrays">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Arrays</a></li>
+        <li><a href="#creating-functions">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Creating Functions</a></li>
+        <li><a href="#calling-functions">&nbsp;&nbsp;&nbsp;&nbsp;└&nbsp;Calling Functions</a></li>
+        <li><a href="#whats-new">Updates</a></li>
+
 
 
 
@@ -367,7 +375,7 @@
           Use <code>elsefi</code> statements as a response to the initial statement<br>
           Use <code>default</code> statement to respond if no condition is reached
         </p>
-        <pre><code>set x = 10;int<br>set y = 5;int<br>fi ( ?x > ?y ) stdout x is larger than y<br>elsefi ( ?x < ?y ) stdout x is smaller than y<br>default stdout x and y are the same value</code></pre>
+        <pre><code>set x = 10;int<br>set y = 5;int<br>fi ( ?x > ?y ) stdout x is larger than y<br>elsefi ( ?x < ?y  ) stdout x is smaller than y<br>default stdout x and y are the same value</code></pre>
       </section>
       <section id="loops">
         <h3><br>Loops</h3>
@@ -377,12 +385,14 @@
           <br>
           <br>
         <h4>Repeat Loops</h4>
-        Repeat loops are very similiar to for loops, they will iterate a given number of times, not until a codition is met (do loops)
+        Repeat loops are very similiar to for loops, they will iterate a given number of times, not until a codition is
+        met (do loops)
         <br>
         Use <code>?iteration</code> to keep track of the iterations of the loop
         <pre><code>repeat 5 {<br><i>// code will loop 5 times</i><br>}</code></pre>
         <h4>Do Loop</h4>
-        Do loops run until a condition is met, comparing 2 values together, if the first one less than or equal to the second one (respectively). Values are incremented themselfs
+        Do loops run until a condition is met, comparing 2 values together, if the first one less than or equal to the
+        second one (respectively). Values are incremented themselfs
         <br>
         Use <code>?iteration</code> to keep track of the loop iteration
         <pre><code>do 0 < 5 {<br><i>// code will loop 5 times, or unless the first values incrementation is interrupted</i><br>}</code></pre>
@@ -411,10 +421,26 @@
           <br>
         <pre><code> func;{return_type} {function_name} {variables;type} {<br><i>// function code</i> <br>return statement if needed<br>}</code></pre>
         </p>
+        <h4>Example Function</h4>
+        <pre><code><i>// creating a simple function that add's two numbers</i><br>func;int addition $x;int $y;int {<br>&nbsp;&nbsp;return ( $x + $y ) <br>}</code></pre>
+      </section>
+      <section id="calling-functions">
+        <h3><br>Calling Functions</h3>
+        <p>calling a functions requires the prefix <code>@</code> followed by the function name, before function arguement (if required).<br>If a function returns a value, the value will have to be stored in a variable.</p>
+        <h4>Calling The Example Function Defined Earlier</h4>
+        <pre><code>set result = @addition 10 20<br>stdout ?result<br><i>// output of 30</i></code></pre>
       </section>
 
+      <section id="whats-new">
+        <h2><br>What's New</h2>
+        <h3>
+          Version Release <span style="color: #2e8b57;">v02/25</span>. February 3rd, 2025
+        </h3>
+        <p>
+          - [Interpreter] Added Array Functions, including <code>pop</code> and <code>push</code>. managing arrays effeciently<br>
+          - [Webdocs] Created Webdocs<br>
+        </p>
     </section>
-
   </main>
 </body>
 

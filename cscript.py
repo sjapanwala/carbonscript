@@ -70,7 +70,7 @@ variables = {
             "type": "int",
             "value": 0,
         },
-        "length": {
+        "len": {
             "cat": "preset",
             "type": "int",
             "value": 0,

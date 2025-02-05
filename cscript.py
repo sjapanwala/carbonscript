@@ -1528,7 +1528,7 @@ def update():
                 print("\rApplying Update...        ", end="", flush=True)
                 subprocess.run(["sudo", "cp", temp_file, bin_file])
                 print("\r\033[92mUpdate Applied Successfully!\033[0m     ", end="\n")
-                subprocess.run(["curl", "-s", "carbonscript/refs/heads/define/updates.txt"])
+                subprocess.run(["curl", "-s", "https://raw.githubusercontent.com/sjapanwala/carbonscript/refs/heads/define/updates.txt"])
             else:
                 print("\r\033[91mNo Updates Applied\033[0m     ", end="\n")
                 exit(1)

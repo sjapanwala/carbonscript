@@ -6,9 +6,14 @@ Added,
   - run "car --update" to run update proccess
 - CarbonScript Webdocs
 - Changed ?length -> ?len
+- Update Terminal Logs
 
 Removed,
 - Nothing
 
+For More Information
+ - [WebDocs][https://sjapanwala.github.io/carbonscript/#introduction]
+ - [ReadME] [https://github.com/sjapanwala/carbonscript]
 
 
+End Of Updates. 🚂-------💨

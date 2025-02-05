@@ -1445,23 +1445,6 @@ def numceil(tokens):
         except:
             return 1
 
-def ls(tokens):
-    if len(tokens) < 1:
-        dir_path = '.'
-    else:
-        dir_path = tokens[0]
-    files = []
-    try:
-        for filename in os.listdir(dir_path):
-            if filename[filename.rfind("."):] == ".arc":
-                files.append(filename)
-            else:
-                continue
-        print("Compatible Files")
-        print("   ".join(files))
-        return 0
-    except:
-        return 1
 
 def run(tokens):
     if len(tokens) != 1:

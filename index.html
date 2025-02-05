@@ -375,8 +375,7 @@
           Use <code>elsefi</code> statements as a response to the initial statement<br>
           Use <code>default</code> statement to respond if no condition is reached
         </p>
-        <pre><code>set x = 10;int<br>set y = 5;int<br>fi ( ?x > ?y ) stdout x is larger than y<br>elsefi ( ?x < ?y )
-              stdout x is smaller than y<br>default stdout x and y are the same value</code></pre>
+        <pre><code>set x = 10;int<br>set y = 5;int<br>fi ( ?x > ?y ) stdout x is larger than y<br>elsefi ( ?x < ?y ) stdout x is smaller than y<br>default stdout x and y are the same value</code></pre>
       </section>
       <section id="loops">
         <h3><br>Loops</h3>
@@ -386,18 +385,15 @@
           <br>
           <br>
         <h4>Repeat Loops</h4>
-        Repeat loops are very similiar to for loops, they will iterate a given number of times, not until a codition is
-        met (do loops)
+        Repeat loops are very similiar to for loops, they will iterate a given number of times, not until a codition is met (do loops)
         <br>
         Use <code>?iteration</code> to keep track of the iterations of the loop
         <pre><code>repeat 5 {<br><i>// code will loop 5 times</i><br>}</code></pre>
         <h4>Do Loop</h4>
-        Do loops run until a condition is met, comparing 2 values together, if the first one less than or equal to the
-        second one (respectively). Values are incremented themselfs
+        Do loops run until a condition is met, comparing 2 values together, if the first one less than or equal to the second one (respectively). Values are incremented themselfs
         <br>
         Use <code>?iteration</code> to keep track of the loop iteration
-        <pre><code>do 0 < 5 {<br><i>// code will loop 5 times, or unless the first values incrementation is
-                interrupted</i><br>}</code></pre>
+        <pre><code>do 0 < 5 {<br><i>// code will loop 5 times, or unless the first values incrementation is interrupted</i><br>}</code></pre>
       </section>
       <section id="arrays">
         <h3><br>Arrays</h3>
@@ -411,16 +407,19 @@
         <pre><code><i>// assuming x is an array</i><br>push a 1 2 3</code></pre>
         <h4>Popping Out of The Array</h4>
         Using the keyword <code>pop</code> followed by the name of the array, we can remove the last item of the array,
-        and store it in an immutable (for the user) variable called <code>?pop</code> which contains the item that was
-        popped.
-        <pre><code><i>// assuming x is the same array as last example</i><br>pop x<br>stdout ?pop<br><i>// output of
-              3</i></code></pre>
+        and store it in an immutable (for the user) variable called <code>?pop</code> which contains the item that was popped.
+        <pre><code><i>// assuming x is the same array as last example</i><br>pop x<br>stdout ?pop<br><i>// output of 3</i></code></pre>
+        <h4>Indexing The Array</h4>
+        Using indexing brackets <code>[]</code> followed by the index of the item you want to access, we can access the item at that index.
+        <pre><code><i>// assuming x is the same array as last example</i><br>stdout x[1]<br><i>// output of 2</i></code></pre>
+        <h4>Array Length</h4>
+        Using the keyword <code>length</code> followed by the name of the array, we can get the length of the array.
+        <pre><code><i>// assuming x is the same array as last example</i><br>stdout ?length x<br><i>// output of 3</i></code></pre>
         </p>
       </section>
       <section id="creating-functions">
         <h3><br>Creating Functions</h3>
-        <p>Functions follow a similiar approach to C, where you need to define in the header, what type of value will be
-          returned, void if none.
+        <p>Functions follow a similiar approach to C, where you need to define in the header, what type of value will be returned, void if none.
           <br>
         <pre><code> func;{return_type} {function_name} {variables;type} {<br><i>// function code</i> <br>return
             statement if needed<br>}</code></pre>
@@ -440,12 +439,9 @@
       <section id="whats-new">
         <h2><br>What's New</h2>
         <h3>
-          Version Release <span style="color: #2e8b57;">v02.1/25</span>. February 3rd, 2025
+          Version Release <span style="color: #2e8b57;">v02.1/25</span>. February 5th, 2025
         </h3>
         <p>
-          - [Interpreter] Added Array Functions, including <code>pop</code> and <code>push</code>. managing arrays
-          effeciently<br>
-          - [Webdocs] Created Webdocs<br>
         </p>
       </section>
   </main>

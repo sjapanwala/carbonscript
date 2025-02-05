@@ -3,6 +3,7 @@ import sys
 import getpass, os
 import operator
 import random
+import subprocess
 
 global allowed_types
 allowed_types = ["str","int","flt","bool","arr","void"]
@@ -33,7 +34,7 @@ variables = {
         "version": {
             "cat": "preset",
             "type": "str",
-            "value": "v02/25"
+            "value": "v02.1/25"
             },
         "pi": {
             "cat": "preset",
@@ -1287,7 +1288,7 @@ def length(tokens):
 
     target = tokens[0]
 
-    variables['length'] = {
+    variables['len'] = {
         "cat": "preset",
         "type": "int",
         "value": len(target)
@@ -1495,11 +1496,48 @@ def help():
     For Code Examples, please refer to \033[92m'/examples'\033[0m folder
     """)
 
+def update():
+    temp_file = os.path.expanduser("~/.temp_csc")
+    bin_file = os.path.expanduser("/usr/local/bin/car")
 
+    print(f"\rChecking for updates...         ", end="", flush=True)
+    update_check = input("\rCheck For Updates? (y/n) ").strip().lower()  # Overwrites the line
 
+    if update_check != "y":
+        print("\r\033[91mError:\033[0m Update Aborted     ", end="\n")  # Overwrites & clears line
+        exit(1)
 
+    print("\rDownloading Update File...       ", end="", flush=True)
+    try:
+        subprocess.run(["curl", "-s", "-o", temp_file, "https://raw.githubusercontent.com/sjapanwala/carbonscript/refs/heads/define/cscript.py"])
+        print("\r\033[92mSuccessfully Received Update Check File\033[0m     ", end="\n")  # Overwrites line
+    except:
+        print("\r\033[91mFailed To Download Update Check File\033[0m     ", end="\n")
+        exit(1)
 
+    print("\rChecking If Updates Are Required...      ", end="", flush=True)
+    try:
+        update = os.path.getsize(temp_file)
+        downloaded = os.path.getsize(bin_file)
 
+        if update != downloaded:
+            print("\r\033[92mUpdates Found!\033[0m          ", end="\n",flush=True)  # Overwrites line
+            apply_check = input("\rApply Updates? (y/n) ").strip().lower()  # Overwrites line
+            
+            if apply_check == "y":
+                print("\rApplying Update...        ", end="", flush=True)
+                subprocess.run(["sudo", "cp", temp_file, bin_file])
+                print("\r\033[92mUpdate Applied Successfully!\033[0m     ", end="\n")
+                subprocess.run(["curl", "-s", "carbonscript/refs/heads/define/updates.txt"])
+            else:
+                print("\r\033[91mNo Updates Applied\033[0m     ", end="\n")
+                exit(1)
+        else:
+            print("\r\033[92mVersion Up To Date!\033[0m     ", end="\n")  # Overwrites line
+
+    except Exception as e:
+        print(f"\r\033[91mError Checking Updates: {e}\033[0m     ", end="\n")
+        exit(1)
 
 def main(returncode):
     if len(sys.argv) > 1 and not TEST:
@@ -1580,5 +1618,8 @@ if __name__ == "__main__":
         elif "--help" in sys.argv:
             help()
             exit(1)
+        elif "--update" in sys.argv:
+            update()
+            exit(0)
 
     main(returncode)

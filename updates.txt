@@ -1,0 +1,14 @@
+Version 0.21/25 Updates
+Updated Februrary 5th 2025
+
+Added,
+- Self Updates.
+  - run "car --update" to run update proccess
+- CarbonScript Webdocs
+- Changed ?length -> ?len
+
+Removed,
+- Nothing
+
+
+

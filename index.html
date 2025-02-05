@@ -232,7 +232,7 @@
         <br>
         <strong>Sudo Access Is Required</strong>
       </p>
-      <h3><br>Latest Version: <a href="#whats-new" <span style="color: #2e8b57;">v02/25</span></a></h3>
+      <h3><br>Latest Version: <a href="#whats-new" <span style="color: #2e8b57;">v02.1/25</span></a></h3>
       <p>
         Released 02/03/2025
       <p>
@@ -278,7 +278,7 @@
       <section id="data-types">
         <h3><br>Data Types</h3>
         <p>
-          As of <a href="#whats-new" <span style="color: #2e8b57;">v02/25</span></a></h3>, CarbonScript has 6
+          As of <a href="#whats-new" <span style="color: #2e8b57;">v02.1/25</span></a></h3>, CarbonScript has 6
           Datatypes,
         </p>
         <h4><br>Intigers</h4>
@@ -375,7 +375,8 @@
           Use <code>elsefi</code> statements as a response to the initial statement<br>
           Use <code>default</code> statement to respond if no condition is reached
         </p>
-        <pre><code>set x = 10;int<br>set y = 5;int<br>fi ( ?x > ?y ) stdout x is larger than y<br>elsefi ( ?x < ?y  ) stdout x is smaller than y<br>default stdout x and y are the same value</code></pre>
+        <pre><code>set x = 10;int<br>set y = 5;int<br>fi ( ?x > ?y ) stdout x is larger than y<br>elsefi ( ?x < ?y )
+              stdout x is smaller than y<br>default stdout x and y are the same value</code></pre>
       </section>
       <section id="loops">
         <h3><br>Loops</h3>
@@ -395,7 +396,8 @@
         second one (respectively). Values are incremented themselfs
         <br>
         Use <code>?iteration</code> to keep track of the loop iteration
-        <pre><code>do 0 < 5 {<br><i>// code will loop 5 times, or unless the first values incrementation is interrupted</i><br>}</code></pre>
+        <pre><code>do 0 < 5 {<br><i>// code will loop 5 times, or unless the first values incrementation is
+                interrupted</i><br>}</code></pre>
       </section>
       <section id="arrays">
         <h3><br>Arrays</h3>
@@ -411,7 +413,8 @@
         Using the keyword <code>pop</code> followed by the name of the array, we can remove the last item of the array,
         and store it in an immutable (for the user) variable called <code>?pop</code> which contains the item that was
         popped.
-        <pre><code><i>// assuming x is the same array as last example</i><br>pop x<br>stdout ?pop<br><i>// output of 3</i></code></pre>
+        <pre><code><i>// assuming x is the same array as last example</i><br>pop x<br>stdout ?pop<br><i>// output of
+              3</i></code></pre>
         </p>
       </section>
       <section id="creating-functions">
@@ -419,14 +422,17 @@
         <p>Functions follow a similiar approach to C, where you need to define in the header, what type of value will be
           returned, void if none.
           <br>
-        <pre><code> func;{return_type} {function_name} {variables;type} {<br><i>// function code</i> <br>return statement if needed<br>}</code></pre>
+        <pre><code> func;{return_type} {function_name} {variables;type} {<br><i>// function code</i> <br>return
+            statement if needed<br>}</code></pre>
         </p>
         <h4>Example Function</h4>
-        <pre><code><i>// creating a simple function that add's two numbers</i><br>func;int addition $x;int $y;int {<br>&nbsp;&nbsp;return ( $x + $y ) <br>}</code></pre>
+        <pre><code><i>// creating a simple function that add's two numbers</i><br>func;int addition $x;int $y;int
+            {<br>&nbsp;&nbsp;return ( $x + $y ) <br>}</code></pre>
       </section>
       <section id="calling-functions">
         <h3><br>Calling Functions</h3>
-        <p>calling a functions requires the prefix <code>@</code> followed by the function name, before function arguement (if required).<br>If a function returns a value, the value will have to be stored in a variable.</p>
+        <p>calling a functions requires the prefix <code>@</code> followed by the function name, before function
+          arguement (if required).<br>If a function returns a value, the value will have to be stored in a variable.</p>
         <h4>Calling The Example Function Defined Earlier</h4>
         <pre><code>set result = @addition 10 20<br>stdout ?result<br><i>// output of 30</i></code></pre>
       </section>
@@ -434,13 +440,14 @@
       <section id="whats-new">
         <h2><br>What's New</h2>
         <h3>
-          Version Release <span style="color: #2e8b57;">v02/25</span>. February 3rd, 2025
+          Version Release <span style="color: #2e8b57;">v02.1/25</span>. February 3rd, 2025
         </h3>
         <p>
-          - [Interpreter] Added Array Functions, including <code>pop</code> and <code>push</code>. managing arrays effeciently<br>
+          - [Interpreter] Added Array Functions, including <code>pop</code> and <code>push</code>. managing arrays
+          effeciently<br>
           - [Webdocs] Created Webdocs<br>
         </p>
-    </section>
+      </section>
   </main>
 </body>
 

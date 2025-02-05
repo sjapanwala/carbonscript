@@ -159,8 +159,20 @@ def tokenization(user_input):
                 print("\r'quit' Detected; Session Ended")
                 exit(1)
             if "?" in token[0]:
-                recovered = deVar(token)
-                token_array[i] = recovered
+                if "]" in token[-1] and "[" in token:
+                    first_idx = token.rfind("[")
+                    last_idx = token.rfind("]")
+                    index_val = (token[first_idx+1:last_idx])
+                    toke_var = token[:first_idx]
+                    recovered = deVar(toke_var)
+                    if isinstance(recovered,list):
+                        return_val = recovered[int(index_val)]
+                    else:
+                        return_val = "\033[90mUndefined\033[0m"
+                    token_array[i] = return_val
+                else:
+                    recovered = deVar(token)
+                    token_array[i] = recovered
             if token[0] == "@":
                 ec,return_val = run_func(token[1:],token_array)
                 token_array[i] = return_val[0]
@@ -1295,6 +1307,17 @@ def stdout(tokens):
     ["hello","world"] -> helloworld
     """
     phrase = ""
+    if tokens[0] == "-t":
+        try:
+            for i in tokens:
+                if len(phrase) > 1:
+                    phrase += " "
+                phrase += str(i)
+            #print(f"\033[0m{phrase}")
+            print(type(phrase))
+            return 0
+        except:
+            return 1
     try:
         for i in tokens:
             if len(phrase) > 1:

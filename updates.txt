@@ -1,12 +1,9 @@
-Version 0.21/25 Updates
+Version 02.2/25 Updates
 Updated Februrary 5th 2025
 
 Added,
-- Self Updates.
-  - run "car --update" to run update proccess
-- CarbonScript Webdocs
-- Changed ?length -> ?len
-- Update Terminal Logs
+- Added a more intuitive file debugger
+- recomendations on syntax errors
 
 Removed,
 - Nothing

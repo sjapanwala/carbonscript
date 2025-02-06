@@ -39,7 +39,6 @@ func;int do_operations $op;int {
   return ?ans
 }
 
-// main code
 
 set ch = @prompt
 set answer = @do_operations ?ch

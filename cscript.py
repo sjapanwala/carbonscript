@@ -34,7 +34,7 @@ variables = {
         "version": {
             "cat": "preset",
             "type": "str",
-            "value": "v02.1/25"
+            "value": "v02.2/25"
             },
         "pi": {
             "cat": "preset",
@@ -177,6 +177,7 @@ def tokenization(user_input):
             if token[0] == "@":
                 ec,return_val = run_func(token[1:],token_array)
                 token_array[i] = return_val[0]
+                variables['errorlevel']['value'] = int(ec)
                 global func_code
                 func_code = ec
         if "(" in token_array:
@@ -274,13 +275,80 @@ def run_file(file_contents):
         if codeline in func_ignore:
             continue
         else:
-            func_caller(tokenizer)
+            returncode = func_caller(tokenizer)
+            if returncode not in (0,2):
+                error_responder(returncode,file_line,codeline,file_contents)
+            elif variables['errorlevel']['value'] not in (0,2):
+                returncode = variables['errorlevel']['value']
+                error_responder(returncode,file_line,codeline,file_contents)
+
+
+
+def error_responder(error_code,linenum,codeline,contents):
+    variables['errorlevel']['value'] = 0
+    return_map = {
+        0 : "No Error Code",
+        1 : "function requirements not fullfilled",
+        2 : "Comment Code\nCommented on this line",
+        3 : "unexpected type interaction.",
+        4 : "unexpected syntax provided."
+    }
+    ec_color_map = {
+        1: "\033[91m",
+        3: "\033[96m",
+        4: "\033[93m"
+    }
+    if error_code in return_map:
+        error_reason = return_map[error_code]
+        #print(error_reason)
+    else:
+        error_reason = "Unknown"
+    ec_color = ec_color_map[error_code]
+    get_num_len = len(str(linenum))
+    print(f"""
+    {get_num_len * " "} {ec_color}|\033[0m
+    \033[90m{linenum}\033[0m {ec_color}|\033[0m {codeline}
+    {get_num_len * " "} {ec_color}|\033[0m \033[91m{len(codeline) * "~"} {ec_color}{error_reason}\033[0m
+   """)
+    exit(1)
+
+def suggest_func(input):
+    omit_suggestions = {
+        "tokenization",
+        "aggregate",
+        "increm",
+        "decrem",
+        "checkfile",
+        "open_file",
+        "run_file",
+        "error_responder",
+        "suggest_func",
+        "func_caller",
+        "type_check",
+        "add_space",
+        "deVar",
+        "deVarFunc",
+        "run_func",
+        "construct_functions",
+        "do_math",
+        "help",
+        "update",
+        "main"
+    }
+    callable_globals = {name: obj for name, obj in globals().items() if callable(obj)}
+    # Iterate over the dictionary and print name and object
+    for name, obj in callable_globals.items():
+        if input in name:
+            if name not in omit_suggestions:
+                return f"Did You Mean \033[93m{name}\033[0m?"
+    return ""
+
 
 def func_caller(tokens):
     if envriornment_config["showtokens"] == True:
         print(tokens)
     if tokens == None:
-        return 1
+        return 2
     user_input = tokens[0]
     if user_input == "RULE":
         return 0
@@ -319,11 +387,13 @@ def func_caller(tokens):
     else:
         if file_mode:
             if envriornment_config['show_error_msgs']:
-                print(f"\033[91mstatment:syntax error: \033[0m\033[93m On Line {file_line}\033[0m: '{user_input}' is not recognized.")
+                suggestion = suggest_func(user_input)
+                print(f"\033[91mstatment:syntax error: \033[0m\033[93m On Line {file_line}\033[0m: '{user_input}' is not recognized. {suggestion}")
                 return 4
             return 4
         else:
-            print(f"\033[91mstatment:syntax error: \033[0m'{user_input}' is not recognized.")
+            suggestion = suggest_func(user_input)
+            print(f"\033[91mstatment:syntax error: \033[0m'{user_input}' is not recognized. {suggestion}")
         return 4
 
 def type_check(value):
@@ -417,7 +487,7 @@ def run_func(funcname, params):
         content[i] = line
     
     # Process content
-    ec = 1
+    ec = 0
     returnval = []
     
     for line in content:
@@ -438,7 +508,7 @@ def run_func(funcname, params):
         
         # Call function with tokenized line
         tokenizer = tokenization(line)
-        func_caller(tokenizer)
+        ec = func_caller(tokenizer)
     
     # Handle void return type
     if method["returntype"] == "void":
@@ -582,37 +652,49 @@ def construct_functions(tokens):
 
 
 def fi(tokens):
+    if len(tokens) < 1:
+        return 1
     if envriornment_config["showtokens"] == True:
         print(tokens)
     global fi_code
     fi_code = 0
     if tokens[0] == True:
-        func_caller(tokens[1:])
+        returncode = func_caller(tokens[1:])
+        if returncode not in (0,2):
+            return returncode
         fi_code = 0
         return 0
     else:
         fi_code = 1
-        return 1
+        return 0
 
 
 def elsefi(tokens):
+    if len(tokens) < 1:
+        return 1
     global fi_code
     if fi_code != 1:
-        return 1
+        return 0
     else:
         if tokens[0] == True:
-            func_caller(tokens[1:])
+            returncode = func_caller(tokens[1:])
+            if returncode not in (0,2):
+                return returncode
             fi_code = 0
             return 0
         else:
             fi_code = 1
-            return 1
+            return 0
 
 def default(tokens):
-    if fi_code !=1:
+    if len(tokens) < 1:
         return 1
+    if fi_code !=1:
+        return 0
     else:
-        func_caller(tokens[0:])
+        return_code = func_caller(tokens[0:])
+        if returncode not in (0,2):
+            return returncode
         return 0
     
 def repeat(tokens):
@@ -970,7 +1052,7 @@ def set(tokens):
     allowed_types = ["str","int","flt","bool","arr"]
     if "=" not in tokens:
         print("\033[91mset:args error: \033[0mplease add expected params")
-        return 0
+        return 1
     else:
         eq_place = tokens.index("=")
         if not tokens[eq_place+1]:
@@ -1077,7 +1159,7 @@ def const(tokens):
 
     allowed_types = ["str","int","flt","bool","arr"]
     if "=" not in tokens:
-        return 0
+        return 1
     else:
         eq_place = tokens.index("=")
         var_key = tokens[eq_place-1]
@@ -1471,12 +1553,12 @@ def run(tokens):
 
 def help():
     print("""Welcome To CarbonScript Help!
-    
-    All files to be passed by the interpretor must end with \033[92m.car\033[0m Extentions
-
-    Please Interact with the \033[92m'learn_cscript.md'\033[0m for more information about syntax and writing code
-
-    For Code Examples, please refer to \033[92m'/examples'\033[0m folder
+    Args Usage,
+    ---
+    --help        shows this menu
+    --v           shows interpretor version
+    env:show-tk   shows debug tokens
+    env:show-ec   shows return code
     """)
 
 def update():

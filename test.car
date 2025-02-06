@@ -1,6 +1,0 @@
-func;void main {
-  stdin a;int "??"
-  fi ( ?a == 1 ) stdout exit
-}
-
-@main

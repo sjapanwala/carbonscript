@@ -3,7 +3,6 @@ Updated Februrary 9th 2025
 
 Added,
  - Some Error Responder changes (errorcode;rust copycat...)
- - "repeat" bug fixes, now can use variables as repeat val in filemode
 
 Removed,
 - numceil (floor,ceil will be reintroduces in v02.3/2025)

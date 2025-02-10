@@ -396,9 +396,7 @@ def func_caller(tokens):
         if file_mode:
             if envriornment_config['show_error_msgs']:
                 suggestion = suggest_func(user_input)
-                #print(f"\033[91mstatment:syntax error: \033[0m\033[93m On Line {file_line}\033[0m: '{user_input}' is not recognized. {suggestion}")
-                
-                print(f"\033[91mstatment:syntax error\033[0m: '{user_input}' is not recognized. {suggestion}")
+                print(f"\033[91mstatment:syntax error:\033[0m: '{user_input}' is not recognized. {suggestion}")
                 return 4
             return 4
         else:
@@ -714,82 +712,82 @@ def default(tokens):
             return returncode
         return 0
     
-
 def repeat(tokens):
     """
     Handle repeat loops in both file and interactive modes
+    token_input -> ["5","{"]
+    repeat 5 {
+        // contents
+    }
     """
+    # Input validation
     if len(tokens) < 1:
-        print("\033[91mrepeat:value: \033[0mno repetition attribute assigned")
+        print("\033[91mrepeat:value: \033[0mno repition attribute assigned")
         return 1
     elif tokens[-1] != "{":
         print("\033[91mrepeat:opener: \033[0mno repeat loop opener provided")
         return 1
-
+    
     # Parse repeat value
     try:
         repeat_val = int(tokens[0])
     except ValueError:
-        print("\033[91mrepeat:type error: \033[0mno int assigned for repeater")
+        print("\033[91mrepeat:type error: \033[0mno int assigned for repeator")
         return 3
-
+        
     loop_contents = []
     
     try:
-        global file_mode  # Ensure file_mode is defined
-        
         if file_mode:
-            func_header = f"repeat {repeat_val} {{"  # Match header
-            repeat_val = repeat_val - 1
+            func_header = f"repeat {repeat_val} {{"
             inside_loop = False
-            found_closing = False  # Track if closing brace is found
+            repeat_val = repeat_val - 1
             
             with open(file_path, "r") as read_file:
                 lines = read_file.readlines()
-
+                
             for i, line in enumerate(lines):
                 line = line.strip()
-
-                if line.startswith("repeat") and line.endswith("{"):
+                
+                # Find the start of our repeat block
+                if line == func_header:
                     inside_loop = True
                     continue
-
+                
+                # Collect contents until closing brace
                 if inside_loop:
                     if line == "}":
-                        found_closing = True
                         break
-                    if line:  # Avoid empty lines
+                    if line:  # Only add non-empty lines
                         loop_contents.append(line)
-
-            if inside_loop and not found_closing:
-                print("\033[91mrepeat:syntax error: \033[0mClosing brace '}' not found")
-                return 1
         else:
+            # Interactive mode remains the same
             file_input = ""
             while file_input != "}":
                 file_input = input("repeat loop> ")
                 if file_input != "}":
                     loop_contents.append(file_input)
-
+    
     except Exception as e:
         print(f"\033[91mrepeat:error: \033[0m{str(e)}")
         return 1
-
+        
     try:
         # Reset iteration counter
         variables["iteration"]["value"] = 0
-
-        for _ in range(repeat_val):  
+        
+        # Execute the loop contents repeat_val times
+        for _ in range(repeat_val):
             for command in loop_contents:
                 minitoke = tokenization(command)
-                error_code = func_caller(minitoke)
-                if error_code not in (0,2):
-                    return error_code
-
-            variables["iteration"]["value"] += 1
-
+                ec = func_caller(minitoke)
+                if ec not in (0,2):
+                    return ec
+                variables["iteration"]["value"] += 1
+                
+        variables["iteration"]["value"] = 0
         return 0
-
+        
     except Exception as e:
         print(f"\033[91mrepeat:execution error: \033[0m{str(e)}")
         return 1

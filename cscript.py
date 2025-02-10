@@ -13,7 +13,8 @@ allowed_types = ["str","int","flt","bool","arr","void"]
 envriornment_config = {
         "showtokens": False,
         "print_error_code": False,
-        "show_error_msgs": True
+        "show_error_msgs": True,
+        "force_run": False
         }
 
 in_file_args = ("RULE show-tokens","RULE hide-errors","RULE show-ec")
@@ -264,6 +265,8 @@ def open_file(filename):
                 envriornment_config['print_error_code'] = True
             if line.strip() == "RULE show-tk":
                 envriornment_config['showtokens'] = True
+            if line.strip() == "RULE force-run":
+                envriornment_config['force_run'] = True 
     run_file(file_contents)
 
 def run_file(file_contents):
@@ -283,20 +286,21 @@ def run_file(file_contents):
                 error_responder(returncode,file_line,codeline,file_contents)
 
 
-
 def error_responder(error_code,linenum,codeline,contents):
     variables['errorlevel']['value'] = 0
     return_map = {
         0 : "No Error Code",
-        1 : "function requirements not fullfilled",
+        1 : "",
         2 : "Comment Code\nCommented on this line",
         3 : "unexpected type interaction.",
-        4 : "unexpected syntax provided."
+        4 : f"unexpected syntax provided.",
+        5 : "incompleted parameters proveded"
     }
     ec_color_map = {
-        1: "\033[91m",
-        3: "\033[96m",
-        4: "\033[93m"
+        1: "\033[1;31m",
+        3: "\033[1;36m",
+        4: "\033[1;33m",
+        5: "\033[1;35m"
     }
     if error_code in return_map:
         error_reason = return_map[error_code]
@@ -305,19 +309,23 @@ def error_responder(error_code,linenum,codeline,contents):
         error_reason = "Unknown"
     ec_color = ec_color_map[error_code]
     get_num_len = len(str(linenum))
-    print(f"""
-    {get_num_len * " "} {ec_color}|\033[0m
-    \033[90m{linenum}\033[0m {ec_color}|\033[0m {codeline}
-    {get_num_len * " "} {ec_color}|\033[0m \033[91m{len(codeline) * "~"} {ec_color}{error_reason}\033[0m
+    stat_bar = f"{file_path}"
+    print(f"""{stat_bar}:{linenum}:{error_code}
+
+{get_num_len * " "} {ec_color}|\033[0m
+\033[90m{linenum}\033[0m {ec_color}|\033[0m {codeline}
+{get_num_len * " "} {ec_color}|\033[0m \033[91m{len(codeline) * "^"} {ec_color}{error_reason}\033[0m
+
+\033[1;91merror: \033[0maborting due to status code {error_code}
    """)
+    if envriornment_config['force_run'] == True:
+        pass
     exit(1)
 
 def suggest_func(input):
     omit_suggestions = {
         "tokenization",
         "aggregate",
-        "increm",
-        "decrem",
         "checkfile",
         "open_file",
         "run_file",
@@ -388,7 +396,7 @@ def func_caller(tokens):
         if file_mode:
             if envriornment_config['show_error_msgs']:
                 suggestion = suggest_func(user_input)
-                print(f"\033[91mstatment:syntax error: \033[0m\033[93m On Line {file_line}\033[0m: '{user_input}' is not recognized. {suggestion}")
+                print(f"\033[91mstatment:syntax error\033[0m: '{user_input}' is not recognized. {suggestion}")
                 return 4
             return 4
         else:
@@ -457,6 +465,9 @@ def deVarFunc(var):
         return "\033[90mUndefined\033[0m"
     
 
+def func_return(analysis):
+    returned_value = tokenization(analysis)
+    print(returned_value)
 
 
 def run_func(funcname, params):
@@ -501,11 +512,12 @@ def run_func(funcname, params):
         if line.startswith('return'):
             returnval = tokenization(line[7:])
             continue
+            
         elif 'return' in line:
             return_index = line.find('return')
             returnval = tokenization(line[return_index+7:])
             continue
-        
+
         # Call function with tokenized line
         tokenizer = tokenization(line)
         ec = func_caller(tokenizer)
@@ -653,7 +665,8 @@ def construct_functions(tokens):
 
 def fi(tokens):
     if len(tokens) < 1:
-        return 1
+        print("\033[91mfi:params error: \033[0mnot enough params provided")
+        return 5
     if envriornment_config["showtokens"] == True:
         print(tokens)
     global fi_code
@@ -671,7 +684,8 @@ def fi(tokens):
 
 def elsefi(tokens):
     if len(tokens) < 1:
-        return 1
+        print("\033[91mfi:params error: \033[0mnot enough params provided")
+        return 5
     global fi_code
     if fi_code != 1:
         return 0
@@ -688,7 +702,8 @@ def elsefi(tokens):
 
 def default(tokens):
     if len(tokens) < 1:
-        return 1
+        print("\033[91mfi:params error: \033[0mnot enough params provided")
+        return 5
     if fi_code !=1:
         return 0
     else:
@@ -765,7 +780,9 @@ def repeat(tokens):
         for _ in range(repeat_val):
             for command in loop_contents:
                 minitoke = tokenization(command)
-                func_caller(minitoke)
+                ec = func_caller(minitoke)
+                if ec not in (0,2):
+                    return ec
                 variables["iteration"]["value"] += 1
                 
         variables["iteration"]["value"] = 0
@@ -1051,16 +1068,16 @@ def set(tokens):
     """
     allowed_types = ["str","int","flt","bool","arr"]
     if "=" not in tokens:
-        print("\033[91mset:args error: \033[0mplease add expected params")
-        return 1
+        print("\033[91mset:params error: \033[0mplease add expected params")
+        return 5
     else:
         eq_place = tokens.index("=")
         if not tokens[eq_place+1]:
-            print("\033[91mset:args error: \033[0mplease add expected params")
-            return 1
+            print("\033[91mset:params error: \033[0mplease add expected params")
+            return 5
         if not tokens[eq_place-1]:
-            print("\033[91mset:args error: \033[0mplease add expected params")
-            return 1
+            print("\033[91mset:params error: \033[0mplease add expected params")
+            return 5
         var_key = tokens[eq_place-1]
         if var_key in variables:
             if variables[var_key]["cat"] == "preset":
@@ -1097,8 +1114,8 @@ def set(tokens):
                     try:
                         var_val = int(var_val)
                         if var_val > 1 or var_val < 0:
-                            print("\033[91mconst:assignment error: \033[0mbool has to be 0/1 or true/false")
-                            return 1
+                            print("\033[91mset:type error: \033[0mbool has to be 0/1 or true/false")
+                            return 3
                     except:
                         print("\033[91mset:assignment error: \033[0mbool has to be 0/1 or true/false")
                         return 1
@@ -1168,8 +1185,8 @@ def const(tokens):
                 print("\033[91mconst:const error: \033[0mvariable cannot be rewritten")
                 return 1
         if not tokens[eq_place+1]:
-            print("\033[91mconst:args error: \033[0mplease add expected params")
-            return 1
+            print("\033[91mconst:params error: \033[0mplease add expected params")
+            return 5
         var_valueraw = tokens[eq_place+1]
         
         if isinstance(var_valueraw, int):
@@ -1247,12 +1264,12 @@ def let(tokens):
             return 1
     """
     if len(tokens) < 1:
-        print("\033[91mlet:args error: \033[0mplease add expected params")
-        return 1
+        print("\033[91mlet:params error: \033[0mplease add expected params")
+        return 5
     var_key_raw = tokens[0]
     if var_key_raw.find(";") == -1:
-        print("\033[91mlet:args error: \033[0mplease add expected params")
-        return 1
+        print("\033[91mlet:params error: \033[0mplease add expected params")
+        return 5
     semi_idx = var_key_raw.find(";")
     var_key = var_key_raw[:semi_idx]
     if var_key in variables:
@@ -1285,7 +1302,7 @@ def push(tokens):
         return 1
 
     if tokens[0] not in variables:
-        print("\033[91mpush:error : \033[0marray not initialized")
+        print("\033[91mpush:error: \033[0marray not initialized")
         return 1 
 
     if variables[tokens[0]]['type'] != "arr":
@@ -1337,7 +1354,7 @@ def pop(tokens):
         return 3
     if len(variables[tokens[0]]['value']) <= 0:
         print("\033[91mpop:content error: \033[0marray is empty")
-        return 3
+        return 1
     temp_array = variables[tokens[0]]['value']
     item = temp_array[-1]
     item_type = ""
@@ -1423,8 +1440,8 @@ def stdin(tokens):
     - it will ask the user "please add your age"
     """
     if not tokens:
-        print("\033[91mstdin:args error: \033[0mplease add expected params")
-        return 1
+        print("\033[91mstdin:params error: \033[0mplease add expected params")
+        return 5
 
     var_keyraw = tokens[0]
     
@@ -1508,24 +1525,7 @@ def clear(void):
     except:
         return 1
     
-def numceil(tokens):
-    if len(tokens) < 2:
-        print("\033[91mnumceil:args error: \033[0mplease add expected params")
-    if not tokens[0]:
-        print("\033[91mnumceil:args error: \033[0mplease add expected params")
-        return 1
-    elif not tokens[1]:
-        print("\033[91mnumceil:args error: \033[0mplease add significant digits")
-        return 1
-    else:
-        try:
-            num = float(tokens[0])
-            sig = int(tokens[1])
-            num = round(num, sig)
-            print(num)
-            return 0
-        except:
-            return 1
+
 
 
 def run(tokens):

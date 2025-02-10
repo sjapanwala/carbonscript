@@ -1,0 +1,9 @@
+let a;arr
+let b;arr
+push a 1 2 3 4 5
+length ?a
+repeat ?len {
+  pop a
+  push b ?pop
+}
+stdout ?b

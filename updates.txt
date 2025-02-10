@@ -1,12 +1,15 @@
-Version 02.2/25 Updates
-Updated Februrary 5th 2025
+Version 02.2.2/25 Updates
+Updated Februrary 9th 2025
 
 Added,
-- Added a more intuitive file debugger
-- recomendations on syntax errors
+ - Some Error Responder changes (errorcode;rust copycat...)
+ - "repeat" bug fixes, now can use variables as repeat val in filemode
 
 Removed,
-- Nothing
+- numceil (floor,ceil will be reintroduces in v02.3/2025)
+
+
+
 
 For More Information
  - [WebDocs][https://sjapanwala.github.io/carbonscript/#introduction]

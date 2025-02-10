@@ -311,13 +311,15 @@ def error_responder(error_code,linenum,codeline,contents):
         2 : "Comment Code\nCommented on this line",
         3 : "unexpected type interaction.",
         4 : f"unexpected syntax provided.",
-        5 : "incompleted parameters proveded"
+        5 : "incompleted parameters proveded",
+        404: "forbidden call"
     }
     ec_color_map = {
         1: "\033[1;31m",
         3: "\033[1;36m",
         4: "\033[1;33m",
-        5: "\033[1;35m"
+        5: "\033[1;35m",
+        404: "\033[1;90m"
     }
     if error_code in return_map:
         error_reason = return_map[error_code]
@@ -406,7 +408,30 @@ def func_caller(tokens):
             else:
                 error_code = func_code
                 return error_code
+    omit = {
+            "tokenization",
+            "aggregate",
+            "checkfile",
+            "open_file",
+            "run_file",
+            "error_responder",
+            "suggest_func",
+            "func_caller",
+            "type_check",
+            "add_space",
+            "deVar",
+            "deVarFunc",
+            "run_func",
+            "construct_functions",
+            "do_math",
+            "help",
+            "update",
+            "main"
+        }
     if user_input in globals() and callable(globals()[user_input]):
+        if user_input in omit:
+            print(f"\033[91mforbidden function:\033[0m You are not allowed to call this function")
+            return 404
         error_code = globals()[user_input](list(tokens[1:]))
         return error_code
     else:

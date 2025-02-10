@@ -1,13 +1,14 @@
-Version 02.2.2/25 Updates
-Updated Februrary 9th 2025
+Version 02.3/25 Updates
+Updated Februrary 10th 2025
 
 Added,
- - Some Error Responder changes (errorcode;rust copycat...)
-
-Removed,
-- numceil (floor,ceil will be reintroduces in v02.3/2025)
-
-
+- floor and ceil values.
+   floor(x)
+    - rounds the value down
+    - expects a flt, returns an int
+   ceil(x)
+    - round the value up
+    - expects a flt, returns an int
 
 
 For More Information

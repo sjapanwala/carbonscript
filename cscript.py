@@ -4,6 +4,7 @@ import getpass, os
 import operator
 import random
 import subprocess
+import math
 
 global allowed_types
 allowed_types = ["str","int","flt","bool","arr","void"]
@@ -181,6 +182,22 @@ def tokenization(user_input):
                 variables['errorlevel']['value'] = int(ec)
                 global func_code
                 func_code = ec
+            if "ceil(" in token:
+                if ")" in token:
+                    l_idx = token.rfind(")")
+                    r_idx = token.rfind("(")
+                    number = token[r_idx + 1 : l_idx]
+                    number = tokenization(number)
+                    number = float(number[0])  
+                    token_array[i] = math.ceil(number)  
+            if "floor(" in token:
+                if ")" in token:
+                    l_idx = token.rfind(")")
+                    r_idx = token.rfind("(")
+                    number = token[r_idx + 1 : l_idx]  
+                    number = tokenization(number)
+                    number = float(number[0])  
+                    token_array[i] = math.floor(number)  
         if "(" in token_array:
             token_array = do_math(token_array)
         return token_array
@@ -346,7 +363,7 @@ def suggest_func(input):
     callable_globals = {name: obj for name, obj in globals().items() if callable(obj)}
     # Iterate over the dictionary and print name and object
     for name, obj in callable_globals.items():
-        if input in name:
+        if str(input) in name:
             if name not in omit_suggestions:
                 return f"Did You Mean \033[93m{name}\033[0m?"
     return ""

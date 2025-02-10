@@ -232,7 +232,7 @@
         <br>
         <strong>Sudo Access Is Required</strong>
       </p>
-      <h3><br>Latest Version: <a href="#whats-new" <span style="color: #2e8b57;">v02.1/25</span></a></h3>
+      <h3><br>Latest Version: <a href="#whats-new" <span style="color: #2e8b57;">v02.3/25</span></a></h3>
       <p>
         Released 02/03/2025
       <p>
@@ -278,7 +278,7 @@
       <section id="data-types">
         <h3><br>Data Types</h3>
         <p>
-          As of <a href="#whats-new" <span style="color: #2e8b57;">v02.1/25</span></a></h3>, CarbonScript has 6
+          As of <a href="#whats-new" <span style="color: #2e8b57;">v02.3/25</span></a></h3>, CarbonScript has 6
           Datatypes,
         </p>
         <h4><br>Intigers</h4>
@@ -330,14 +330,12 @@
           <br>
           <br>
           <strong><code>set</code></strong> is used to define mutable variables. You can change the value of a
-          variable
-          once it's assigned.
+          variable once it's assigned.
           <br>
           <strong><code>const</code></strong> is used for immutable variables. Once a value is assigned to a
           <code>const</code> variable, it cannot be changed.
           <br>
-          <strong><code>let</code></strong> is used for temporary mutable variables, typically used in short-term
-          calculations or loops.
+          <strong><code>let</code></strong> is used for temporary mutable variables, typically used in short-term calculations or loops.
         </p>
         <pre><code>const name = "John Doe";str<br>set age = 25;int<br>set graduated = false;bool</code></pre>
       </section>
@@ -366,6 +364,11 @@
           <br>
         </p>
         <pre><code>stdout ( 100 + ?x )<br><i>// assuming x is already a preset variable</i></code></pre>
+        <h3><br>Ceil and Floor</h3>
+        <p>
+          Use the <code>ceil</code> and <code>floor</code> functions to round values up or down.
+        </p>
+        <pre><code>set x = 3.14;flt<br>stdout ?x<br>stdout ceil(?x)<br>stdout floor(?x)</code></pre>
       </section>
       <section id="conditions">
         <h3><br>Conditional Statements</h3>
@@ -439,8 +442,15 @@
       <section id="whats-new">
         <h2><br>What's New</h2>
         <h3>
-          Version Release <span style="color: #2e8b57;">v02.1/25</span>. February 5th, 2025
+          Version Release <span style="color: #2e8b57;">v02.3/25</span>. February 5th, 2025
         </h3>
+          - Added ceil() and floor()<br>
+          floor(x)<br>
+            - rounds the value down<br>
+            - expects a flt, returns an int<br>
+          ceil(x)<br>
+            - round the value up<br>
+            - expects a flt, returns an int<br>
         <p>
         </p>
       </section>

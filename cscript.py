@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# -- TODO --
+# [] - Incorporate lambda functions
+# [] - add recursions, until {basecase} - call them "until loops?"
+# [] - ???
+
+
 import sys
 import getpass, os
 import operator
@@ -253,7 +259,7 @@ def decrem(tokens):
                         variable_value = variables[increm_variable]['value']
                         variables[increm_variable]['value'] = int(variable_value) - 1
 
-
+    
 
 # --- START OF THE FILE READING SYSTEM, READING ".car" FILES ONLY ---
 file_contents = []

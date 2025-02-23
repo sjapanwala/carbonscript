@@ -30,7 +30,7 @@ in_file_args = ("RULE show-tokens","RULE hide-errors","RULE show-ec")
 
 variables = {
         "errorlevel" : {
-            "cat": "preset",
+            "cat": "assigned",
             "type": "int",
             "value": 0
             },

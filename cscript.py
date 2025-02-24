@@ -11,8 +11,8 @@ import operator
 import random
 import subprocess
 import math
-import time
 import re
+import time
 
 global allowed_types
 allowed_types = ["str","int","flt","bool","arr","void"]
@@ -44,7 +44,7 @@ variables = {
         "version": {
             "cat": "preset",
             "type": "str",
-            "value": "v02.4/25"
+            "value": "v02.2/25"
             },
         "pi": {
             "cat": "preset",
@@ -210,11 +210,10 @@ def tokenization(user_input):
                     number = tokenization(number)
                     number = float(number[0])  
                     token_array[i] = math.floor(number)  
-            if any("(" in str(token) for token in token_array):
-                token_array = do_math(token_array)
+        if "(" in token_array:
+            token_array = do_math(token_array)
         return token_array
     except Exception as e:
-        print(f"\033[91mtokenizer error:from interpretor:\033[0m {e}")
         return ["undefined"]
 
 def aggregate(tokens):
@@ -328,7 +327,7 @@ def error_responder(error_code,linenum,codeline,contents):
         3 : "unexpected type interaction.",
         4 : f"unexpected syntax provided.",
         5 : "incompleted parameters proveded",
-        8 : "logical arithmetic error",
+        8 : "mathematical logic error",
         404: "forbidden call",
         000: "Not Implemented"
     }
@@ -398,6 +397,7 @@ def suggest_func(input):
 def func_caller(tokens):
     if envriornment_config["showtokens"] == True:
         print(tokens)
+    
     if tokens == None:
         return 2
     user_input = tokens[0]
@@ -452,6 +452,7 @@ def func_caller(tokens):
             "update",
             "main"
         }
+
     for token in tokens:
         if isinstance(token,str):
             if token.lower() == "undefined":
@@ -907,7 +908,6 @@ def do(tokens):
 
     # Parse instructions
     do_instructions = []
-
     variables["iteration"]['value'] = 0
 
     if file_mode:  # File-based input
@@ -1155,15 +1155,20 @@ def do_math(tokens):
     }
 
     # Step 1: Process parentheses (if any)
-    if "(" not in tokens:
-        new_tokens = []
-        for token in tokens:
-            split_tokens = re.split(r'([()])', token)
-            new_tokens.extend([t for t in split_tokens if t])
-        tokens = [t for t in new_tokens if t not in ("(", ")")]
+    while '(' in tokens:
+        # Find the innermost parentheses
+        first = tokens.index('(')
+        last = len(tokens) - 1 - list(reversed(tokens)).index(')')
+        
+        # Evaluate the expression inside the parentheses
+        sub_tokens = tokens[first + 1:last]
+        result = do_math(sub_tokens)  # Recursive call for nested expressions
+        
+        # Replace the parentheses with the result
+        tokens[first] = result[0]
+        del tokens[first + 1:last + 1]
 
     i = 0
-    print(tokens)
     while i < len(tokens):
         if tokens[i] in operator_map:
             # Perform the operation and replace the operands and operator
@@ -1683,6 +1688,7 @@ def run(tokens):
 
 
 
+
 def help():
     RESET = "\033[0m"
     BOLD = "\033[1m"
@@ -1827,6 +1833,8 @@ def update():
         exit(1)
     subprocess.run(["rm",f"{temp_file}"])
     print("─" * 50)
+
+
 def main(returncode):
     if len(sys.argv) > 1 and not TEST:
         if checkfile(sys.argv[1]):

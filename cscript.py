@@ -24,7 +24,7 @@ envriornment_config = {
         "force_run": False
         }
 
-in_file_args = ("RULE show-tokens","RULE hide-errors","RULE show-ec")
+in_file_args = ("RULE show-tokens","RULE hide-errors","RULE show-ec","RULE force-run")
 
 
 
@@ -283,6 +283,7 @@ def open_file(filename):
             file_contents.append(line.strip())
             raw_files.append(line)
             if line.strip() == "RULE hide-errors":
+                print(True)
                 envriornment_config['show_error_msgs'] = False
             if line.strip() == "RULE show-ec":
                 envriornment_config['print_error_code'] = True
@@ -318,14 +319,16 @@ def error_responder(error_code,linenum,codeline,contents):
         3 : "unexpected type interaction.",
         4 : f"unexpected syntax provided.",
         5 : "incompleted parameters proveded",
-        404: "forbidden call"
+        404: "forbidden call",
+        000: "Not Implemented"
     }
     ec_color_map = {
         1: "\033[1;31m",
         3: "\033[1;36m",
         4: "\033[1;33m",
         5: "\033[1;35m",
-        404: "\033[1;90m"
+        404: "\033[1;90m",
+        000: "\033[1;30m"
     }
     if error_code in return_map:
         error_reason = return_map[error_code]
@@ -343,9 +346,8 @@ def error_responder(error_code,linenum,codeline,contents):
 
 \033[1;91merror: \033[0maborting due to status code {error_code}
    """)
-    if envriornment_config['force_run'] == True:
-        pass
-    exit(1)
+    if envriornment_config['force_run'] == False:
+        exit(1)
 
 def suggest_func(input):
     omit_suggestions = {
@@ -780,8 +782,11 @@ def repeat(tokens):
     try:
         repeat_val = int(tokens[0])
     except ValueError:
-        print("\033[91mrepeat:type error: \033[0mno int assigned for repeator")
-        return 3
+        try:
+            repeat_val = int(variables[tokens[0]]['value'])
+        except:
+            print("\033[91mrepeat:type error: \033[0mno int assigned for repeator")
+            return 3
         
     loop_contents = []
     
@@ -935,6 +940,71 @@ def do(tokens):
     return 0
 
 
+def until(tokens):
+    # Basic parameter validation
+    if len(tokens) < 3:
+        print("\033[91muntil:params error:\033[0m not enough params given")
+        return 1
+
+    statement_decider = tokens[0]
+    if tokens[1] != "=":
+        print("\033[91muntil:operator error:\033[0m operator needs to be '='")
+        return 1
+    try:
+        # This is the target value for the condition
+        statement_value = int(tokens[2])
+    except ValueError:
+        print("\033[91muntil:type error:\033[0m statement value needs to be an int")
+        return 3
+
+    # Check for the opening brace
+    if tokens[-1] != "{":
+        print("\033[91muntil:opener error:\033[0m opening brace not provided")
+        return 1
+
+    # Gather the loop block contents
+    loop_contents = []
+    if file_mode:
+        loop_header = f"until {statement_decider} = {statement_value} {{"
+        in_loop = False
+        with open(file_path, 'r') as readfile:
+            for line in readfile:
+                stripped = line.strip()
+                if stripped == loop_header:
+                    in_loop = True
+                    continue
+                if in_loop:
+                    if stripped == '}':
+                        break
+                    loop_contents.append(line.rstrip())
+    else:
+        loop_input = ""
+        while loop_input != "}":
+            loop_input = input("until; ")
+            if loop_input != '}':
+                loop_contents.append(loop_input)
+
+    # Recursive loop that re-evaluates the condition each time.
+    def recur_loop(contents):
+        try:
+            # Evaluate the current value of the variable referenced by statement_decider.
+            current_value = eval(statement_decider, globals())
+        except Exception as e:
+            print("\033[91muntil:evaluation error:\033[0m", e)
+            return 1
+
+        # Exit condition: when the current value equals the target.
+        if current_value == statement_value:
+            return 0
+        else:
+            for instruction in contents:
+                # Execute each instruction. It is assumed that func_caller and tokenization are defined.
+                ec = func_caller(tokenization(instruction))
+            # Recursively call the loop again, re-checking the condition.
+            return recur_loop(contents)
+
+    # Start the recursive loop.
+    return recur_loop(loop_contents)
 
 
 
@@ -1078,7 +1148,6 @@ def do_math(tokens):
         tokens[first] = result[0]
         del tokens[first + 1:last + 1]
 
-    # Step 2: Process operators (left-to-right for simplicity)
     i = 0
     while i < len(tokens):
         if tokens[i] in operator_map:

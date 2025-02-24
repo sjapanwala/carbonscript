@@ -11,6 +11,8 @@ import operator
 import random
 import subprocess
 import math
+import time
+import re
 
 global allowed_types
 allowed_types = ["str","int","flt","bool","arr","void"]
@@ -42,7 +44,7 @@ variables = {
         "version": {
             "cat": "preset",
             "type": "str",
-            "value": "v02.2/25"
+            "value": "v02.4/25"
             },
         "pi": {
             "cat": "preset",
@@ -208,10 +210,13 @@ def tokenization(user_input):
                     number = tokenization(number)
                     number = float(number[0])  
                     token_array[i] = math.floor(number)  
-        if "(" in token_array:
-            token_array = do_math(token_array)
+            if any("(" in str(token) for token in token_array):
+                token_array = do_math(token_array)
+            #if "(" in token_array:
+            #token_array = do_math(token_array)
         return token_array
     except Exception as e:
+        print(f"\033[91mtokenizer error:from interpretor:\033[0m {e}")
         return ["undefined"]
 
 def aggregate(tokens):
@@ -325,7 +330,7 @@ def error_responder(error_code,linenum,codeline,contents):
         3 : "unexpected type interaction.",
         4 : f"unexpected syntax provided.",
         5 : "incompleted parameters proveded",
-        8 : "mathematical logic error",
+        8 : "logical arithmetic error",
         404: "forbidden call",
         000: "Not Implemented"
     }
@@ -395,7 +400,6 @@ def suggest_func(input):
 def func_caller(tokens):
     if envriornment_config["showtokens"] == True:
         print(tokens)
-    
     if tokens == None:
         return 2
     user_input = tokens[0]
@@ -450,7 +454,6 @@ def func_caller(tokens):
             "update",
             "main"
         }
-
     for token in tokens:
         if isinstance(token,str):
             if token.lower() == "undefined":
@@ -906,6 +909,7 @@ def do(tokens):
 
     # Parse instructions
     do_instructions = []
+
     variables["iteration"]['value'] = 0
 
     if file_mode:  # File-based input
@@ -1153,20 +1157,15 @@ def do_math(tokens):
     }
 
     # Step 1: Process parentheses (if any)
-    while '(' in tokens:
-        # Find the innermost parentheses
-        first = tokens.index('(')
-        last = len(tokens) - 1 - list(reversed(tokens)).index(')')
-        
-        # Evaluate the expression inside the parentheses
-        sub_tokens = tokens[first + 1:last]
-        result = do_math(sub_tokens)  # Recursive call for nested expressions
-        
-        # Replace the parentheses with the result
-        tokens[first] = result[0]
-        del tokens[first + 1:last + 1]
+    if "(" not in tokens:
+        new_tokens = []
+        for token in tokens:
+            split_tokens = re.split(r'([()])', token)
+            new_tokens.extend([t for t in split_tokens if t])
+        tokens = [t for t in new_tokens if t not in ("(", ")")]
 
     i = 0
+    print(tokens)
     while i < len(tokens):
         if tokens[i] in operator_map:
             # Perform the operation and replace the operands and operator
@@ -1687,58 +1686,149 @@ def run(tokens):
 
 
 def help():
-    print("""Welcome To CarbonScript Help!
-    Args Usage,
-    ---
-    --help        shows this menu
-    --v           shows interpretor version
-    env:show-tk   shows debug tokens
-    env:show-ec   shows return code
-    """)
+    RESET = "\033[0m"
+    BOLD = "\033[1m"
+    BRIGHT_GREEN = "\033[92m"
+    BLUE = "\033[94m"
+    YELLOW = "\033[33m"
+    CYAN = "\033[96m"
+    
+    print(f"\n{BOLD}CARBONSCRIPT HELP{RESET}")
+    print("─" * 50)
+    print(f"\n{BOLD}{BLUE}DESCRIPTION{RESET}")
+    print(f"{RESET}CarbonScript is a toy interpretor built in Python3.\nDeveloped by {BRIGHT_GREEN}Saaim Japanwala{RESET} as a side project.\nBy no means is it the fastest,\nthe most effecient, or the greates interpretor to ever be created, \033[3m\033[90mthats what python is for :){RESET}\nPlease enjoy my work!")
+    print(f"\n{BOLD}{BLUE}DOCUMENTATION{RESET}")
+    print(f"  {BRIGHT_GREEN}WebDocs{RESET}       https://sjapanwala.github.io/carbonscript/")
+    print(f"  {BRIGHT_GREEN}README{RESET}        https://github.com/sjapanwala/carbonscript")
+
+
+    print(f"\n{BOLD}{BLUE}CLI COMMANDS{RESET}")
+    print(f"  {BRIGHT_GREEN}--update{RESET}      Updates the interpreter {YELLOW}(requires sudo){RESET}")
+    print(f"  {BRIGHT_GREEN}--help{RESET}        Shows this help menu")
+    print(f"  {BRIGHT_GREEN}--v{RESET}           Displays interpreter version; download source")
+    
+    print(f"\n{BOLD}{BLUE}STARTUP INSTRUCTIONS{RESET}")
+    print(f"  {BRIGHT_GREEN}env:show-tk{RESET}   Shows debug tokens")
+    print(f"  {BRIGHT_GREEN}env:show-ec{RESET}   Shows return code")
+    
+    print(f"\n{BOLD}{BLUE}ERROR CODES{RESET}")
+    print(f"  {BRIGHT_GREEN}   0{RESET}          Void; Nothing Abnormal")
+    print(f"  {BRIGHT_GREEN}   1{RESET}          Ambiguous Error")
+    print(f"  {BRIGHT_GREEN}   2{RESET}          Comment Code")
+    print(f"  {BRIGHT_GREEN}   3{RESET}          Type Error")
+    print(f"  {BRIGHT_GREEN}   4{RESET}          Syntax Error")
+    print(f"  {BRIGHT_GREEN}   5{RESET}          Incompleted Parameters")
+    print(f"  {BRIGHT_GREEN}   8{RESET}          Logical Artithemitc Error")
+    # Footer 
+    print("\n" + "─" * 50)
+    print(f"Run {CYAN}car{RESET} with arguments to execute operations")
 
 def update():
+
+    
+    # Colors and styling
+    RESET = "\033[0m"
+    BOLD = "\033[1m"
+    GREEN = "\033[32m"
+    BRIGHT_GREEN = "\033[92m"
+    RED = "\033[91m"
+    BLUE = "\033[94m"
+    YELLOW = "\033[33m"
+    CYAN = "\033[96m"
+    
+    # Spinner frames
+    spinner = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+    
+    # Path setup
     temp_file = os.path.expanduser("~/.temp_csc")
     bin_file = os.path.expanduser("/usr/local/bin/car")
+    
 
-    print(f"\rChecking for updates...         ", end="", flush=True)
-    update_check = input("\rCheck For Updates? (y/n) ").strip().lower()  # Overwrites the line
+    def clear_line():
+        return "\r\033[K" 
+    
 
+    print(f"\n{BOLD}CARBONSCRIPT UPDATE{RESET}")
+    print("─" * 50)
+    
+    def show_status(message, success=None, frames=5):
+        for i in range(frames):
+            if success is None:
+                spin_char = spinner[i % len(spinner)]
+                print(f"{clear_line()}{BLUE}{spin_char}{RESET} {message}", end="", flush=True)
+                time.sleep(0.1)
+        
+        if success is True:
+            print(f"{clear_line()}{BRIGHT_GREEN}✓{RESET} {message}", flush=True)
+        elif success is False:
+            print(f"{clear_line()}{RED}✗{RESET} {message}", flush=True)
+    
+    def prompt_user(prompt_text):
+        print(f"{clear_line()}{CYAN}?{RESET} {prompt_text}", end=" ", flush=True)
+        return input().strip().lower()
+    
+    show_status("Preparing update check...", success=None, frames=3)
+    show_status("Preparing update check...", success=True)
+    
+    update_check = prompt_user("Check for updates? (y/n)")
+    
     if update_check != "y":
-        print("\r\033[91mError:\033[0m Update Aborted     ", end="\n")  # Overwrites & clears line
+        print(f"{clear_line()}{RED}✗{RESET} Update process aborted by user")
         exit(1)
-
-    print("\rDownloading Update File...       ", end="", flush=True)
+    
+    for i in range(10):
+        spin_char = spinner[i % len(spinner)]
+        print(f"{clear_line()}{BLUE}{spin_char}{RESET} Downloading update file... {i*10}%", end="", flush=True)
+        time.sleep(0.1)
+    
     try:
         subprocess.run(["curl", "-s", "-o", temp_file, "https://raw.githubusercontent.com/sjapanwala/carbonscript/refs/heads/define/cscript.py"])
-        print("\r\033[92mSuccessfully Received Update Check File\033[0m     ", end="\n")  # Overwrites line
-    except:
-        print("\r\033[91mFailed To Download Update Check File\033[0m     ", end="\n")
+        print(f"{clear_line()}{BRIGHT_GREEN}✓{RESET} Update file downloaded successfully")
+    except Exception as e:
+        print(f"{clear_line()}{RED}✗{RESET} Failed to download update file")
+        print(f"{RED}Error: {e}{RESET}")
         exit(1)
-
-    print("\rChecking If Updates Are Required...      ", end="", flush=True)
+    
+    for i in range(5):
+        spin_char = spinner[i % len(spinner)]
+        print(f"{clear_line()}{BLUE}{spin_char}{RESET} Comparing version files...", end="", flush=True)
+        time.sleep(0.1)
+    
     try:
-        update = os.path.getsize(temp_file)
-        downloaded = os.path.getsize(bin_file)
-
-        if update != downloaded:
-            print("\r\033[92mUpdates Found!\033[0m          ", end="\n",flush=True)  # Overwrites line
-            apply_check = input("\rApply Updates? (y/n) ").strip().lower()  # Overwrites line
+        update_size = os.path.getsize(temp_file)
+        current_size = os.path.getsize(bin_file)
+        
+        if update_size != current_size:
+            print(f"{clear_line()}{BRIGHT_GREEN}✓{RESET} New version available!")
+            print(f"{CYAN}Current:{RESET} {current_size} bytes | {CYAN}Updated:{RESET} {update_size} bytes")
+            
+            apply_check = prompt_user("Apply updates? (y/n)")
             
             if apply_check == "y":
-                print("\rApplying Update...        ", end="", flush=True)
+                # Apply update with progress on the same line
+                for i in range(10):
+                    spin_char = spinner[i % len(spinner)]
+                    print(f"{clear_line()}{BLUE}{spin_char}{RESET} Applying update... {i*10}%", end="", flush=True)
+                    time.sleep(0.1)
+                
                 subprocess.run(["sudo", "cp", temp_file, bin_file])
-                print("\r\033[92mUpdate Applied Successfully!\033[0m     ", end="\n")
+                print(f"{clear_line()}{BRIGHT_GREEN}✓{RESET} Update applied successfully")
+                
+                print(f"\n{BOLD}UPDATE NOTES:{RESET}")
+                print("─" * 30)
                 subprocess.run(["curl", "-s", "https://raw.githubusercontent.com/sjapanwala/carbonscript/refs/heads/define/updates.txt"])
+                print("─" * 30)
             else:
-                print("\r\033[91mNo Updates Applied\033[0m     ", end="\n")
+                print(f"{clear_line()}{YELLOW}⚠{RESET} Update canceled - No changes made")
                 exit(1)
         else:
-            print("\r\033[92mVersion Up To Date!\033[0m     ", end="\n")  # Overwrites line
-
+            print(f"{clear_line()}{BRIGHT_GREEN}✓{RESET} CarbonScript is already at the latest version")
     except Exception as e:
-        print(f"\r\033[91mError Checking Updates: {e}\033[0m     ", end="\n")
+        print(f"{clear_line()}{RED}✗{RESET} Error checking updates")
+        print(f"{RED}Error: {e}{RESET}")
         exit(1)
-
+    subprocess.run(["rm",f"{temp_file}"])
+    print("─" * 50)
 def main(returncode):
     if len(sys.argv) > 1 and not TEST:
         if checkfile(sys.argv[1]):

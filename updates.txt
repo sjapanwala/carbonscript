@@ -1,10 +1,29 @@
-Version 02.3/25 Updates
-Updated Februrary 10th 2025
+   CARBONSCRIPT UPDATE - 02.4/25 - 02/24/2025
+──────────────────────────────────────────────────
+Whats New?
 
-Added,
-- Added new error code
- 8 - Mathematical / Logical Error
-- Updated Error Colors for Debuggers
+1️⃣  Brand New Formatting
+ - Update Script Formatting Has Changed Completely!
+ - Used to be an eyesore, and annoying to read longer logs
+2️⃣  Fixed Updater Format and Logic
+ - Did not clean up after itself, now removes old files
+ - Better UI, shows more information (carriage return glitch fixed)
+3️⃣  Help Menu Repaired
+ - Changed the way it looks, has more information now
+
+Changes?
+
+1️⃣  Logical Arithmetic Parenthesis Fixed
+ - Bug: had to add whitespace before the equation like so,
+   set x = ( 10 + 10 )
+ - Changed: removed the need for whitespace
+   set x = (10 + 10)
+
+ - Dont worry, all the code written with whitespace will still function the same way!
+
+Removed?
+
+- None
 
 For More Information
  - [WebDocs][https://sjapanwala.github.io/carbonscript/#introduction]

@@ -319,14 +319,16 @@ def error_responder(error_code,linenum,codeline,contents):
         3 : "unexpected type interaction.",
         4 : f"unexpected syntax provided.",
         5 : "incompleted parameters proveded",
+        8 : "mathematical logic error",
         404: "forbidden call",
         000: "Not Implemented"
     }
     ec_color_map = {
         1: "\033[1;31m",
-        3: "\033[1;36m",
-        4: "\033[1;33m",
-        5: "\033[1;35m",
+        3: "\033[1;38;5;220m",
+        4: "\033[38;5;202m",
+        5: "\033[38;5;196m",
+        8: "\033[38;5;129m",
         404: "\033[1;90m",
         000: "\033[1;30m"
     }
@@ -382,6 +384,7 @@ def suggest_func(input):
 def func_caller(tokens):
     if envriornment_config["showtokens"] == True:
         print(tokens)
+    
     if tokens == None:
         return 2
     user_input = tokens[0]
@@ -436,6 +439,11 @@ def func_caller(tokens):
             "update",
             "main"
         }
+
+    for token in tokens:
+        if isinstance(token,str):
+            if token.lower() == "undefined":
+                return 8
     if user_input in globals() and callable(globals()[user_input]):
         if user_input in omit:
             print(f"\033[91mforbidden function:\033[0m You are not allowed to call this function")

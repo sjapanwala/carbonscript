@@ -2,14 +2,9 @@ Version 02.3/25 Updates
 Updated Februrary 10th 2025
 
 Added,
-- floor and ceil values.
-   floor(x)
-    - rounds the value down
-    - expects a flt, returns an int
-   ceil(x)
-    - round the value up
-    - expects a flt, returns an int
-
+- Added new error code
+ 8 - Mathematical / Logical Error
+- Updated Error Colors for Debuggers
 
 For More Information
  - [WebDocs][https://sjapanwala.github.io/carbonscript/#introduction]

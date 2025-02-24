@@ -5,9 +5,11 @@ Whats New?
 1️⃣  Brand New Formatting
  - Update Script Formatting Has Changed Completely!
  - Used to be an eyesore, and annoying to read longer logs
+
 2️⃣  Fixed Updater Format and Logic
  - Did not clean up after itself, now removes old files
  - Better UI, shows more information (carriage return glitch fixed)
+
 3️⃣  Help Menu Repaired
  - Changed the way it looks, has more information now
 

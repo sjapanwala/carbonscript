@@ -212,8 +212,6 @@ def tokenization(user_input):
                     token_array[i] = math.floor(number)  
             if any("(" in str(token) for token in token_array):
                 token_array = do_math(token_array)
-            #if "(" in token_array:
-            #token_array = do_math(token_array)
         return token_array
     except Exception as e:
         print(f"\033[91mtokenizer error:from interpretor:\033[0m {e}")

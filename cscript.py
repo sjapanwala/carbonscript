@@ -167,6 +167,10 @@ def tokenization(user_input):
             if token == "quit":
                 print("\r'quit' Detected; Session Ended")
                 exit(1)
+            if token == "true":
+                token_array[i] = int(1)
+            if token == "false":
+                token_array[i] = int(0)
             if "?" in token[0]:
                 if "]" in token[-1] and "[" in token:
                     first_idx = token.rfind("[")
@@ -308,6 +312,8 @@ def run_file(file_contents):
             elif variables['errorlevel']['value'] not in (0,2):
                 returncode = variables['errorlevel']['value']
                 error_responder(returncode,file_line,codeline,file_contents)
+    #find_optimization(file_contents)
+
 
 
 def error_responder(error_code,linenum,codeline,contents):
@@ -350,6 +356,11 @@ def error_responder(error_code,linenum,codeline,contents):
    """)
     if envriornment_config['force_run'] == False:
         exit(1)
+
+def find_optimization(contents):
+    events = {}
+    for i in contents:
+        print(i)
 
 def suggest_func(input):
     omit_suggestions = {
@@ -846,8 +857,7 @@ def repeat(tokens):
                     return ec
                 variables["iteration"]["value"] += 1
                 
-        variables["iteration"]["value"] = 0
-        return 0
+        return 
         
     except Exception as e:
         print(f"\033[91mrepeat:execution error: \033[0m{str(e)}")
@@ -896,6 +906,7 @@ def do(tokens):
 
     # Parse instructions
     do_instructions = []
+    variables["iteration"]['value'] = 0
 
     if file_mode:  # File-based input
         
@@ -944,7 +955,6 @@ def do(tokens):
             bench_marker += 1  
             variables["iteration"]['value'] += 1
     
-    variables["iteration"]['value'] = 0
     return 0
 
 

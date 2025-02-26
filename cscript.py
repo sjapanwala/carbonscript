@@ -186,11 +186,11 @@ def tokenization(user_input):
                 if "]" in token[-1] and "[" in token:
                     first_idx = token.rfind("[")
                     last_idx = token.rfind("]")
-                    index_val = (token[first_idx+1:last_idx])
+                    index_val = tokenization(token[first_idx+1:last_idx])
                     toke_var = token[:first_idx]
                     recovered = deVar(toke_var)
                     if isinstance(recovered,list):
-                        return_val = recovered[int(index_val)]
+                        return_val = recovered[int(index_val[0])]
                     else:
                         return_val = "\033[90mUndefined\033[0m"
                     token_array[i] = return_val

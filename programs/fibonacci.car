@@ -1,6 +1,4 @@
 // generating a fibonacci sequence
-// written by github.com/sjapanwala
-// 02/03/25
 
 func;void generateFibonacci $n;int {
     set a = 0;int
@@ -9,8 +7,9 @@ func;void generateFibonacci $n;int {
 
     push sequence ?a
     push sequence ?b
+    set fibIt = ( $n - 2 )
 
-    repeat 8 {
+    repeat ?fibIt {
         set next = ( ?a + ?b )
         push sequence ?next
         set a = ?b
@@ -20,4 +19,4 @@ func;void generateFibonacci $n;int {
     stdout "Fibonacci Sequence:" ?sequence
 }
 
-@generateFibonacci 10 
+@generateFibonacci 12

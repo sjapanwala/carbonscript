@@ -1,9 +1,12 @@
-set array = 1,2,3,4,5;arr   
-let reversed;arr
+let array;arr          // initializing the array                       
+push array 1 2 3 4 5   // adding numbers 1 thru 5 to the array
 
-repeat 5 {  
-  pop array                 
-  push reversed ?pop        
+let reversed;arr       // initializing the reversed array
+stdout "Original Array: " ?array
+length ?array          // finding the iteration amount with the lenght of the array
+repeat ?len {  
+  pop array            // running a loop to pop the last element             
+  push reversed ?pop   // appending it to the reversed array     
 }
 
-stdout ?reversed
+stdout "Reversed Array: " ?reversed

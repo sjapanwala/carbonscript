@@ -1,3 +1,5 @@
+RULE force-dontrun
+
 // Keywords
 set         // sets mutable variable
 const       // sets an immutable variable
@@ -12,6 +14,9 @@ do          // while loop
 return      // returing a value from a function
 iteration   // iteration number for loops
 RULE        // describe a file rule (hide-errors,show-ec,...)
+length      // obtain the length of a value
+push        // push a value into an array
+pop         // pop a value from an array
 
 // PreDefined / Variables
 varlist     // lists all defined variables and information
@@ -22,6 +27,8 @@ version     // version number
 pi          // 3.14
 eu          //2.72
 ?anyvar     // calling a variable
+?len        // use the len value found from "length"
+?pop        // use the popped value gained from "pop"
 
 // Functions
 rand        // random number (rand min max)
@@ -29,7 +36,8 @@ stdout      // print to the console
 stdin       // takes variables from console
 increm      // incrementing a value
 decrem      // decrementing a value
-numceil     // rounding floats
+ceil        // rounds a float to an int (UP)
+floor       // rounds a float to an int (DOWN)
 
 // Types
 ;int, ;void, ;str, ;arr, ;flt, ;bool

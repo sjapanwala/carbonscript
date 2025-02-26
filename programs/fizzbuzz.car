@@ -1,0 +1,20 @@
+// i / 3 and 5 == fizzbuzz
+// i / 3 == fizz
+// i / 5 == buzz
+
+func;void fizzBuzz $n;int {
+  let resultArray;arr
+  set interLen = ceil($n)
+  set repetition = 0;int
+  repeat ?interLen {
+    set repetition = ( ?repetition + 1 )
+    fi ( ?repetition % 15 == 0 ) push resultArray "fizzbuzz"
+    elsefi ( ?repetition % 3 == 0 ) push resultArray "fizz"
+    elsefi ( ?repetition % 5 == 0 ) push resultArray "buzz"
+    default push resultArray ?repetition
+  }
+  stdout "FizzBuzz - Iterations: $n"
+  stdout ?resultArray
+}
+
+@fizzBuzz 50

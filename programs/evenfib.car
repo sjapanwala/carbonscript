@@ -1,18 +1,19 @@
+RULE hide-errors
+
 // generating a fibonacci sequence
 // adds all the even numbers to a sum
 // part of q2 for eulars problems
-// written by github.com/sjapanwala
-// 02/03/25
 
-func;void generateFibonacci $n;int {
-    set a = 0;int
-    set b = 1;int
+func;int generateFibonacci $n;int {
+    set a = 1;int
+    set b = 2;int
     let sequence;arr
 
     push sequence ?a
     push sequence ?b
-
-    repeat 8 {
+    set n = ceil($n)
+    set fibIt = ( ?n - 2 )
+    repeat ?fibIt {
         set next = ( ?a + ?b )
         push sequence ?next
         set a = ?b
@@ -20,20 +21,21 @@ func;void generateFibonacci $n;int {
     }
     
     let evenarr;arr
-    repeat 10 {
+    repeat ?n {
         pop sequence
         fi ( ?pop % 2 == 0 ) push evenarr ?pop
     }
     
     set sum = 0;int
 
-    repeat 4 {
+    length ?evenarr
+    repeat ?len {
         pop evenarr
-        set sum = ( ?sum + ?pop )
-
+        set sum = ( ?pop + ?sum )
     }
-
-    stdout ?sum
+    stdout "Sum of Even Fibonacci Numbers - Iterations: $n "
+    return ?sum
 }
 
-@generateFibonacci 10 
+set ans = @generateFibonacci 50
+stdout ?ans

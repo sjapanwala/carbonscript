@@ -1,5 +1,0 @@
-// we can write to the console with the keyword "stdout"
-// stdout means - "standard output", this will turn everything into a string
-// types do nothing here, everythingn needs to be quoted
-
-stdout "Welcome To CarbonScript! A Whole New World!"

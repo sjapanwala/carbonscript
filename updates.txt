@@ -13,23 +13,19 @@ Whats New?
 3️⃣  Help Menu Repaired
  - Changed the way it looks, has more information now
 
+4️⃣  Lots of More Demo Programs!
+ - Check Them Out in The GitHub Repo!
+
 Changes?
 
-1️⃣  Logical Arithmetic Parenthesis Fixed
- - Bug: had to add whitespace before the equation like so,
-   set x = ( 10 + 10 )
- - Changed: removed the need for whitespace
-   set x = (10 + 10)
-
- - Dont worry, all the code written with whitespace will still function the same way!
+1️⃣  Fixed Repeat Loop Variable Bug
 
 Removed?
 
-- None
+🗑️ Cleaned Up Github Repository
 
 For More Information
  - [WebDocs][https://sjapanwala.github.io/carbonscript/#introduction]
  - [ReadME] [https://github.com/sjapanwala/carbonscript]
-
 
 End Of Updates. 🚂-------💨

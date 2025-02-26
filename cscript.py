@@ -26,7 +26,7 @@ envriornment_config = {
         "force_run": False
         }
 
-in_file_args = ("RULE show-tokens","RULE hide-errors","RULE show-ec","RULE force-run")
+in_file_args = ("show-tokens","hide-errors","show-ec","force-run","force-dontrun")
 
 
 
@@ -44,7 +44,7 @@ variables = {
         "version": {
             "cat": "preset",
             "type": "str",
-            "value": "v02.2/25"
+            "value": "v02.4/25"
             },
         "pi": {
             "cat": "preset",
@@ -99,7 +99,7 @@ methods = {
             "returntype": "void",
             "params": 0,
             "param_order": [],
-            "content" : ["stdout Exited With Status Code ?errorlevel","}"],
+            "content" : ["stdout \033[93m * \033[0m Exited With Status Code ?errorlevel","}"],
         },
         "add" : {
             "returntype": "int",
@@ -164,6 +164,15 @@ def tokenization(user_input):
             increm(token_array[1:])
         if "decrem" in token_array[0]:
             decrem(token_array[1:])
+        # scan for comments
+        
+        for i,token in enumerate(token_array):
+            if token_array[0] == "//":
+                token_array = "~"
+            elif token == "//":
+                token_array = token_array[:i]
+        token_array = [item for item in token_array if item != ""]
+        
         for i,token in enumerate(token_array):
             # check for precedence
             if token == "quit":
@@ -285,11 +294,16 @@ def checkfile(filepath):
 raw_files = []
 def open_file(filename):
     with open(filename, "r") as file:
+        counter = 0
         for line in file:
+            counter +=1
             file_contents.append(line.strip())
             raw_files.append(line)
+            if line.strip() == "RULE force-dontrun":
+                print(f"\033[90m{file_path} {counter}:RULE: force-dontrun")
+                print("\033[91merror: \033[0mYou are not allowed to run this file!")
+                exit(1)
             if line.strip() == "RULE hide-errors":
-                print(True)
                 envriornment_config['show_error_msgs'] = False
             if line.strip() == "RULE show-ec":
                 envriornment_config['print_error_code'] = True
@@ -417,6 +431,8 @@ def func_caller(tokens):
         return 0
     if user_input == "decrem":
         return 0
+    if user_input == "~":
+        return 2
     if user_input in in_file_args:
         return 0
     if isinstance(user_input, str):
@@ -793,7 +809,7 @@ def repeat(tokens):
     """
     # Input validation
     if len(tokens) < 1:
-        print("\033[91mrepeat:value: \033[0mno repition attribute assigned")
+        print("\033[91mrepeat:value: \033[0mno repetition attribute assigned")
         return 1
     elif tokens[-1] != "{":
         print("\033[91mrepeat:opener: \033[0mno repeat loop opener provided")
@@ -815,7 +831,6 @@ def repeat(tokens):
         if file_mode:
             func_header = f"repeat {repeat_val} {{"
             inside_loop = False
-            repeat_val = repeat_val - 1
             
             with open(file_path, "r") as read_file:
                 lines = read_file.readlines()
@@ -823,19 +838,24 @@ def repeat(tokens):
             for i, line in enumerate(lines):
                 line = line.strip()
                 
-                # Find the start of our repeat block
+                if line.startswith("repeat ?"):
+                    var_name = line.split()[1][1:]
+                    if var_name in variables:
+                        line = f"repeat {variables[var_name]['value']} {{"
+                
                 if line == func_header:
                     inside_loop = True
                     continue
                 
-                # Collect contents until closing brace
                 if inside_loop:
                     if line == "}":
                         break
-                    if line:  # Only add non-empty lines
+                    if line:  
                         loop_contents.append(line)
+            
+            repeat_val = repeat_val - 1
+            
         else:
-            # Interactive mode remains the same
             file_input = ""
             while file_input != "}":
                 file_input = input("repeat loop> ")
@@ -847,11 +867,10 @@ def repeat(tokens):
         return 1
         
     try:
-        # Reset iteration counter
         variables["iteration"]["value"] = 0
         
-        # Execute the loop contents repeat_val times
-        for _ in range(repeat_val):
+        
+        for _ in range(repeat_val):  
             for command in loop_contents:
                 minitoke = tokenization(command)
                 ec = func_caller(minitoke)
@@ -859,7 +878,7 @@ def repeat(tokens):
                     return ec
                 variables["iteration"]["value"] += 1
                 
-        return 
+        return 0
         
     except Exception as e:
         print(f"\033[91mrepeat:execution error: \033[0m{str(e)}")
@@ -1709,6 +1728,7 @@ def help():
     print(f"\n{BOLD}{BLUE}CLI COMMANDS{RESET}")
     print(f"  {BRIGHT_GREEN}--update{RESET}      Updates the interpreter {YELLOW}(requires sudo){RESET}")
     print(f"  {BRIGHT_GREEN}--help{RESET}        Shows this help menu")
+    print(f"  {BRIGHT_GREEN}--logs{RESET}        Shows lastests update logs")
     print(f"  {BRIGHT_GREEN}--v{RESET}           Displays interpreter version; download source")
     
     print(f"\n{BOLD}{BLUE}STARTUP INSTRUCTIONS{RESET}")
@@ -1820,8 +1840,7 @@ def update():
                 
                 print(f"\n{BOLD}UPDATE NOTES:{RESET}")
                 print("─" * 30)
-                subprocess.run(["curl", "-s", "https://raw.githubusercontent.com/sjapanwala/carbonscript/refs/heads/define/updates.txt"])
-                print("─" * 30)
+                print(f"\n{BOLD}{BLUE}Check Out Update Information with \033[92mcar --logs{RESET}")
             else:
                 print(f"{clear_line()}{YELLOW}⚠{RESET} Update canceled - No changes made")
                 exit(1)
@@ -1832,7 +1851,6 @@ def update():
         print(f"{RED}Error: {e}{RESET}")
         exit(1)
     subprocess.run(["rm",f"{temp_file}"])
-    print("─" * 50)
 
 
 def main(returncode):
@@ -1916,6 +1934,9 @@ if __name__ == "__main__":
             exit(1)
         elif "--update" in sys.argv:
             update()
+            exit(0)
+        elif "--logs" in sys.argv:
+            subprocess.run(["curl", "-s", "https://raw.githubusercontent.com/sjapanwala/carbonscript/refs/heads/define/updates.txt"])
             exit(0)
 
     main(returncode)

@@ -1,27 +1,25 @@
 // Project Eular Question #1
 // "find the sum of all multiples of 3 or 5 under 1000"
-// written by github.com/sjapanwala
-// 02/03/25
 
 func;void eu1 $void {
   let a;arr
   set num = 0
-  repeat 1000 {
+  set IterNum = 1000;int
+  repeat ?IterNum {
     fi ( ?num % 3 == 0 ) push a ?num
     elsefi ( ?num % 5 == 0 ) push a ?num
     set num = ( ?num + 1 )
   }
 
   set sum = 0;int
-  repeat 467 {
+  length ?a
+  repeat ?len {
     pop a
     set sum = ( ?sum + ?pop )
   }
   
-  stdout The Sum Of All Numbers: ?sum
+  stdout "The Sum Multiples of 3 and 5 - Iterations:" ?IterNum
+  stdout ?sum
 }
 
-stdout "----"
-stdout "Project Eular Question 1"
-stdout "----"
 @eu1

@@ -173,6 +173,14 @@
       #main-content {
         width: 100%;
       }
+
+      footer {
+        padding: 15px 0;
+        text-align: center;
+        border-top: 1px solid #eaeaea;
+        font-size: 14px;
+        color: #333;
+      }
     }
   </style>
 </head>
@@ -186,6 +194,7 @@
         <li><a href="#Installation">Installation</a></li>
         <li><a href="#overview">Overview</a></li>
         <li><a href="#getting-started">Getting Started</a></li>
+        <li><a href="#file-rules">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;File Rules</a></li>
         <li><a href="#standard-outputs">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Standard Outputs</a></li>
         <li><a href="#data-types">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Data Types</a></li>
         <li><a href="#assign-vars">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Assigning Variables</a></li>
@@ -232,18 +241,18 @@
         <br>
         <strong>Sudo Access Is Required</strong>
       </p>
-      <h3><br>Latest Version: <a href="#whats-new" <span style="color: #2e8b57;">v02.3/25</span></a></h3>
+      <h3><br>Latest Version: <a href="#whats-new" <span style="color: #2e8b57;">v02.4/25</span></a></h3>
       <p>
-        Released 02/03/2025
+        Released 02/25/2025
       <p>
-      <pre><code>git clone git@github.com:sjapanwala/carbonscript.git<br> cd carbonscript/<br>sudo ./install.sh
+      <pre><code>git clone git@github.com:sjapanwala/carbonscript.git<br>cd carbonscript/<br>sudo ./install.sh
         </code></pre>
     </section>
 
 
     <section id="overview">
       <h2><br>Overview</h2>
-      <p>Highlight the unique syntactical features of your language.</p>
+      <p>Syntax Difference Between <code>JavaScript</code> and <code>CarbonScript</code></p>
 
       <div class="syntax-comparison">
         <div>
@@ -267,6 +276,33 @@
         Whether you're coming from Python, JavaScript, or another language, you'll feel right at home as you start
         writing code in CarbonScript.
       </p>
+      <section id="file-rules">
+        <h3><br>File Rules</h3>
+        <p>
+          When creating a file in CarbonScript using the <code>.car</code> file extention, you can add rules to the top of the file Using the <code>RULE</code> command. These dictate certain enviornments and how the file will perform
+        </p>
+        <h4><br>hide-errors<br></h4>
+        <p>
+          using <code>RULE hide-errors</code> hiding any errors that emerge in the file.
+        </p>
+        <h4>show-ec</h4>
+        <p>
+          using <code>RULE show-ec</code> shows the error codes in the file.
+        </p>
+        <h4>show-tk</h4>
+        <p>
+          using <code>RULE show-tk</code> shows the tokens in the file.
+        </p>
+        <h4>force-run</h4>
+        <p>
+          using <code>RULE force-run</code> forces the file to run.
+        </p>
+        <h4>force-dontrun</h4>
+        <p>
+          using <code>RULE force-dontrun</code> forces the file to not run.
+        </p>
+          <br>
+      </section>
       <section id="standard-outputs">
         <h3><br>Standard Outputs</h3>
         <p>
@@ -278,7 +314,7 @@
       <section id="data-types">
         <h3><br>Data Types</h3>
         <p>
-          As of <a href="#whats-new" <span style="color: #2e8b57;">v02.3/25</span></a></h3>, CarbonScript has 6
+          As of <a href="#whats-new" <span style="color: #2e8b57;">v02.4/25</span></a></h3>, CarbonScript has 6
           Datatypes,
         </p>
         <h4><br>Intigers</h4>
@@ -383,7 +419,7 @@
       <section id="loops">
         <h3><br>Loops</h3>
         <p>
-          As of <a href="#whats-new" <span style="color: #2e8b57;">v02/25</span></a></h3>, CarbonScript has 2 loops.
+          As of <a href="#whats-new" <span style="color: #2e8b57;">v02.4/25</span></a></h3>, CarbonScript has 2 loops.
           <code>repeat</code> and <code>do</code>
           <br>
           <br>
@@ -442,19 +478,18 @@
       <section id="whats-new">
         <h2><br>What's New</h2>
         <h3>
-          Version Release <span style="color: #2e8b57;">v02.3/25</span>. February 5th, 2025
+          Version Release <span style="color: #2e8b57;">v02.4/25</span>. February 5th, 2025
         </h3>
-          - Added ceil() and floor()<br>
-          floor(x)<br>
-            - rounds the value down<br>
-            - expects a flt, returns an int<br>
-          ceil(x)<br>
-            - round the value up<br>
-            - expects a flt, returns an int<br>
+        <br>
+          ✅ &nbsp;&nbsp;better in terminal update, installation, and help management
+          <br>
+          ✅ &nbsp;&nbsp;paying more attention to <code>RULE</code> commands
+          <br>
+          ✅ &nbsp;&nbsp;repaired loops not validating variables
         <p>
         </p>
       </section>
+      <h1> Happy Hacking!</h1>
   </main>
 </body>
-
 </html>

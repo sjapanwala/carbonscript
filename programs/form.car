@@ -1,0 +1,86 @@
+// Job Application Survey
+// using structs to create user attributes
+
+let applicant;struct
+set applicantCounter = 0;int
+// Collect Basic Information
+stdout "------- JOB APPLICATION SURVEY -------"
+stdout " You are filling out a Servey for ABCompany."
+stdout "* Please Be Honest In Your Submissions."
+stdout "* Please Fill In The Following Information."
+stdout "* References May Be Required."
+stdout " "
+stdout "------- Personal Informatin Section -------"
+stdin fullName;str "Enter Your Full Name:"
+stdin age;int "Enter Your Age:"
+stdin email;str "Enter Your Email Address:"
+stdin phone;str "Enter Your Phone Number:"
+
+// Assign Basic Info to Struct
+{
+  set applicant:fullName = ?fullName
+  set applicant:age = ?age
+  set applicant:email = ?email
+  set applicant:phone = ?phone
+}
+
+// Job-Specific Information
+stdout " "
+stdout "------- Job Preferences -------"
+
+stdin desiredRole;str "What Position Are You Applying For?"
+stdin yearsExperience;int "How Many Years of Experience Do You Have?"
+stdin expectedSalary;int "What Is Your Expected Monthly Salary?"
+stdin relocation;bool "Are You Willing to Relocate? (true/false)"
+
+// Assign Job Data to Struct
+{
+  set applicant:desiredRole = ?desiredRole
+  set applicant:yearsExperience = ?yearsExperience
+  set applicant:expectedSalary = ?expectedSalary
+  set applicant:relocation = ?relocation
+}
+// ask user for education data
+stdout " "
+stdout "------- Education and Certificates -------"
+
+stdin education;str "What is Your Highest Level Of Education?"
+stdin institution;str "Name of Institution?"
+stdin gradutionYear;str "When Did You Graduate/Plan to Graduate"
+
+{
+  set applicant:education = ?education
+  set applicant:institution = ?institution
+  set applicant:gradutionYear = ?gradutionYear
+}
+
+// Increase the Applicant Counter
+increm ?applicantCounter
+// Final Summary
+stdout " "
+stdout "----- Job Application Created For Applicant" ?applicantCounter " -----"
+stdout " "
+stdout " ----- Applicant Personal Information ----- "
+stdout "Applicant Name:        " ?applicant.fullName
+stdout "Applicant Age:         " ?applicant.age
+stdout "Email Address:         " ?applicant.email
+stdout "Phone Number:          " ?applicant.phone
+stdout " "
+stdout " ----- Applicant Occupational Information ----- "
+stdout "Desired Role:          " ?applicant.desiredRole
+stdout "Years of Experience:   " ?applicant.yearsExperience
+stdout "Expected Salary:      $" ?applicant.expectedSalary
+stdout "Willing to Relocate:   " ?applicant.relocation
+stdout " "
+stdout " ----- Applicant Education Information ----- "
+stdout "Highest Education      " ?applicant.education
+stdout "Education Institution  " ?applicant.institution
+stdout "Year of Graduation     " ?applicant.gradutionYear
+stdout " "
+stdout "      ----- End of Application -----"
+
+
+stdin confirmation;bool "Send Application? (true/false)"
+fi ( ?confirmation == true ) stdout "Application Sent! Thanks For Applying to ABCompany!"
+elsefi ( ?confirmation == false ) stdout "Application Was Not Sent."
+

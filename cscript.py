@@ -11,11 +11,10 @@ import operator
 import random
 import subprocess
 import math
-import re
 import time
 
 global allowed_types
-allowed_types = ["str","int","flt","bool","arr","void"]
+allowed_types = ["str","int","flt","bool","arr","void","struct"]
 
 
 # this is where the "envriornmental rules are stored; can be modified with args"
@@ -145,7 +144,20 @@ methods = {
         },
     }
 
-
+structs = {
+    "test": {
+        "name": {
+            "cat": "assigned",
+            "type": "str",
+            "value": "saaim",
+        },
+        "age": {
+            "cat": "assigned",
+            "type": "int",
+            "value": 20,
+        }
+    },
+}
 
 def tokenization(user_input):
     """
@@ -342,8 +354,10 @@ def error_responder(error_code,linenum,codeline,contents):
         4 : f"unexpected syntax provided.",
         5 : "incompleted parameters proveded",
         8 : "mathematical logic error",
+        17: "ctrl c detected, exited program",
         404: "forbidden call",
         000: "Not Implemented"
+
     }
     ec_color_map = {
         1: "\033[1;31m",
@@ -351,6 +365,7 @@ def error_responder(error_code,linenum,codeline,contents):
         4: "\033[38;5;202m",
         5: "\033[38;5;196m",
         8: "\033[38;5;129m",
+        17: "\033[38;5;142m",
         404: "\033[1;90m",
         000: "\033[1;30m"
     }
@@ -510,6 +525,9 @@ def add_space(chunk):
     return chunk[:sp_idx], chunk[sp_idx+1:]
 
 def deVar(variable):
+    if "." in variable:
+        return_value = deStruct(variable[1:])
+        return return_value
     if variable[1:] in variables:
         var_val = variables[variable[1:]]["value"]
         var_type = variables[variable[1:]]["type"]
@@ -523,13 +541,44 @@ def deVar(variable):
         elif var_type == "flt":
             return float(var_val)
         elif var_type == "bool":
-            return int(var_val)
+            if var_val == 1:
+                    return True
+            return False
         elif var_type == "randint":
             return random.randint(random_min,random_max)
         else:
             return "\033[90mUndefined\033[0m"
     else:
         return "\033[90mUndefined\033[0m"
+
+def deStruct(var):
+    if "." in var:
+        struct_name_index = var.find(".")
+        struct_key = var[struct_name_index+1:]
+        struct_name = var[:struct_name_index]
+        if struct_name not in structs:
+            return "\033[90mUndefined\033[0m"
+        elif struct_key not in structs[struct_name]:
+            return "\033[90mUndefined\033[0m"
+        else:
+            value_type = structs[struct_name][struct_key]["type"]
+            value_value = structs[struct_name][struct_key]["value"]
+            if value_type == "str":
+                return str(value_value)
+            elif value_type == "int":
+                return int(value_value)
+            elif value_type == "flt":
+                return float(value_value)
+            elif value_type == "arr":
+                return str(value_value)
+            elif value_type == "bool":
+                if value_value == 1:
+                    return True
+                return False
+                
+            else:
+              return "\033[90mUndefined\033[0m"
+
 
 def deVarFunc(var):
     if var[1:] in variables:
@@ -551,6 +600,17 @@ def deVarFunc(var):
     else:
         return "\033[90mUndefined\033[0m"
     
+
+def carbon(tokens):
+    if len(tokens) < 1:
+        return 1
+    system_call = tokens[0]
+    if system_call == "varls":
+        varlist("void")
+        return 0
+    elif system_call == "funcls":
+        funclist("void")
+        return 0
 
 def func_return(analysis):
     returned_value = tokenization(analysis)
@@ -1222,7 +1282,6 @@ def set(tokens):
         else:
             return 1
     """
-    allowed_types = ["str","int","flt","bool","arr"]
     if "=" not in tokens:
         print("\033[91mset:params error: \033[0mplease add expected params")
         return 5
@@ -1239,7 +1298,13 @@ def set(tokens):
             if variables[var_key]["cat"] == "preset":
                 print("\033[91mset:const error: \033[0mvariable cannot be rewritten")
                 return 1
+        if var_key in structs:
+            print("\033[91mset:struct error: \033[0ma struct with this name already exists")
+            return 1
         var_valueraw = tokens[eq_place+1]
+        
+        
+
 
 
                
@@ -1253,7 +1318,7 @@ def set(tokens):
             var_val = var_valueraw
             var_type = "flt"
 
-        
+
 
         elif var_valueraw.find(";") > -1:
             semi_idx = var_valueraw.find(";")
@@ -1285,11 +1350,28 @@ def set(tokens):
             var_type = type_check(var_val)
 
 
+
     
         if var_type not in allowed_types:
             print("\033[91mset:type error: \033[0minvalid type")
             return 3
 
+        cat_val = "assigned"
+
+        if ":" in var_key:
+            struct_key_index = var_key.find(":")
+            struct_name = var_key[:struct_key_index]
+            struct_key = var_key[struct_key_index+1:]
+            if struct_name not in structs:
+                print("\033[91mset error: struct init:\033[0m struct has not been initialized")
+                return 1
+            else:
+                structs[struct_name][struct_key] = {
+                    "cat": cat_val,
+                    "type": var_type,
+                    "value": var_val,
+                }
+                return 0
         
         if var_key in variables:
             if variables[var_key]['value'] == "undefined":
@@ -1302,7 +1384,7 @@ def set(tokens):
 
 
 
-        cat_val = "assigned"
+        
 
         variables[var_key] = {
             "cat": cat_val,
@@ -1330,7 +1412,6 @@ def const(tokens):
     """
 
 
-    allowed_types = ["str","int","flt","bool","arr"]
     if "=" not in tokens:
         return 1
     else:
@@ -1340,6 +1421,9 @@ def const(tokens):
             if variables[var_key]["cat"] == "preset":
                 print("\033[91mconst:const error: \033[0mvariable cannot be rewritten")
                 return 1
+        if var_key in structs:
+            print("\033[91mconst:struct error: \033[0ma struct with this name already exists")
+            return 1        
         if not tokens[eq_place+1]:
             print("\033[91mconst:params error: \033[0mplease add expected params")
             return 5
@@ -1387,6 +1471,21 @@ def const(tokens):
 
         cat_val = "preset"
 
+        if ":" in var_key:
+            struct_key_index = var_key.find(":")
+            struct_name = var_key[:struct_key_index]
+            struct_key = var_key[struct_key_index+1:]
+            if struct_name not in structs:
+                print("\033[91mset error: struct init:\033[0m struct has not been initialized")
+                return 1
+            else:
+                structs[struct_name][struct_key] = {
+                    "cat": cat_val,
+                    "type": var_type,
+                    "value": var_val,
+                }
+                return 0
+
         if var_key in variables:
             if variables[var_key]['value'] == "undefined":
                 if variables[var_key]['type'] != var_type:
@@ -1431,6 +1530,9 @@ def let(tokens):
     if var_key in variables:
         print("\033[91mlet:exists error: \033[0mvariable already has value")
         return 1
+    if var_key in structs:
+            print("\033[91mlet:struct error: \033[0ma struct with this name already exists")
+            return 1
     var_type = var_key_raw[semi_idx+1:]
     if var_type not in allowed_types:
         print("\033[91mlet:type error: \033[0minvalid type")
@@ -1438,9 +1540,11 @@ def let(tokens):
 
     if var_type == "arr":
         var_value = []
+    elif var_type == "struct":
+        structs[var_key] = {}
+        return 0
     else:
         var_value = "void"
-
     cat_val = "assigned"
     variables[var_key] = {
         "cat": cat_val,
@@ -1595,84 +1699,87 @@ def stdin(tokens):
     - var_type is int
     - it will ask the user "please add your age"
     """
-    if not tokens:
-        print("\033[91mstdin:params error: \033[0mplease add expected params")
-        return 5
-
-    var_keyraw = tokens[0]
-    
-    if var_keyraw.find(";") == -1:
-        print("\033[91mstdin:type error: \033[0mno type specified")
-        return 3
-
     try:
-        semi_idx = var_keyraw.find(";")
-        var_key = var_keyraw[:semi_idx]
-        if var_key in variables:
-            if variables[var_key]["cat"] == "preset":
-                print("\033[91msstdin:const error: \033[0mvariable cannot be rewritten")
-                return 1
-        var_type = var_keyraw[semi_idx+1:]
+        if not tokens:
+            print("\033[91mstdin:params error: \033[0mplease add expected params")
+            return 5
+
+        var_keyraw = tokens[0]
         
-        var_types = ["str","int","bool","arr"]
-        if var_type not in var_types:
-            print("\033[91mstdin:type error: \033[0minvalid type provided")
+        if var_keyraw.find(";") == -1:
+            print("\033[91mstdin:type error: \033[0mno type specified")
             return 3
 
-        phrase = " ".join(tokens[1:])
-        
-        var_val = input(f"\033[33m{var_type} \033[0m{phrase} ")
-        if var_type == "str":
-            try:
-                str(var_val)
-            except:
-                print(f"\033[91mstdin:type error: \033[0minvalid type provided, expected {var_type}")
-                return 1
-        elif var_type == "int":
-            try:
-                int(var_val)
-            except:
-                print(f"\033[91mstdin:type error: \033[0minvalid type provided, expected {var_type}")
-                return 1
-        elif var_type == "flt":
-            try:
-                float(var_val)
-            except:
-                print(f"\033[91mstdin:type error: \033[0minvalid type provided, expected {var_type}")
-                return 1
-        elif var_type == "bool":
-            try:
-                if var_val.lower() in ("true","false"):
-                    if var_val == "true":
-                        var_val = 1
-                    elif var_val == "false":
-                        var_val = 0
-                else:
-                    try:
-                        var_val = int(var_val)
-                        if var_val > 1 or var_val < 0:
+        try:
+            semi_idx = var_keyraw.find(";")
+            var_key = var_keyraw[:semi_idx]
+            if var_key in variables:
+                if variables[var_key]["cat"] == "preset":
+                    print("\033[91msstdin:const error: \033[0mvariable cannot be rewritten")
+                    return 1
+            var_type = var_keyraw[semi_idx+1:]
+            
+            var_types = ["str","int","bool","arr"]
+            if var_type not in var_types:
+                print("\033[91mstdin:type error: \033[0minvalid type provided")
+                return 3
+
+            phrase = " ".join(tokens[1:])
+            
+            var_val = input(f"\033[33m{var_type} \033[0m{phrase} ")
+            if var_type == "str":
+                try:
+                    str(var_val)
+                except:
+                    print(f"\033[91mstdin:type error: \033[0minvalid type provided, expected {var_type}")
+                    return 1
+            elif var_type == "int":
+                try:
+                    int(var_val)
+                except:
+                    print(f"\033[91mstdin:type error: \033[0minvalid type provided, expected {var_type}")
+                    return 1
+            elif var_type == "flt":
+                try:
+                    float(var_val)
+                except:
+                    print(f"\033[91mstdin:type error: \033[0minvalid type provided, expected {var_type}")
+                    return 1
+            elif var_type == "bool":
+                try:
+                    if var_val.lower() in ("true","false"):
+                        if var_val == "true":
+                            var_val = 1
+                        elif var_val == "false":
+                            var_val = 0
+                    else:
+                        try:
+                            var_val = int(var_val)
+                            if var_val > 1 or var_val < 0:
+                                print(f"\033[91mstdin:assignment error: \033[0mbool has to be either 0/1 or true/false")
+                                return 1
+                        except:
                             print(f"\033[91mstdin:assignment error: \033[0mbool has to be either 0/1 or true/false")
                             return 1
-                    except:
-                        print(f"\033[91mstdin:assignment error: \033[0mbool has to be either 0/1 or true/false")
-                        return 1
-            except:
-                print(f"\033[91mstdin:type error: \033[0minvalid type provided, expected {var_type}")
-                return 1
+                except:
+                    print(f"\033[91mstdin:type error: \033[0minvalid type provided, expected {var_type}")
+                    return 1
 
-        if not var_val:
-            var_val = "not specified"
-        variables[var_key] = {
-            "type": var_type,
-            "value": var_val,
-            "cat" : "assigned"
-        }
+            if not var_val:
+                var_val = "not specified"
+            variables[var_key] = {
+                "type": var_type,
+                "value": var_val,
+                "cat" : "assigned"
+            }
 
-        return 0
+            return 0
 
-    except Exception as e:
-        print(f"\033[91merror: \033[0m{str(e)}")
-        return 1
+        except Exception as e:
+            print(f"\033[91merror: \033[0m{str(e)}")
+            return 1
+    except:
+        return 17
 
 def clear(void):
     try:

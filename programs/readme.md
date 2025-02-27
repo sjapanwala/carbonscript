@@ -42,3 +42,6 @@ run `multiples.car` to run this program with 1000 iterations
 this is a demonstartions i created to showcase how to reverse an array using the *then* new array functions i added
 
 run `reversed_array` to reverse the array
+
+### 8. Job Application Form Using Structs
+

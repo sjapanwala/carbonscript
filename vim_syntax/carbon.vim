@@ -19,7 +19,7 @@ syntax match carbonVariable /?[_a-zA-Z][_a-zA-Z0-9]*/
 syntax match carbonSemicolon /;/
 
 " Type definitions
-syntax match carbonType /;\(int\|str\|flt\|arr\|void\|bool\)/ contains=carbonTypeDelimiter
+syntax match carbonType /;\(int\|str\|flt\|arr\|void\|bool\|struct\)/ contains=carbonTypeDelimiter
 syntax match carbonTypeDelimiter /;/ contained
 
 " In your highlight group section:

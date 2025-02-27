@@ -35,7 +35,7 @@ type code there to execute them in real time.
 ### Interpreting Files
 
 1. Create a file with the extention `.car`, this is the file that will be passed in
-2. Write code in this file follow the [Synatx](./programs/syntax.car) to get started
+2. Write code in this file follow the [Syntax](./programs/syntax.car) to get started
 3. After you are finished writing the code, run it in the terminal like so `car filename.car`
 
 > [!IMPORTANT]

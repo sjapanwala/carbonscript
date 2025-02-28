@@ -144,20 +144,30 @@ methods = {
         },
     }
 
-structs = {
-    "test": {
-        "name": {
-            "cat": "assigned",
-            "type": "str",
-            "value": "saaim",
-        },
-        "age": {
-            "cat": "assigned",
-            "type": "int",
-            "value": 20,
-        }
-    },
+structs = {}
+
+remap_keywords = {
+    "if": "fi",
+    "ifelse":"elsefi",
+    "else":"default",
 }
+
+def print_structs(structname):
+        if structname in structs:
+            struct = structs[structname]
+            print(f"{structname} {{")
+            
+            for field_name, field_info in struct.items():
+                if isinstance(field_info, dict) and 'value' in field_info:
+                    value = field_info['value']
+                    if isinstance(value, str):
+                        print(f'    "{field_name}": \'{value}\',')
+                    else:
+                        print(f'    "{field_name}": {value},')
+            
+            print("}")
+        else:
+            print(f"Structure '{structname}' not found")
 
 def tokenization(user_input):
     """
@@ -187,9 +197,10 @@ def tokenization(user_input):
         
         for i,token in enumerate(token_array):
             # check for precedence
-            if token == "quit":
-                print("\r'quit' Detected; Session Ended")
-                exit(1)
+            if token in remap_keywords:
+                token_array[i] = remap_keywords[token]
+            if token == ".":
+                token_array[i] = str("carbon")
             if token == "true":
                 token_array[i] = int(1)
             if token == "false":
@@ -520,6 +531,7 @@ def type_check(value):
     else:
         return "?" 
 
+
 def add_space(chunk):
     sp_idx = chunk.find("_")
     return chunk[:sp_idx], chunk[sp_idx+1:]
@@ -548,6 +560,8 @@ def deVar(variable):
             return random.randint(random_min,random_max)
         else:
             return "\033[90mUndefined\033[0m"
+    elif variable[1:] in structs:
+        return structs[variable[1:]]
     else:
         return "\033[90mUndefined\033[0m"
 
@@ -608,6 +622,11 @@ def carbon(tokens):
     if system_call == "varls":
         varlist("void")
         return 0
+    if system_call == "quit":
+        if len(tokens) < 2:
+            exit(0)
+        else:
+            exit(tokens[1])
     elif system_call == "funcls":
         funclist("void")
         return 0
@@ -812,7 +831,7 @@ def construct_functions(tokens):
 
 def fi(tokens):
     if len(tokens) < 1:
-        print("\033[91mfi:params error: \033[0mnot enough params provided")
+        print("\033[91mif:params error: \033[0mnot enough params provided")
         return 5
     if envriornment_config["showtokens"] == True:
         print(tokens)
@@ -831,7 +850,7 @@ def fi(tokens):
 
 def elsefi(tokens):
     if len(tokens) < 1:
-        print("\033[91mfi:params error: \033[0mnot enough params provided")
+        print("\033[91mifelse:params error: \033[0mnot enough params provided")
         return 5
     global fi_code
     if fi_code != 1:
@@ -849,7 +868,7 @@ def elsefi(tokens):
 
 def default(tokens):
     if len(tokens) < 1:
-        print("\033[91mfi:params error: \033[0mnot enough params provided")
+        print("\033[91melse:params error: \033[0mnot enough params provided")
         return 5
     if fi_code !=1:
         return 0
@@ -1678,6 +1697,13 @@ def stdout(tokens):
             return 0
         except:
             return 1
+    elif tokens[0] == "-ds":
+        if len(tokens) > 1:  # First check if there's a second token
+            struct_name = tokens[1][1:]  # Get the struct name by slicing
+            if struct_name in structs:
+                print_structs(struct_name)
+                return 0
+        return 1
     try:
         for i in tokens:
             if len(phrase) > 1:

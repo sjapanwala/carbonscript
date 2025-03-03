@@ -12,10 +12,9 @@ import random
 import subprocess
 import math
 import time
-
+import importlib
 global allowed_types
 allowed_types = ["str","int","flt","bool","arr","void","struct"]
-
 
 # this is where the "envriornmental rules are stored; can be modified with args"
 envriornment_config = {
@@ -35,6 +34,11 @@ variables = {
             "type": "int",
             "value": 0
             },
+        "errorlevel_history" : {
+            "cat": "preset",
+            "type": "arr",
+            "value": [],
+        },
         "uname" : {
             "cat": "preset",
             "type": "str",
@@ -85,6 +89,11 @@ variables = {
             "type": "int",
             "value": 0,
         },
+        "sorted": {
+            "cat": "preset",
+            "type": "arr",
+            "value": []
+        }
     }
 
 methods = {
@@ -150,6 +159,8 @@ remap_keywords = {
     "if": "fi",
     "ifelse":"elsefi",
     "else":"default",
+    "sort": "sort_array",
+    "libutils": "import_libraries"
 }
 
 def print_structs(structname):
@@ -214,7 +225,7 @@ def tokenization(user_input):
                     recovered = deVar(toke_var)
                     if isinstance(recovered,list):
                         return_val = recovered[int(index_val[0])]
-                    else:
+      
                         return_val = "\033[90mUndefined\033[0m"
                     token_array[i] = return_val
                 else:
@@ -346,6 +357,7 @@ def run_file(file_contents):
             continue
         else:
             returncode = func_caller(tokenizer)
+            variables["errorlevel"]["value"] = returncode
             if returncode not in (0,2):
                 error_responder(returncode,file_line,codeline,file_contents)
             elif variables['errorlevel']['value'] not in (0,2):
@@ -366,6 +378,7 @@ def error_responder(error_code,linenum,codeline,contents):
         5 : "incompleted parameters proveded",
         8 : "mathematical logic error",
         17: "ctrl c detected, exited program",
+        81: "libutil not found",
         404: "forbidden call",
         000: "Not Implemented"
 
@@ -377,6 +390,7 @@ def error_responder(error_code,linenum,codeline,contents):
         5: "\033[38;5;196m",
         8: "\033[38;5;129m",
         17: "\033[38;5;142m",
+        81: "\033[38;5;199m",
         404: "\033[1;90m",
         000: "\033[1;30m"
     }
@@ -406,6 +420,7 @@ def find_optimization(contents):
 
 def suggest_func(input):
     omit_suggestions = {
+        "find_optimization",
         "tokenization",
         "aggregate",
         "checkfile",
@@ -435,6 +450,7 @@ def suggest_func(input):
 
 
 def func_caller(tokens):
+    variables["errorlevel_history"]["value"].append(int(variables["errorlevel"]["value"]))
     if envriornment_config["showtokens"] == True:
         print(tokens)
     
@@ -475,6 +491,7 @@ def func_caller(tokens):
                 error_code = func_code
                 return error_code
     omit = {
+            "find_optimization",
             "tokenization",
             "aggregate",
             "checkfile",
@@ -630,6 +647,10 @@ def carbon(tokens):
     elif system_call == "funcls":
         funclist("void")
         return 0
+    elif system_call == "history":
+        print(error_level_history)
+        return 0
+    return 1
 
 def func_return(analysis):
     returned_value = tokenization(analysis)
@@ -1838,8 +1859,36 @@ def run(tokens):
         print('\033[91mrun:file error: \033[0mnot a valid file')
         return 1
 
+def sort_array(tokens):
+    if len(tokens) < 1:
+        print("\033[91merror: sorting error: \033[0mnothing provided")
+        return 1
+    if isinstance(tokens[0],list):
+        array = tokens[0]
+        sorted_array = quicksort(array)
+        variables["sorted"] = {
+            "cat": "preset",
+            "type": "arr",
+            "value": sorted_array,
+        }
+        return 0
+    else:
+        print("\033[91merror: sorting error: \033[0mno array provided")
+        return 1
+
+def quicksort(arr):
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2] 
+    left = [x for x in arr if x < pivot] 
+    middle = [x for x in arr if x == pivot]  
+    right = [x for x in arr if x > pivot] 
+    return quicksort(left) + middle + quicksort(right)
 
 
+
+def import_libraries(tokens):
+    pass
 
 def help():
     RESET = "\033[0m"
@@ -1876,9 +1925,29 @@ def help():
     print(f"  {BRIGHT_GREEN}   4{RESET}          Syntax Error")
     print(f"  {BRIGHT_GREEN}   5{RESET}          Incompleted Parameters")
     print(f"  {BRIGHT_GREEN}   8{RESET}          Logical Artithemitc Error")
+    print(f"  {BRIGHT_GREEN}  17{RESET}          Ctrl+C Detected")
+    print(f"  {BRIGHT_GREEN}  81{RESET}          Unknown Library Imported")
+
     # Footer 
     print("\n" + "─" * 50)
     print(f"Run {CYAN}car{RESET} with arguments to execute operations")
+
+def download_libs(args):
+    file_cache = []
+    approved_libs = []
+    download_mirror = "https://raw.githubusercontent.com/sjapanwala/carbonscript/refs/heads/define/libraries/libs.txt"
+    file_contents = subprocess.check_output(["curl", "-s", download_mirror], text=True)
+    file_cache.extend(file_contents.splitlines())
+    for libname in args:
+        if libname in file_cache:  
+            approved_libs.append(libname)
+        else:
+            print(f"\033[91merror: libdownload:\033[0m {libname} not in the official lib repo")
+    if not approved_libs:  
+        sys.exit(1)
+    print(f"Downloading {len(approved_libs)} libraries...")
+    for i in approved_libs:
+        print(f"{i}   [{10 * '#'}]")
 
 def update():
 
@@ -2070,6 +2139,12 @@ if __name__ == "__main__":
             exit(0)
         elif "--logs" in sys.argv:
             subprocess.run(["curl", "-s", "https://raw.githubusercontent.com/sjapanwala/carbonscript/refs/heads/define/updates.txt"])
+            exit(0)
+        elif "--libutil" in sys.argv:
+            if len(sys.argv) < 3:
+                print("\033[91mno library name provided\033[0m")
+                exit(1)
+            download_libs(sys.argv[2:])
             exit(0)
 
     main(returncode)

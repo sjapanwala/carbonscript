@@ -1,31 +1,24 @@
-   CARBONSCRIPT UPDATE - 02.4/25 - 02/24/2025
-──────────────────────────────────────────────────
+───────────────────────────CARBONSCRIPT UPDATE - Pre03.0/25 - 03/3/2025─────────────────────────────
 Whats New?
+1. Added sort for arrays.
+      - sort arrays with one command, and get the result with one variable
+      - under the hood, it uses merge sort, a faster algorithm than timsort
+      ```car
+       set x = [15,2,1,5,7,2];arr
+       sort ?x
+       stdout ?sorted // [1, 2, 2, 5, 7, 15]
+      ```
+2. Added `errorlevel_history` as a variable
+      - is not allowed to be modified
+      - is stack based; errors will be pushed to the last index
+      - can be used to create custom functions or libraries (03.0/2025)
+3. Libraries are being worked on.
+      - libraries can be accessed using `libutils` followed by the library name
+      - can be installed using --libutil {libname}
+      - all libraries are currenlty only downloadable through the public repo
+      - library logic not implemented yet, will be in the structured release next update (03.0/2025)
+──────────────────────────────────────────DOCUMENTATION─────────────────────────────────────────────
+                                      For More Information
+                  [WebDocs][https://sjapanwala.github.io/carbonscript/#introduction]
+                  [ReadME] [https://github.com/sjapanwala/carbonscript]
 
-1️⃣  Brand New Formatting
- - Update Script Formatting Has Changed Completely!
- - Used to be an eyesore, and annoying to read longer logs
-
-2️⃣  Fixed Updater Format and Logic
- - Did not clean up after itself, now removes old files
- - Better UI, shows more information (carriage return glitch fixed)
-
-3️⃣  Help Menu Repaired
- - Changed the way it looks, has more information now
-
-4️⃣  Lots of More Demo Programs!
- - Check Them Out in The GitHub Repo!
-
-Changes?
-
-1️⃣  Fixed Repeat Loop Variable Bug
-
-Removed?
-
-🗑️ Cleaned Up Github Repository
-
-For More Information
- - [WebDocs][https://sjapanwala.github.io/carbonscript/#introduction]
- - [ReadME] [https://github.com/sjapanwala/carbonscript]
-
-End Of Updates. 🚂-------💨

@@ -81,6 +81,6 @@ stdout "      ----- End of Application -----"
 
 
 stdin confirmation;bool "Send Application? (true/false)"
-fi ( ?confirmation == true ) stdout "Application Sent! Thanks For Applying to ABCompany!"
-elsefi ( ?confirmation == false ) stdout "Application Was Not Sent."
+if ( ?confirmation == true ) stdout "Application Sent! Thanks For Applying to ABCompany!"
+ifelse ( ?confirmation == false ) stdout "Application Was Not Sent."
 

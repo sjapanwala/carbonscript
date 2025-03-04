@@ -31,11 +31,11 @@ func;int do_operations $op;int {
   stdin num1;int Num1:
   stdin num2;int Num2:
   set ans = 0;int
-  fi ( $op == 1 ) set ans = @add ?num1 ?num2
-  elsefi ( $op == 2 ) set ans = @subtract ?num1 ?num2
-  elsefi ( $op == 3 ) set ans = @multiply ?num1 ?num2
-  elsefi ( $op == 4 ) set ans = @divide ?num1 ?num2
-  default set ans = 0
+  if ( $op == 1 ) set ans = @add ?num1 ?num2
+  ifelse ( $op == 2 ) set ans = @subtract ?num1 ?num2
+  ifelse ( $op == 3 ) set ans = @multiply ?num1 ?num2
+  ifelse ( $op == 4 ) set ans = @divide ?num1 ?num2
+  else set ans = 0
   return ?ans
 }
 

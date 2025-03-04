@@ -23,7 +23,7 @@ func;int generateFibonacci $n;int {
     let evenarr;arr
     repeat ?n {
         pop sequence
-        fi ( ?pop % 2 == 0 ) push evenarr ?pop
+        if ( ?pop % 2 == 0 ) push evenarr ?pop
     }
     
     set sum = 0;int

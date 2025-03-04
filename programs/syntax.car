@@ -7,8 +7,11 @@ let         // sets a blank varable
 func        // defining a function
 end         // returning a 
 fi          // if statement
+if          // if statement
 elsefi      // else if statement
+ifelse      // else if statement
 default     // else statement
+else        // else statement
 repeat      // for loop
 do          // while loop
 return      // returing a value from a function
@@ -17,6 +20,7 @@ RULE        // describe a file rule (hide-errors,show-ec,...)
 length      // obtain the length of a value
 push        // push a value into an array
 pop         // pop a value from an array
+sort        // sort an array
 
 // PreDefined / Variables
 varlist     // lists all defined variables and information
@@ -25,9 +29,10 @@ errorlevel  // shows the exit code
 uname       // users username
 version     // version number
 pi          // 3.14
-eu          //2.72
+eu          // 2.72
 ?anyvar     // calling a variable
 ?len        // use the len value found from "length"
+?sorted     // the sorted array returned from "sort"
 ?pop        // use the popped value gained from "pop"
 
 // Functions
@@ -40,8 +45,8 @@ ceil        // rounds a float to an int (UP)
 floor       // rounds a float to an int (DOWN)
 
 // Types
-;int, ;void, ;str, ;arr, ;flt, ;bool
-$int, $void, $str, $arr, $flt, $bool
+;int, ;void, ;str, ;arr, ;flt, ;bool ;struct
+$int, $void, $str, $arr, $flt, $bool $bool
 // blank semi colons are highlighted red; they arent operators tho
 ;
 

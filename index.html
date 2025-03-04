@@ -314,7 +314,7 @@
       <section id="data-types">
         <h3><br>Data Types</h3>
         <p>
-          As of <a href="#whats-new" <span style="color: #2e8b57;">v02.4/25</span></a></h3>, CarbonScript has 6
+          As of <a href="#whats-new" <span style="color: #2e8b57;">v02.5/25</span></a></h3>, CarbonScript has 7
           Datatypes,
         </p>
         <h4><br>Intigers</h4>
@@ -324,40 +324,52 @@
           <br>
           Intigers are known as <code>int</code>, define them by using this keyword.
         </p>
+        <pre><code>set x = 10;int</code></pre>
         <h4><br>Strings</h4>
         <p>
           Strings are words/charachers, sequence of characthers.
           <br>
           Strings are known as <code>str</code>, define them by using this keyword.
         </p>
-
+        <pre><code>set x = "Hello World";str</code></pre>
         <h4><br>Floats</h4>
         <p>
           Floats are numbers that can have decimal points.
           <br>
           Floats are known as <code>flt</code>, define them by using this keyword.
         </p>
-
+        <pre><code>set x = 10.5;flt</code></pre>
         <h4><br>Arrays</h4>
         <p>
           Arrays are collections of multiple values stored together.
           <br>
           Arrays are defined using the <code>arr</code> keyword, followed by a list of values.
         </p>
-
+        <pre><code><i>// arrays can be set in 2 ways, defining an array right away, or pushing into it</i><br>set x = "Hello","World";arr <i>// anything assigned this way, will be types as a string</i><br><br><i>// use <code>push</code> to accuratly type the contents of the array</i><br>let y;arr<br>push y 1;int "hello";str 3.14;flt</code></pre>
         <h4><br>Void</h4>
         <p>
           The <code>void</code> type is used for functions that do not return a value.
           <br>
           Functions with the <code>void</code> return type are used when no result is needed from the function.
         </p>
+        <pre><code>let x;void <i>// this funtion returns code 2, so it has no value</i></code></pre>
 
         <h4><br>Booleans</h4>
         <p>
           Booleans represent true or false values.
           <br>
-          Booleans are known as <code>bool</code>, define them by using this keyword.
+          Booleans are known as <code>bool</code>, define them by using this keyword.<br>
+          Booleans can also be assigned with 1 or 0. 1 = true, 0 = false.
         </p>
+        <pre><code>set x == true;bool</code></pre>
+        <h4><br>Structs</h4>
+        <p>
+          Structs are a collection of multipls datatypes and variables stored inside a bunch.
+          <br>
+          structs are known as <code>structs</code>, define them by using this keyword.
+        </p>
+        <pre><code>let profile;struct <i>// assiging the variable profile as a struct</i><br>const profile:name = "John Doe";str<br>const profile:age = 45;int<br>const profile:graduatued = true;bool<br><br><i>// now we have configered the struct, now we need to call it</i><br>stdout profile.name<br>stdout profile.age<br>stdout profile.graduated
+        </code></pre>
       </section>
       <section id="assign-vars">
         <h3><br>Assigning Variables</h3>
@@ -410,11 +422,11 @@
         <h3><br>Conditional Statements</h3>
         <p>Conditional statements are used to observe according to conditions.
           <br><br>
-          Use <code>fi</code> statement to open you conditional analysis<br>
-          Use <code>elsefi</code> statements as a response to the initial statement<br>
-          Use <code>default</code> statement to respond if no condition is reached
+          Use <code>if</code> statement to open you conditional analysis<br>
+          Use <code>ifelse</code> statements as a response to the initial statement<br>
+          Use <code>else</code> statement to respond if no condition is reached
         </p>
-        <pre><code>set x = 10;int<br>set y = 5;int<br>fi ( ?x > ?y ) stdout x is larger than y<br>elsefi ( ?x < ?y ) stdout x is smaller than y<br>default stdout x and y are the same value</code></pre>
+        <pre><code>set x = 10;int<br>set y = 5;int<br>if ( ?x > ?y ) stdout x is larger than y<br>ifelse ( ?x < ?y ) stdout x is smaller than y<br>else stdout x and y are the same value</code></pre>
       </section>
       <section id="loops">
         <h3><br>Loops</h3>
@@ -460,12 +472,10 @@
         <h3><br>Creating Functions</h3>
         <p>Functions follow a similiar approach to C, where you need to define in the header, what type of value will be returned, void if none.
           <br>
-        <pre><code> func;{return_type} {function_name} {variables;type} {<br><i>// function code</i> <br>return
-            statement if needed<br>}</code></pre>
+        <pre><code> func;{return_type} {function_name} {variables;type} {<br><i>// function code</i> <br>return statement if needed<br>}</code></pre>
         </p>
         <h4>Example Function</h4>
-        <pre><code><i>// creating a simple function that add's two numbers</i><br>func;int addition $x;int $y;int
-            {<br>&nbsp;&nbsp;return ( $x + $y ) <br>}</code></pre>
+        <pre><code><i>// creating a simple function that add's two numbers</i><br>func;int addition $x;int $y;int {<br>&nbsp;&nbsp;return ( $x + $y ) <br>}</code></pre>
       </section>
       <section id="calling-functions">
         <h3><br>Calling Functions</h3>

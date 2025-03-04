@@ -26,3 +26,6 @@ subprocess.run([".././cscript.py", "./main.car"])
 
 print("\033[92m Testing Reversed Array\033[0m\n")
 subprocess.run([".././cscript.py", "./reversed_array.car"])
+
+print("\033[92m Testing Soprted Array\033[0m\n")
+subprocess.run([".././cscript.py", "./sort.car"])

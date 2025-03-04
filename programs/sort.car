@@ -1,0 +1,5 @@
+let x;arr
+push x 1 89 1 45 -120 12 4 5
+sort ?x
+stdout "Unsorted Array: " ?x
+stdout "Sorted Array:   " ?sorted

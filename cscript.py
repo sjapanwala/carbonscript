@@ -396,14 +396,14 @@ def error_responder(error_code,linenum,codeline,contents):
     }
     if error_code in return_map:
         error_reason = return_map[error_code]
-        #print(error_reason)
+        ec_color = ec_color_map[error_code]
     else:
-        error_reason = "Unknown"
-    ec_color = ec_color_map[error_code]
+        error_reason = ("error was not identfiable")
+        ec_color = "\033[90m"
+        error_code = -1
     get_num_len = len(str(linenum))
     stat_bar = f"{file_path}"
     print(f"""{stat_bar}:{linenum}:{error_code}
-
 {get_num_len * " "} {ec_color}|\033[0m
 \033[90m{linenum}\033[0m {ec_color}|\033[0m {codeline}
 {get_num_len * " "} {ec_color}|\033[0m \033[91m{len(codeline) * "^"} {ec_color}{error_reason}\033[0m
@@ -1918,6 +1918,7 @@ def help():
     print(f"  {BRIGHT_GREEN}env:show-ec{RESET}   Shows return code")
     
     print(f"\n{BOLD}{BLUE}ERROR CODES{RESET}")
+    print(f"  {BRIGHT_GREEN}  -1{RESET}          Unexptected Error; No Set Reason")
     print(f"  {BRIGHT_GREEN}   0{RESET}          Void; Nothing Abnormal")
     print(f"  {BRIGHT_GREEN}   1{RESET}          Ambiguous Error")
     print(f"  {BRIGHT_GREEN}   2{RESET}          Comment Code")
@@ -1925,8 +1926,8 @@ def help():
     print(f"  {BRIGHT_GREEN}   4{RESET}          Syntax Error")
     print(f"  {BRIGHT_GREEN}   5{RESET}          Incompleted Parameters")
     print(f"  {BRIGHT_GREEN}   8{RESET}          Logical Artithemitc Error")
-    print(f"  {BRIGHT_GREEN}  17{RESET}          Ctrl+C Detected")
-    print(f"  {BRIGHT_GREEN}  81{RESET}          Unknown Library Imported")
+    print(f"  {BRIGHT_GREEN}   17{RESET}         Ctrl+C Detected")
+    print(f"  {BRIGHT_GREEN}   81{RESET}         Unknown Library Imported")
 
     # Footer 
     print("\n" + "─" * 50)

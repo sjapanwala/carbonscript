@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CarbonScript Webdocs</title>
   <style>
-    /* Reset and base styles */
     * {
       margin: 0;
       padding: 0;
@@ -15,7 +14,6 @@
 
     html {
       font-size: 16px;
-      /* Base font size for rem calculations */
     }
 
     body {
@@ -23,20 +21,15 @@
       line-height: 1.6;
       color: #333;
       max-width: 75rem;
-      /* 1200px */
       min-width: 20rem;
-      /* 320px - typical minimum mobile width */
       margin: 0 auto;
       display: flex;
     }
 
-    /* Sidebar navigation */
     #sidebar {
       width: 15.625rem;
-      /* 250px */
       background-color: #f4f4f4;
       padding: 1.25rem;
-      /* 20px */
       height: 100vh;
       position: sticky;
       top: 0;
@@ -45,17 +38,13 @@
 
     #sidebar h2 {
       border-bottom: 0.125rem solid #333;
-      /* 2px */
       padding-bottom: 0;
       margin-bottom: 0.9375rem;
-      /* 15px */
     }
 
     #sidebar #logo {
       width: 3.125rem;
-      /* 50px */
       height: 3.125rem;
-      /* 50px */
       margin-right: 0;
     }
 
@@ -65,7 +54,6 @@
 
     #sidebar nav ul li {
       margin-bottom: 0.625rem;
-      /* 10px */
     }
 
     #sidebar nav ul li a {
@@ -79,87 +67,61 @@
       color: #0066cc;
     }
 
-    /* Main content area */
     #main-content {
       flex-grow: 1;
       padding: 1.25rem;
-      /* 20px */
       background-color: white;
       max-width: 60rem;
-      /* 960px - prevents excessive stretching */
     }
 
-    /* Syntax highlighting */
     pre {
       background-color: #f4f4f4;
       padding: 0.9375rem;
-      /* 15px */
       border-radius: 0.3125rem;
-      /* 5px */
       overflow-x: auto;
       margin: 0.9375rem 0;
-      /* 15px */
     }
 
     code {
       font-family: 'Courier New', Courier, monospace;
       background-color: #f1f1f1;
       padding: 0.125rem 0.25rem;
-      /* 2px 4px */
       border-radius: 0.1875rem;
-      /* 3px */
     }
 
-    /* Syntax comparison */
     .syntax-comparison {
       display: flex;
       margin: 1.25rem 0;
-      /* 20px */
       flex-wrap: wrap;
-      /* Allow wrapping on smaller screens */
       gap: 1rem;
-      /* Consistent spacing when wrapped */
     }
 
     .syntax-comparison>div {
       flex: 1;
       min-width: 15rem;
-      /* Minimum width before wrapping */
       padding: 0.625rem;
-      /* 10px */
       background-color: #f4f4f4;
       border-radius: 0.3125rem;
-      /* 5px */
     }
 
-    /* Playground styles */
     #syntax-playground {
       margin-top: 1.875rem;
-      /* 30px */
       border: 0.0625rem solid #ddd;
-      /* 1px */
       padding: 1.25rem;
-      /* 20px */
       border-radius: 0.3125rem;
-      /* 5px */
     }
 
     #custom-syntax-input,
     #transpiled-output {
       width: 100%;
       min-height: 12.5rem;
-      /* 200px */
       margin-bottom: 0.9375rem;
-      /* 15px */
       padding: 0.625rem;
-      /* 10px */
       font-family: monospace;
     }
 
-    /* Media query for smaller screens */
     @media (max-width: 48rem) {
 
-      /* 768px */
       body {
         flex-direction: column;
       }
@@ -173,6 +135,21 @@
       #main-content {
         width: 100%;
       }
+
+      table {
+            width: 50%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 18px;
+            text-align: left;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
 
       footer {
         padding: 15px 0;
@@ -205,7 +182,10 @@
         <li><a href="#loops">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Loops</a></li>
         <li><a href="#arrays">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Arrays</a></li>
         <li><a href="#creating-functions">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Creating Functions</a></li>
-        <li><a href="#calling-functions">&nbsp;&nbsp;&nbsp;&nbsp;└&nbsp;Calling Functions</a></li>
+        <li><a href="#calling-functions">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Calling Functions</a></li>
+        <li><a href="#file-interactions">&nbsp;&nbsp;&nbsp;&nbsp;└&nbsp;File Interactions</a></li>
+        <li><a href="#understanding-diagnosis">Understanding The Diagnostics</a></li>
+        <li><a href="#error-codes">Error Codes</a></li>
         <li><a href="#whats-new">Updates</a></li>
 
 
@@ -241,9 +221,9 @@
         <br>
         <strong>Sudo Access Is Required</strong>
       </p>
-      <h3><br>Latest Version: <a href="#whats-new" <span style="color: #2e8b57;">v02.4/25</span></a></h3>
+      <h3><br>Latest Version: <a href="#whats-new" <span style="color: #2e8b57;">v03.0/25</span></a></h3>
       <p>
-        Released 02/25/2025
+        Released 03/10/2025
       <p>
       <pre><code>git clone git@github.com:sjapanwala/carbonscript.git<br>cd carbonscript/<br>sudo ./install.sh
         </code></pre>
@@ -314,7 +294,7 @@
       <section id="data-types">
         <h3><br>Data Types</h3>
         <p>
-          As of <a href="#whats-new" <span style="color: #2e8b57;">v02.5/25</span></a></h3>, CarbonScript has 7
+          As of <a href="#whats-new" <span style="color: #2e8b57;">v03.0/25</span></a></h3>, CarbonScript has 7
           Datatypes,
         </p>
         <h4><br>Intigers</h4>
@@ -431,7 +411,7 @@
       <section id="loops">
         <h3><br>Loops</h3>
         <p>
-          As of <a href="#whats-new" <span style="color: #2e8b57;">v02.4/25</span></a></h3>, CarbonScript has 2 loops.
+          As of <a href="#whats-new" <span style="color: #2e8b57;">v03.0/25</span></a></h3>, CarbonScript has 2 loops.
           <code>repeat</code> and <code>do</code>
           <br>
           <br>
@@ -485,21 +465,130 @@
         <pre><code>set result = @addition 10 20<br>stdout ?result<br><i>// output of 30</i></code></pre>
       </section>
 
+      <section id="file-interactions">
+        <h3><br>Interacting With Files</h3>
+        <p>You can interact with other files and intergrate it with your carbon script code</p>
+        <h4><br>Assiging files</h4>
+        <p>
+          To interact with a file, you need to make sure it is defined
+          <br>
+          <br>
+          To define a file you need to use the keyword <code>fset</code> followed by the file path
+        </p>
+        <pre><code>fset /path/to/file  <i>// now we have defined the file path and can interact with the file</i></code></pre>
+        <h4><br>Writing files</h4>
+        <p>
+          To write to a file, we have to make sure a file is defined
+          <br>
+          <br>
+          To write to a file we have to use the keyword <code>fwrite "{content}"</code>; when the line is finished, there is a newline escape code so next line typed will be placed on a newline
+        </p>
+        <pre><code>fwrite "Hello World!" <i>// we write "Hello World!" to the file path we defined earlier</i></code></pre>
+        <h4><br>Reading Files</h4>
+        <p>
+          reading a file, will be stored inside a struct, alongside with other types in the struct. All the content from reading the file is stored inside an array; and content can be accessed from indexing the array content
+          <br>
+          <br>
+          To read a file, we use the keyword <code>fread</code>; the contents are stored inside a struct with the name of the file, without the extention (notes.txt -> notes)
+        </p>
+        <pre><code>fread <i>// reading notes.txt </i><br>stdout ?notes.contents <i>// prints the array of the contents</i><br>stdout ?notes.len <i>// prints the length of contents</i><br>stdout ?notes.type <i>// prints the file type</i></code></pre>
+        <h4><br>Clearing A File</h4>
+        <p>
+          You can Clear a file using <code>fclear</code>; it will clear the file assigned previously
+        </p>
+        <pre><code>fclear<i>// this will clear the file</i></code></pre><br>
+      </section>
+
+      <section id="understanding-diagnosis">
+        <h2>Understanding The Error Diagnosis</h2>
+        <p>CarbonScript has an intuitive and helpful error diagnosis system, similiar to other diagnosis tools. Heres how to understand it<br><br>Suppose we run a file with a faulty function header; where we have not defined the type of the variables we are passing through. We would get an output like this...</p>
+        <pre><code>function:type error: no function intake type specified for $a<br>main.car:1:3<br>&nbsp;|<br>1| func;int addNums $a $b;int {<br>&nbsp;| ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unexpected type interaction.<br>error: aborting due to status code 3</code></pre>
+        <h3><br>Understanding The Error Diagnosis</h3>
+        <p>
+          The first line will always show us the error we have recieved; what we have done wrong, and what function gave it to us. In this case we got an error from <code>function</code> and it gave us a type error, it also provides us with textual hints on what we did wrong.
+          <br>
+          <br>
+          The second line provides us with some information we need to decipher a little bit. The text before the first colon will be our filename/path. the second will always be a number, this is the line number where your error occured, the third is the error code we were given. Every code has its own meaning; in this case, we got error code <code>3</code> which means there was a <code>type error</code> this means, there was a faulty interaction between the function and the variable type. read more about <strong><a href="#error-codes">Error Codes</a></strong> here.
+          <br>
+          <br>
+          Then we get some a text editor based design of the faulty code. we get to the see line, the code, and a caret pointing to the place where the error occured alongside what we did wrong. while we cannot see a color here; each error code has its own color to make ease of understanding!
+          <br><br>
+          Finally the last line tells us the runtime was aborted, with the error code that was returned.
+        </p>
+        <br>
+      </section>
+
+      <section id="error-codes">
+        <h2>Error Codes</h2>
+        <p>CarbonScript handles internal and external errors using error codes; following its own error code system. Follow these codes to make your CarbonScripting experience seamless<br><br></p>
+        <table>
+          <tr>
+              <th>Error Code&nbsp;&nbsp;</th>
+              <th>Description</th>
+          </tr>
+          <tr>
+            <td>-1</td>
+            <td>Unexpected Error; No Set Reason</td>
+        </tr>
+        <tr>
+            <td>0</td>
+            <td>Void; Nothing Abnormal</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Ambiguous Error</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Comment Code</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Type Error</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Syntax Error</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Incomplete Parameters</td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td>Logical Arithmetic Error</td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td>File Interaction Error</td>
+        </tr>
+        <tr>
+            <td>17</td>
+            <td>Ctrl+C Detected</td>
+        </tr>
+        <tr>
+            <td>81</td>
+            <td>Unknown Library Imported</td>
+        </tr>
+      </table>
+      </section>
+
       <section id="whats-new">
         <h2><br>What's New</h2>
         <h3>
-          Version Release <span style="color: #2e8b57;">v02.4/25</span>. February 5th, 2025
+          Version Release <span style="color: #2e8b57;">v03.0/25</span>. March 10th, 2025
         </h3>
         <br>
-          ✅ &nbsp;&nbsp;better in terminal update, installation, and help management
-          <br>
-          ✅ &nbsp;&nbsp;paying more attention to <code>RULE</code> commands
-          <br>
-          ✅ &nbsp;&nbsp;repaired loops not validating variables
+          ✅ &nbsp;&nbsp;better Added CarbonScript-File Interaction
+        <br>
+          ✅ &nbsp;&nbsp;Added Sort; sorting arrays
+        <br>
+          ✅ &nbsp;&nbsp;Wiki Update
         <p>
         </p>
       </section>
-      <h1> Happy Hacking!</h1>
+      <br>
+      <h1 align="center"> Happy Hacking!</h1>
   </main>
 </body>
 </html>

@@ -41,7 +41,10 @@ run `multiples.car` to run this program with 1000 iterations
 
 this is a demonstartions i created to showcase how to reverse an array using the *then* new array functions i added
 
-run `reversed_array` to reverse the array
+run `reversed_array.car` to reverse the array
 
-### 8. Job Application Form Using Structs
+### 8. Job Application Form Using Structs and File Interactions
+
+this is a demonstration on how we can use structs to fill out and create profiles, and using file interactions to save them to an external file
+run `form.car` to try it out
 

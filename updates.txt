@@ -1,22 +1,21 @@
-───────────────────────────CARBONSCRIPT UPDATE - Pre03.0/25 - 03/3/2025─────────────────────────────
+───────────────────────────CARBONSCRIPT UPDATE - 3.0/25 - 03/3/2025─────────────────────────────
 Whats New?
-1. Added sort for arrays.
-      - sort arrays with one command, and get the result with one variable
-      - under the hood, it uses merge sort, a faster algorithm than timsort
-      ```car
-       set x = [15,2,1,5,7,2];arr
-       sort ?x
-       stdout ?sorted // [1, 2, 2, 5, 7, 15]
-      ```
-2. Added `errorlevel_history` as a variable
-      - is not allowed to be modified
-      - is stack based; errors will be pushed to the last index
-      - can be used to create custom functions or libraries (03.0/2025)
-3. Libraries are being worked on.
+1. File Interactions
+      - You can now interact with files using (fset, fwrite, fread, fclear)
+      - fset:   set a filename to be created/edited
+      - fwrite: write to a file; needs to be fset
+      - fread:  read a file; needs to be fset
+      - fclear: clear the contents of a file; needs to be fset
+
+2. Libraries are being worked on.
       - libraries can be accessed using `libutils` followed by the library name
       - can be installed using --libutil {libname}
       - all libraries are currenlty only downloadable through the public repo
-      - library logic not implemented yet, will be in the structured release next update (03.0/2025)
+      - library logic not implemented yet, will be in the structured release next update (03.1/2025)
+
+3. Wiki Update.
+      - Added a guide to understand the diagnosis tool on the wiki
+      - Added an error code guide; to ensure a seamless error handleing system
 ──────────────────────────────────────────DOCUMENTATION─────────────────────────────────────────────
                                       For More Information
                   [WebDocs][https://sjapanwala.github.io/carbonscript/#introduction]

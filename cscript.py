@@ -47,7 +47,7 @@ variables = {
         "version": {
             "cat": "preset",
             "type": "str",
-            "value": "v02.4/25"
+            "value": "v03.0/25"
             },
         "pi": {
             "cat": "preset",
@@ -93,7 +93,17 @@ variables = {
             "cat": "preset",
             "type": "arr",
             "value": []
-        }
+        },
+        "fileInteraction": {
+            "cat": "preset",
+            "type": "str",
+            "value": "."
+        },
+        "freadContents": {
+            "cat": "preset",
+            "type": "arr",
+            "value": "[]"
+        },
     }
 
 methods = {
@@ -160,7 +170,11 @@ remap_keywords = {
     "ifelse":"elsefi",
     "else":"default",
     "sort": "sort_array",
-    "libutils": "import_libraries"
+    "libutils": "import_libraries",
+    "fwrite": "file_write",
+    "fset": "file_assign",
+    "fclear": "file_erase",
+    "fread": "file_read",
 }
 
 def print_structs(structname):
@@ -218,15 +232,7 @@ def tokenization(user_input):
                 token_array[i] = int(0)
             if "?" in token[0]:
                 if "]" in token[-1] and "[" in token:
-                    first_idx = token.rfind("[")
-                    last_idx = token.rfind("]")
-                    index_val = tokenization(token[first_idx+1:last_idx])
-                    toke_var = token[:first_idx]
-                    recovered = deVar(toke_var)
-                    if isinstance(recovered,list):
-                        return_val = recovered[int(index_val[0])]
-      
-                        return_val = "\033[90mUndefined\033[0m"
+                    return_val = indexing(token)
                     token_array[i] = return_val
                 else:
                     recovered = deVar(token)
@@ -258,6 +264,23 @@ def tokenization(user_input):
         return token_array
     except Exception as e:
         return ["undefined"]
+
+def indexing(token):
+    first_idx = token.rfind("[")
+    last_idx = token.rfind("]")
+    index_val = tokenization(token[first_idx+1:last_idx])
+    toke_var = token[:first_idx]
+    recovered = deVar(toke_var)
+    if "." in toke_var:
+        recovered = deStruct(toke_var[1:])
+
+    if isinstance(recovered, list) or isinstance(recovered,str):
+        return_val = recovered[int(index_val[0])]
+    else:
+        return_val = "\033[90mUndefined\033[0m"
+    return return_val
+
+
 
 def aggregate(tokens):
     """
@@ -377,6 +400,7 @@ def error_responder(error_code,linenum,codeline,contents):
         4 : f"unexpected syntax provided.",
         5 : "incompleted parameters proveded",
         8 : "mathematical logic error",
+        9 : "file interaction error",
         17: "ctrl c detected, exited program",
         81: "libutil not found",
         404: "forbidden call",
@@ -389,6 +413,7 @@ def error_responder(error_code,linenum,codeline,contents):
         4: "\033[38;5;202m",
         5: "\033[38;5;196m",
         8: "\033[38;5;129m",
+        9: "\033[38;5;111m",
         17: "\033[38;5;142m",
         81: "\033[38;5;199m",
         404: "\033[1;90m",
@@ -438,12 +463,17 @@ def suggest_func(input):
         "do_math",
         "help",
         "update",
-        "main"
+        "main",
+        "print_structs",
+        "file_read",
+        "file_write",
+        "file_assign",
+        "indexing",
     }
     callable_globals = {name: obj for name, obj in globals().items() if callable(obj)}
     # Iterate over the dictionary and print name and object
     for name, obj in callable_globals.items():
-        if str(input) in name:
+        if str(input) in name or str(input) in remap_keywords:
             if name not in omit_suggestions:
                 return f"Did You Mean \033[93m{name}\033[0m?"
     return ""
@@ -601,12 +631,11 @@ def deStruct(var):
             elif value_type == "flt":
                 return float(value_value)
             elif value_type == "arr":
-                return str(value_value)
+                return (value_value)
             elif value_type == "bool":
                 if value_value == 1:
                     return True
                 return False
-                
             else:
               return "\033[90mUndefined\033[0m"
 
@@ -899,6 +928,7 @@ def default(tokens):
             return returncode
         return 0
     
+
 def repeat(tokens):
     """
     Handle repeat loops in both file and interactive modes
@@ -1184,10 +1214,10 @@ def varlist(void):
         show_val = ""
         show_mod = ""
         for key in variables:
-            #if len(str(variables[key]["value"])) > 10:
-                #show_val = f"{variables[key]['value'][:10]}..."
-            #else:
-                #show_val = f"{variables[key]['value']}"
+            if len(str(variables[key]["value"])) > 10:
+                show_val = f"{variables[key]['value'][:10]}..."
+            else:
+                show_val = f"{variables[key]['value']}"
             if str(variables[key]['cat']) == "preset":
                 show_mod = "False"
                 mod_col = "\033[91m"
@@ -1202,7 +1232,7 @@ def varlist(void):
                 str(key), 
                 str(show_mod),
                 str(variables[key]['type']),
-                str(variables[key]['value'])
+                str(show_val)
             ))
         return 0
 
@@ -1357,6 +1387,10 @@ def set(tokens):
         elif isinstance(var_valueraw, float):
             var_val = var_valueraw
             var_type = "flt"
+        
+        elif isinstance(var_valueraw, list):
+            var_val = var_valueraw
+            var_type = "arr"
 
 
 
@@ -1476,6 +1510,10 @@ def const(tokens):
         elif isinstance(var_valueraw, float):
             var_val = var_valueraw
             var_type = type_check(var_val)
+
+        elif isinstance(var_valueraw, list):
+            var_val = var_valueraw
+            var_type = "arr"
 
 
         elif var_valueraw.find(";") > -1:
@@ -1890,6 +1928,75 @@ def quicksort(arr):
 def import_libraries(tokens):
     pass
 
+def file_assign(tokens):
+    if len(tokens) < 1:
+        print("\033[91merror: fset:\033[0m no file name given")
+        return 1
+    else:
+        variables["fileInteraction"]["value"] = tokens[0]
+        return 0
+
+def file_write(tokens):
+    if len(tokens) < 1:
+        return 1
+    if variables["fileInteraction"]["value"] == ".":
+        print("\033[91merror: fwrite:\033[0m no file name has been assigned")
+        return 1
+    else:
+        fwrite_filename = variables["fileInteraction"]["value"]
+        with open(fwrite_filename,'a') as fwrite_file:
+            write_output = " ".join(map(str, tokens))
+            fwrite_file.writelines(f"{str(write_output)}\n")
+        return 0
+
+def file_erase(void):
+    if variables["fileInteraction"]["value"] == ".":
+        print("\033[91merror: fclear:\033[0m no file name has been assigned")
+        return 1
+    else:
+        fwrite_filename = variables["fileInteraction"]["value"]
+        with open(fwrite_filename,'w') as fwrite_file:
+            pass
+        return 0
+
+def file_read(void):
+    if variables["fileInteraction"]["value"] == ".":
+        print("\033[91merror: fread:\033[0m no file name has been assigned")
+        return 1
+    fread_filename = variables["fileInteraction"]["value"]
+    if fread_filename.rfind(".") != -1:
+        cleaned_filename = fread_filename[:fread_filename.rfind(".")]
+    else:
+        cleaned_filename = fread_filename
+    fread_contents = []
+    try:
+        with open(fread_filename,"r") as fread_filecontents:
+            for line in fread_filecontents:
+                fread_contents.append(line.strip())
+    except:
+        print(f"\033[91merror: fread missing:\033[0m {fread_filename} was not found")
+        return 9
+
+    if cleaned_filename not in structs:
+        structs[cleaned_filename] = {}
+    structs[cleaned_filename]["contents"] = {
+                    "cat": "preset",
+                    "type": "arr",
+                    "value": fread_contents,
+    }
+    structs[cleaned_filename]["len"] = {
+                    "cat": "preset",
+                    "type": "int",
+                    "value": len(fread_contents),
+    }
+    structs[cleaned_filename]["type"] = {
+                    "cat": "preset",
+                    "type": "str",
+                    "value": fread_filename[fread_filename.rfind(".")+1:],
+    }
+    return 0
+
+
 def help():
     RESET = "\033[0m"
     BOLD = "\033[1m"
@@ -1926,6 +2033,7 @@ def help():
     print(f"  {BRIGHT_GREEN}   4{RESET}          Syntax Error")
     print(f"  {BRIGHT_GREEN}   5{RESET}          Incompleted Parameters")
     print(f"  {BRIGHT_GREEN}   8{RESET}          Logical Artithemitc Error")
+    print(f"  {BRIGHT_GREEN}   9{RESET}          File Interaction Error")
     print(f"  {BRIGHT_GREEN}   17{RESET}         Ctrl+C Detected")
     print(f"  {BRIGHT_GREEN}   81{RESET}         Unknown Library Imported")
 

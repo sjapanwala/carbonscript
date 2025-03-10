@@ -80,7 +80,28 @@ stdout " "
 stdout "      ----- End of Application -----"
 
 
-stdin confirmation;bool "Send Application? (true/false)"
-if ( ?confirmation == true ) stdout "Application Sent! Thanks For Applying to ABCompany!"
-ifelse ( ?confirmation == false ) stdout "Application Was Not Sent."
+stdin confirmation;bool "Save Application? (true/false)"
+if ( ?confirmation == true ) stdout "Application Saved"
+{
+  fset profile.txt
+  fclear
+  fwrite "----- Job Application Created For Applicant" ?applicantCounter " -----"
+  fwrite " ----- Applicant Personal Information ----- "
+  fwrite "Applicant Name:        " ?applicant.fullName
+  fwrite "Applicant Age:         " ?applicant.age
+  fwrite "Email Address:         " ?applicant.email
+  fwrite "Phone Number:          " ?applicant.phone
+  fwrite " ----- Applicant Occupational Information ----- "
+  fwrite "Desired Role:          " ?applicant.desiredRole
+  fwrite "Years of Experience:   " ?applicant.yearsExperience
+  fwrite "Expected Salary:      $" ?applicant.expectedSalary
+  fwrite "Willing to Relocate:   " ?applicant.relocation
+  fwrite " ----- Applicant Education Information ----- "
+  fwrite "Highest Education      " ?applicant.education
+  fwrite "Education Institution  " ?applicant.institution
+  fwrite "Year of Graduation     " ?applicant.gradutionYear
+  fwrite "      ----- End of Application -----"
+}
+ifelse ( ?confirmation == false ) stdout "Application Was Not Saved."
+ifelse ( ?confirmation == false ) fclear
 

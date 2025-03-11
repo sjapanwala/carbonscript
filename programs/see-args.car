@@ -1,0 +1,8 @@
+ // this will print all of the args
+ // if < 10 are passed, will print carbondecimal for the args-10 args
+ // else if > 10 are passed, will print the arg for them
+
+length ?args
+repeat ?len {
+ stdout ?args[?iteration]
+}

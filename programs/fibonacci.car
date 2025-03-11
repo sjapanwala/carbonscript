@@ -17,6 +17,14 @@ func;void generateFibonacci $n;int {
     }
 
     stdout "Fibonacci Sequence:" ?sequence
+    // un comment this if you want them listed one by one
+    // length ?sequence
+    // repeat ?len {
+    //    pop sequence
+    //     stdout ?pop
+    // }
+    
 }
-
-@generateFibonacci 12
+if ( ?args[1] != cnum("void") ) set runIterations = ?args[1]
+else set runIterations = 10;int
+@generateFibonacci ?runIterations

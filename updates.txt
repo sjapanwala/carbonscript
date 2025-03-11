@@ -1,21 +1,16 @@
-───────────────────────────CARBONSCRIPT UPDATE - 3.0/25 - 03/3/2025─────────────────────────────
+───────────────────────────CARBONSCRIPT UPDATE - 03.1/25 - 03/3/2025─────────────────────────────
 Whats New?
-1. File Interactions
-      - You can now interact with files using (fset, fwrite, fread, fclear)
-      - fset:   set a filename to be created/edited
-      - fwrite: write to a file; needs to be fset
-      - fread:  read a file; needs to be fset
-      - fclear: clear the contents of a file; needs to be fset
-
-2. Libraries are being worked on.
-      - libraries can be accessed using `libutils` followed by the library name
-      - can be installed using --libutil {libname}
-      - all libraries are currenlty only downloadable through the public repo
-      - library logic not implemented yet, will be in the structured release next update (03.1/2025)
-
-3. Wiki Update.
-      - Added a guide to understand the diagnosis tool on the wiki
-      - Added an error code guide; to ensure a seamless error handleing system
+1. Added Command Line Arguments
+      - default 10 arg slots are generate, if more are used, more are generated.
+      - args are encrypted using the carbon-numbering system
+      - stored as an array "?args"
+      - "?args[0]" will always be the file name being ran
+2. Added Carbon-Numbering System
+      - strings are handleding by converting into a number, then converted using ascii codes
+      - 1181111051000004: 118111105100-> 'void'; 0004 -> length of 'void'
+      - strings can be converted to numbers using cnum()
+      - numbers can be converted to strings using ascii()
+3. Added Misc. Demo Programs
 ──────────────────────────────────────────DOCUMENTATION─────────────────────────────────────────────
                                       For More Information
                   [WebDocs][https://sjapanwala.github.io/carbonscript/#introduction]

@@ -16,5 +16,6 @@ func;void fizzBuzz $n;int {
   stdout "FizzBuzz - Iterations: $n"
   stdout ?resultArray
 }
-
-@fizzBuzz 50
+if ( ?args[1] != cnum("void") ) set runIterations = ?args[1]
+else set runIterations = 10;int
+@fizzBuzz ?runIterations

@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -- TODO --
-# [] - Incorporate lambda functions
-# [] - add recursions, until {basecase} - call them "until loops?"
-# [] - ???
+# allow for forced typing
 
 
 import sys
@@ -12,7 +10,6 @@ import random
 import subprocess
 import math
 import time
-import importlib
 global allowed_types
 allowed_types = ["str","int","flt","bool","arr","void","struct"]
 
@@ -97,9 +94,9 @@ variables = {
         "fileInteraction": {
             "cat": "preset",
             "type": "str",
-            "value": "."
+            "value": "void"
         },
-        "freadContents": {
+        "args": {
             "cat": "preset",
             "type": "arr",
             "value": "[]"
@@ -159,7 +156,7 @@ methods = {
             "returntype": "arr",
             "params": 1,
             "param_order": ["$a"],
-            "content": ['length $a','let reversed;arr','repeat ?length {','pop $a','push reversed ?pop','}','return ?reversed'] 
+            "content": ['set a = ceil($a)','length ?a','let reversed;arr','repeat ?len {','pop $a','push reversed ?pop','}','return ?reversed'] 
         },
     }
 
@@ -258,7 +255,28 @@ def tokenization(user_input):
                     number = token[r_idx + 1 : l_idx]  
                     number = tokenization(number)
                     number = float(number[0])  
-                    token_array[i] = math.floor(number)  
+                    token_array[i] = math.floor(number) 
+            if "type(" in token:
+                if ")" in token:
+                    l_idx = token.rfind(")")
+                    r_idx = token.rfind("(")
+                    to_check_type = token[r_idx + 1 : l_idx]
+                    type_check_response = type_check(tokenization(to_check_type)[0])
+                    token_array[i] = type_check_response
+            if "cnum(" in token:
+                if ")" in token:
+                    l_idx = token.rfind(")")
+                    r_idx = token.rfind("(")
+                    to_convert = token[r_idx + 1 : l_idx]
+                    converted = ascii_to_decimal_inter((tokenization(to_convert)[0]))
+                    token_array[i] = int(converted)
+            if "ascii(" in token:
+                if ")" in token:
+                    l_idx = token.rfind(")")
+                    r_idx = token.rfind("(")
+                    to_convert = token[r_idx + 1 : l_idx]
+                    converted = decimal_to_ascii_stringer((tokenization(to_convert)[0]))
+                    token_array[i] = str(converted)
         if "(" in token_array:
             token_array = do_math(token_array)
         return token_array
@@ -280,7 +298,38 @@ def indexing(token):
         return_val = "\033[90mUndefined\033[0m"
     return return_val
 
+def get_args():
+    args = []
+    if sys.argv:
+        arg_len = len(sys.argv)
+        if arg_len > 11:
+            for _ in range(arg_len):
+                args.append(ascii_to_decimal_inter('void'))
+        else:
+            for _ in range(10):
+                args.append(ascii_to_decimal_inter('void'))
+        for count,arg in enumerate(sys.argv):
+            args[count] = arg
+        variables["args"]["value"] = args[1:]
 
+def ascii_to_decimal_inter(x):
+    string = ""
+    for i in x:
+        temp_string = f"{ord(i):03d}"  
+        string += temp_string  
+    string += f"{len(x):04d}"  
+    return int(string)  
+
+def decimal_to_ascii_stringer(number):
+    length_code = str(number)[-4:]
+    deci_code = str(number)[:-4]
+    if len(deci_code) % 3 != 0:
+        deci_code = deci_code.zfill(len(deci_code) + (3 - len(deci_code) % 3))
+    parts = [int(deci_code[i:i+3]) for i in range(0, len(deci_code), 3)]
+    string = ""
+    for i in parts:
+        string += chr(i)
+    return string
 
 def aggregate(tokens):
     """
@@ -309,8 +358,8 @@ def aggregate(tokens):
 
     if in_quotes:
         result.append(" ".join(quoted_string))
-
     return result
+
 def increm(tokens):
     for pos_var in tokens:
         if not isinstance(pos_var, int):
@@ -340,9 +389,9 @@ def checkfile(filepath):
     checks the authenticity of the file, and if it ends with ".car"
     """
     if os.path.isfile(filepath):
-        if filepath[-4:] != ".car":
-            print("\033[91mfile:type error: \033[0mfile must be of type .car")
-            return False
+        #if filepath[-4:] != ".car":
+        #print("\033[91mfile:type error: \033[0mfile must be of type .car")
+        #return False
         return True
     else:
         print("\033[91mfile:exists error: \033[0mfile does not exist")
@@ -469,6 +518,7 @@ def suggest_func(input):
         "file_write",
         "file_assign",
         "indexing",
+        "sort_array",
     }
     callable_globals = {name: obj for name, obj in globals().items() if callable(obj)}
     # Iterate over the dictionary and print name and object
@@ -556,12 +606,12 @@ def func_caller(tokens):
         if file_mode:
             if envriornment_config['show_error_msgs']:
                 suggestion = suggest_func(user_input)
-                print(f"\033[91mstatment:syntax error\033[0m: '{user_input}' is not recognized. {suggestion}")
+                print(f"\033[91mstatment:syntax error\033[0m: '{user_input}' is not defined. {suggestion}")
                 return 4
             return 4
         else:
             suggestion = suggest_func(user_input)
-            print(f"\033[91mstatment:syntax error: \033[0m'{user_input}' is not recognized. {suggestion}")
+            print(f"\033[91mstatment:syntax error: \033[0m'{user_input}' is not defined. {suggestion}")
         return 4
 
 def type_check(value):
@@ -574,14 +624,32 @@ def type_check(value):
     elif isinstance(value, bool):
         return "bool"
     elif isinstance(value, list):
-        return "arr"  
+        return "arr"
+    elif isinstance(value,dict):
+        return "struct"
     else:
-        return "?" 
+        return "void"
 
 
 def add_space(chunk):
     sp_idx = chunk.find("_")
     return chunk[:sp_idx], chunk[sp_idx+1:]
+    
+def force_type(var_val,var_type):
+    if var_type == "str":
+        return str(var_val)
+    elif var_type == "int":
+        return int(var_val)
+    elif var_type == "arr":
+        var_val = list(var_val)
+        return var_val
+    elif var_type == "flt":
+        return float(var_val)
+    elif var_type == "bool":
+        if var_val == 1:
+                return True
+        return False
+
 
 def deVar(variable):
     if "." in variable:
@@ -1203,7 +1271,6 @@ def rand(tokens):
 
 
 def varlist(void):
-        print("\033[93mAll Initialized Variables:\033[0m\n")
         max_key_length = max(len(str(key)) for key in variables)
         max_type_length = max(len(str(variables[key]['type'])) for key in variables)
         max_value_length = max(len(str(variables[key]['value'])) for key in variables)
@@ -1745,6 +1812,8 @@ def stdout(tokens):
     ["hello","world"] -> helloworld
     """
     phrase = ""
+    if len(tokens) < 1:
+        return 1
     if tokens[0] == "-t":
         try:
             for i in tokens:
@@ -1939,7 +2008,7 @@ def file_assign(tokens):
 def file_write(tokens):
     if len(tokens) < 1:
         return 1
-    if variables["fileInteraction"]["value"] == ".":
+    if variables["fileInteraction"]["value"] == "void":
         print("\033[91merror: fwrite:\033[0m no file name has been assigned")
         return 1
     else:
@@ -1950,7 +2019,7 @@ def file_write(tokens):
         return 0
 
 def file_erase(void):
-    if variables["fileInteraction"]["value"] == ".":
+    if variables["fileInteraction"]["value"] == "void":
         print("\033[91merror: fclear:\033[0m no file name has been assigned")
         return 1
     else:
@@ -1960,7 +2029,7 @@ def file_erase(void):
         return 0
 
 def file_read(void):
-    if variables["fileInteraction"]["value"] == ".":
+    if variables["fileInteraction"]["value"] == "void":
         print("\033[91merror: fread:\033[0m no file name has been assigned")
         return 1
     fread_filename = variables["fileInteraction"]["value"]
@@ -2230,6 +2299,7 @@ if __name__ == "__main__":
     file_line = 0
 
     if len(sys.argv) > 1:
+        get_args()
         TEST = False
         if sys.argv[1] == "--v":
             print(f"CarbonScript Version: \033[92m{variables['version']['value']}\033[0m\nfrom: www.github.com/sjapanwala/CarbonScript")

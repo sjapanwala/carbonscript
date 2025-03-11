@@ -183,6 +183,8 @@
         <li><a href="#arrays">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Arrays</a></li>
         <li><a href="#creating-functions">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Creating Functions</a></li>
         <li><a href="#calling-functions">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Calling Functions</a></li>
+        <li><a href="#carbon-nums">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Carbon Numbers</a></li>
+        <li><a href="#args">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;CLI Arguement</a></li>
         <li><a href="#file-interactions">&nbsp;&nbsp;&nbsp;&nbsp;└&nbsp;File Interactions</a></li>
         <li><a href="#understanding-diagnosis">Understanding The Diagnostics</a></li>
         <li><a href="#error-codes">Error Codes</a></li>
@@ -221,7 +223,7 @@
         <br>
         <strong>Sudo Access Is Required</strong>
       </p>
-      <h3><br>Latest Version: <a href="#whats-new" <span style="color: #2e8b57;">v03.0/25</span></a></h3>
+      <h3><br>Latest Version: <a href="#whats-new" <span style="color: #2e8b57;">v03.1/25</span></a></h3>
       <p>
         Released 03/10/2025
       <p>
@@ -294,7 +296,7 @@
       <section id="data-types">
         <h3><br>Data Types</h3>
         <p>
-          As of <a href="#whats-new" <span style="color: #2e8b57;">v03.0/25</span></a></h3>, CarbonScript has 7
+          As of <a href="#whats-new" <span style="color: #2e8b57;">v03.1/25</span></a></h3>, CarbonScript has 7
           Datatypes,
         </p>
         <h4><br>Intigers</h4>
@@ -411,7 +413,7 @@
       <section id="loops">
         <h3><br>Loops</h3>
         <p>
-          As of <a href="#whats-new" <span style="color: #2e8b57;">v03.0/25</span></a></h3>, CarbonScript has 2 loops.
+          As of <a href="#whats-new" <span style="color: #2e8b57;">v03.1/25</span></a></h3>, CarbonScript has 2 loops.
           <code>repeat</code> and <code>do</code>
           <br>
           <br>
@@ -464,7 +466,34 @@
         <h4>Calling The Example Function Defined Earlier</h4>
         <pre><code>set result = @addition 10 20<br>stdout ?result<br><i>// output of 30</i></code></pre>
       </section>
-
+      <section id="carbon-nums">
+        <h3><br>Carbon Numbers</h3>
+        <p>
+          Carbon Numbers are essentially just decimal numbers of ascii values, padded so they are all divisible by 3. Containing 4 digits at the end symbolizing the values lenght.
+          <br>
+          <br>
+          They are used to represent universal understanding of chars and strings in CarbonScript.
+          <br>
+          <br>
+          Use the keyword <code>cnum()</code> to convert a string into a CarbonNumber
+          <br>
+          Use the keyword <code>ascii()</code> to convert a CarbonNumber into a string
+        </p>
+        <pre><code>set x = "CarbonScript";str<br>set c = cnum(?x)<i>// The cnum = 670971140981111100830991141051121160012</i><br>set s = ascii(?c)<i>// The string = CarbonScript</i></code></pre>
+      </section>
+      <section id="args">
+        <h3><br>Command Line Arguments</h3>
+        <p>Arguments are stored in an array called <code>?args</code>. The first index of the array is always the file name being ran. If there are less than 10 arguements provided, the remaining arguemments will be filled with the carbon number for "void" (<code>1181111051000004</code>) <a href="#carbon-nums">Read About Carbon Numbers</a>
+        <br>
+        <br>
+        A base template to follow for command line args being used inside a program
+        </p>
+        <pre><code>if ( ?args[1] != cnum("void") ) set runIterations = ?args[1]<br>else set runIterations = 10;int<br>@generateFibonacci ?runIterations</code></pre>
+        <p>
+          This is checking the second index of the args array; if the value is not equal to the carbon number value of void, it will we the iterations to how many are provided.
+          If not then it will set the default to the value of 10
+        </p>
+      </section>
       <section id="file-interactions">
         <h3><br>Interacting With Files</h3>
         <p>You can interact with other files and intergrate it with your carbon script code</p>
@@ -576,15 +605,13 @@
       <section id="whats-new">
         <h2><br>What's New</h2>
         <h3>
-          Version Release <span style="color: #2e8b57;">v03.0/25</span>. March 10th, 2025
+          Version Release <span style="color: #2e8b57;">v03.1/25</span>. March 11th, 2025
         </h3>
         <br>
-          ✅ &nbsp;&nbsp;better Added CarbonScript-File Interaction
-        <br>
-          ✅ &nbsp;&nbsp;Added Sort; sorting arrays
-        <br>
-          ✅ &nbsp;&nbsp;Wiki Update
         <p>
+        ✅ &nbsp;&nbsp;Added Command Line Args
+        <br>
+        ✅ &nbsp;&nbsp;Added CarbonNumbers
         </p>
       </section>
       <br>

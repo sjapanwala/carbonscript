@@ -1,0 +1,11 @@
+fset "test.txt"
+set x = 1,2,3,4,5,6,7,8;arr
+stdout "Broken Types" ?x
+let y;arr
+length ?x
+repeat ?len {
+  pop x
+  push y ceil(?pop)
+}
+sort ?y
+stdout "Fixed Types" ?sorted

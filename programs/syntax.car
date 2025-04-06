@@ -21,6 +21,8 @@ length      // obtain the length of a value
 push        // push a value into an array
 pop         // pop a value from an array
 sort        // sort an array
+stdout      // print to the console
+stdin       // takes variables from console
 
 // PreDefined / Variables
 varlist     // lists all defined variables and information
@@ -35,10 +37,9 @@ eu          // 2.72
 ?sorted     // the sorted array returned from "sort"
 ?pop        // use the popped value gained from "pop"
 
+
 // Functions
 rand        // random number (rand min max)
-stdout      // print to the console
-stdin       // takes variables from console
 increm      // incrementing a value
 decrem      // decrementing a value
 ceil        // rounds a float to an int (UP)
@@ -54,4 +55,3 @@ $int, $void, $str, $arr, $flt, $bool $bool
 True
 False
 ( + - * / )
-

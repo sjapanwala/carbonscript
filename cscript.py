@@ -27,7 +27,7 @@ in_file_args = ("show-tokens","hide-errors","show-ec","force-run","force-dontrun
 
 variables = {
         "errorlevel" : {
-            "cat": "assigned",
+            "cat": "elevated",
             "type": "int",
             "value": 0
             },
@@ -44,7 +44,7 @@ variables = {
         "version": {
             "cat": "preset",
             "type": "str",
-            "value": "v03.0/25"
+            "value": "v04.0/25"
             },
         "pi": {
             "cat": "preset",
@@ -57,12 +57,12 @@ variables = {
             "value": 2.72
             },
         "iteration" : {
-            "cat" : "preset",
+            "cat" : "elevated",
             "type": "int",
             "value": 0
             },
         "rand": {
-            "cat": "preset",
+            "cat": "elevated",
             "type": "int",
             "value": 0
             },
@@ -77,17 +77,17 @@ variables = {
                 "value": 0
         },
         "pop": {
-            "cat": "preset",
+            "cat": "elevated",
             "type": "int",
             "value": 0,
         },
         "len": {
-            "cat": "preset",
+            "cat": "elevated",
             "type": "int",
             "value": 0,
         },
         "sorted": {
-            "cat": "preset",
+            "cat": "elevated",
             "type": "arr",
             "value": []
         },
@@ -172,12 +172,16 @@ remap_keywords = {
     "fset": "file_assign",
     "fclear": "file_erase",
     "fread": "file_read",
+    "struct": "print_structs",
+    "*": "carbon"
 }
 
 def print_structs(structname):
-        if structname in structs:
-            struct = structs[structname]
-            print(f"{structname} {{")
+        if len(structname) < 1:
+            return 1
+        if structname[0] in structs:
+            struct = structs[structname[0]]
+            print(f"{structname[0]} {{")
             
             for field_name, field_info in struct.items():
                 if isinstance(field_info, dict) and 'value' in field_info:
@@ -188,8 +192,9 @@ def print_structs(structname):
                         print(f'    "{field_name}": {value},')
             
             print("}")
+            return 0
         else:
-            print(f"Structure '{structname}' not found")
+            return 1
 
 def tokenization(user_input):
     """
@@ -221,8 +226,6 @@ def tokenization(user_input):
             # check for precedence
             if token in remap_keywords:
                 token_array[i] = remap_keywords[token]
-            if token == ".":
-                token_array[i] = str("carbon")
             if token == "true":
                 token_array[i] = int(1)
             if token == "false":
@@ -360,6 +363,9 @@ def aggregate(tokens):
         result.append(" ".join(quoted_string))
     return result
 
+def rem(variable):
+    print(variable)
+
 def increm(tokens):
     for pos_var in tokens:
         if not isinstance(pos_var, int):
@@ -437,44 +443,50 @@ def run_file(file_contents):
                 error_responder(returncode,file_line,codeline,file_contents)
     #find_optimization(file_contents)
 
-
-
-def error_responder(error_code,linenum,codeline,contents):
-    variables['errorlevel']['value'] = 0
+def error_mapper(error_code):
     return_map = {
-        0 : "No Error Code",
-        1 : "",
-        2 : "Comment Code\nCommented on this line",
+        0 : "ok",
+        1 : "ambiguous error",
+        2 : "comment",
         3 : "unexpected type interaction.",
         4 : f"unexpected syntax provided.",
         5 : "incompleted parameters proveded",
         8 : "mathematical logic error",
+        15: "unable to initialized essential items",
+        16: "initializatized",
         9 : "file interaction error",
         17: "ctrl c detected, exited program",
         81: "libutil not found",
         404: "forbidden call",
-        000: "Not Implemented"
-
     }
     ec_color_map = {
-        1: "\033[1;31m",
+        0: "\033[1;92m",
+        1: "\033[1;91m",
         3: "\033[1;38;5;220m",
+        2: "\033[1;90m",
         4: "\033[38;5;202m",
         5: "\033[38;5;196m",
         8: "\033[38;5;129m",
         9: "\033[38;5;111m",
+        15: "\033[38;5;115m",
+        16: "\033[38;5;116m",
         17: "\033[38;5;142m",
         81: "\033[38;5;199m",
         404: "\033[1;90m",
-        000: "\033[1;30m"
     }
     if error_code in return_map:
         error_reason = return_map[error_code]
         ec_color = ec_color_map[error_code]
     else:
         error_reason = ("error was not identfiable")
-        ec_color = "\033[90m"
+        ec_color = "\033[97m"
         error_code = -1
+
+    return error_reason,ec_color
+
+def error_responder(error_code,linenum,codeline,contents):
+    variables['errorlevel']['value'] = 0
+    error_reason,ec_color = error_mapper(error_code)
     get_num_len = len(str(linenum))
     stat_bar = f"{file_path}"
     print(f"""{stat_bar}:{linenum}:{error_code}
@@ -494,39 +506,49 @@ def find_optimization(contents):
 
 def suggest_func(input):
     omit_suggestions = {
-        "find_optimization",
-        "tokenization",
-        "aggregate",
-        "checkfile",
-        "open_file",
-        "run_file",
-        "error_responder",
-        "suggest_func",
-        "func_caller",
-        "type_check",
-        "add_space",
-        "deVar",
-        "deVarFunc",
-        "run_func",
-        "construct_functions",
-        "do_math",
-        "help",
-        "update",
-        "main",
-        "print_structs",
-        "file_read",
-        "file_write",
-        "file_assign",
-        "indexing",
-        "sort_array",
+        "find_optimization" : "void",
+        "tokenization" : "void",
+        "aggregate" : "void",
+        "checkfile" : "void",
+        "open_file": "void",
+        "run_file": "void",
+        "error_responder": "void",
+        "suggest_func": "void",
+        "func_caller" : "void",
+        "type_check": "void",
+        "add_space": "void",
+        "deVar": "void",
+        "deVarFunc": "void",
+        "run_func": "void",
+        "construct_functions": "void",
+        "do_math": "void",
+        "help": "void",
+        "update": "void",
+        "main": "void",
+        "print_structs": "struct",
+        "file_read": "void",
+        "file_write": "fwrite",
+        "file_assign": "fset",
+        "indexing": "void",
+        "sort_array": "sort",
+        "import_libraries": "libutils",
+        "get_args": "void",
+        "force_type": "type()",
+        "ascii_to_decimal_inter": "cnum()",
+        "decimal_to_ascii_stringer": "ascii()"
     }
+    
+    
     callable_globals = {name: obj for name, obj in globals().items() if callable(obj)}
-    # Iterate over the dictionary and print name and object
+    suggestions = []
     for name, obj in callable_globals.items():
         if str(input) in name or str(input) in remap_keywords:
-            if name not in omit_suggestions:
-                return f"Did You Mean \033[93m{name}\033[0m?"
-    return ""
+            if name in omit_suggestions:
+                if omit_suggestions[name] != "void":
+                    suggestions.append(f"Did You Mean \033[93m{omit_suggestions[name]}\033[0m?")
+            elif name not in omit_suggestions:
+                suggestions.append(f"Did You Mean \033[93m{name}\033[0m?")
+    return suggestions[0] if suggestions else ""
 
 
 def func_caller(tokens):
@@ -731,9 +753,10 @@ def deVarFunc(var):
 
 def carbon(tokens):
     if len(tokens) < 1:
+        print("\033[91merror: carbon calls:\033[0mprovide a valid carbonscript function")
         return 1
     system_call = tokens[0]
-    if system_call == "varls":
+    if system_call == "vars":
         varlist("void")
         return 0
     if system_call == "quit":
@@ -741,14 +764,31 @@ def carbon(tokens):
             exit(0)
         else:
             exit(tokens[1])
-    elif system_call == "funcls":
+    elif system_call == "funcs":
         funclist("void")
         return 0
-    elif system_call == "history":
-        print(error_level_history)
+    elif system_call == "structs":
+        structlist("void")
         return 0
-    return 1
+    elif system_call == "history":
+        curr_val = 0
+        history_arr = variables["errorlevel_history"]["value"]
 
+        header = (f"{'PId':<5}│ {'Level Code Information':<35}│ {'Code':<5}")
+        seperator = (
+    f"{'─' * 5}┼"
+    f"{'─' * 36}┼"
+    f"{'─' * 5}─"
+)
+        print(f"{header}\n{seperator}")
+        for code in history_arr:
+            ec_reason, ec_color = error_mapper(code)
+            curr_val += 1
+            reason_col = f"{ec_reason:<35}"
+            print(f"{curr_val:<5}│ {ec_color}{reason_col}\033[0m│ {ec_color}{code:<5}\033[0m")
+        return 0
+    print("\033[91merror: carbon calls:\033[0mprovide a valid carbonscript function")
+    return 1
 def func_return(analysis):
     returned_value = tokenization(analysis)
     print(returned_value)
@@ -1271,52 +1311,58 @@ def rand(tokens):
 
 
 def varlist(void):
-        max_key_length = max(len(str(key)) for key in variables)
-        max_type_length = max(len(str(variables[key]['type'])) for key in variables)
-        max_value_length = max(len(str(variables[key]['value'])) for key in variables)
-        max_cat_length = max(len(str(variables[key]['cat'])) for key in variables)
-        format_string = f"{{:<{max_key_length}}}    {{:<{max_cat_length}}}    {{:<{max_type_length}}}     {{:<{max_value_length}}}    "
-        print(format_string.format("Variable","IsModify",  "Type", "Value"))
-        print(format_string.format("________","______", "____", "_____\n"))
-        show_val = ""
-        show_mod = ""
-        for key in variables:
-            if len(str(variables[key]["value"])) > 10:
-                show_val = f"{variables[key]['value'][:10]}..."
-            else:
-                show_val = f"{variables[key]['value']}"
-            if str(variables[key]['cat']) == "preset":
-                show_mod = "False"
-                mod_col = "\033[91m"
-            elif str(variables[key]['cat']) == "func":
-                show_mod = "Reserved"
-                mod_col = "\033[90m"
-            else:
-                show_mod = "True"
-                mod_col = "\033[92m"
-            reset = "\033[0m"
-            print(format_string.format(
-                str(key), 
-                str(show_mod),
-                str(variables[key]['type']),
-                str(show_val)
-            ))
-        return 0
+    seperator = (
+    f"{'─' * 5}┼"
+    f"{'─' * 21}┼"
+    f"{'─' * 7}┼"
+    f"{'─' * 5}─"
+)
+    
+    header = (f"{'VId':<5}│ {'Variable Name':<20}│ {'Type':<5} │ {'Mod':<3}")
+    print(f"{header}\n{seperator}")
+    func_id = 0
+    for var in variables:
+        func_id+=1
+        if variables[var]['cat'] == "preset":
+            mod_val = f"\033[1;91m0"
+        elif variables[var]['cat'] == "elevated":
+            mod_val = f"\033[1;93m2"
+        else:
+            mod_val = f"\033[1;92m1"
+        type = variables[var]['type']
+        print(f"{func_id:<5}│ {var:<20}│ {type:<6}│ {mod_val:<3}\033[0m")
+    return 0
 
 def funclist(void):
-    print("\033[33mAll Defined Functions\n\033[0m")
-    max_method_length = max(len(str(key)) for key in methods)
-    max_type_length = max(len(str(methods[key]['returntype'])) for key in methods)
-    max_arg_length = max(len(str(methods[key]['params'])) for key in methods)
-    format_string = f"{{:<{max_method_length}}}     {{:<{max_type_length}}}     {{:<{max_arg_length}}}"
-    print(format_string.format("Function","Type","Expected"))
-    print(format_string.format("________","____","_______\n"))
-    for key in methods:
-        print(format_string.format(
-                str(key), 
-                str(methods[key]['returntype']), 
-                str(methods[key]['params'])
-            ))
+    seperator = (
+    f"{'─' * 5}┼"
+    f"{'─' * 21}┼"
+    f"{'─' * 7}┼"
+    f"{'─' * 7}─"
+)
+    header = (f"{'FId':<5}│ {'Function Name':<20}│ {'Type':<5} │ {'Params':<5}")
+    print(f"{header}\n{seperator}")
+    func_id = 0
+    for func in methods:
+        func_id+=1
+        returntype = methods[func]['returntype']
+        params = methods[func]['params']
+        print(f"{func_id:<5}│ {func:<20}│ {returntype:<6}│ {params:<5}")
+    return 0
+
+def structlist(void):
+    seperator = (
+    f"{'─' * 5}┼"
+    f"{'─' * 21}┼"
+    f"{'─' * 9}─"
+)
+    
+    header = (f"{'SId':<5}│ {'Struct Name':<20}│ {'Elements':<6}")
+    print(f"{header}\n{seperator}")
+    func_id = 0
+    for struct in structs:
+        Elements = len(structs[struct])
+        print(f"{func_id:<5}│ {struct:<20}│ {Elements:<6}")
     return 0
 
 def varcheck(void):
@@ -1432,7 +1478,7 @@ def set(tokens):
             return 5
         var_key = tokens[eq_place-1]
         if var_key in variables:
-            if variables[var_key]["cat"] == "preset":
+            if variables[var_key]["cat"] != "assigned":
                 print("\033[91mset:const error: \033[0mvariable cannot be rewritten")
                 return 1
         if var_key in structs:
@@ -1559,7 +1605,7 @@ def const(tokens):
         eq_place = tokens.index("=")
         var_key = tokens[eq_place-1]
         if var_key in variables:
-            if variables[var_key]["cat"] == "preset":
+            if variables[var_key]["cat"] != "assigned":
                 print("\033[91mconst:const error: \033[0mvariable cannot be rewritten")
                 return 1
         if var_key in structs:
@@ -1799,7 +1845,10 @@ def length(tokens):
     }
     return 0
 
-    
+
+def std_operations(tokens):
+    print("standard ops")
+    return 0
     
 
     
@@ -1995,7 +2044,10 @@ def quicksort(arr):
 
 
 def import_libraries(tokens):
-    pass
+    for lib in tokens:
+        imported_libraries.append(lib)
+    print(imported_libraries)
+    return 0
 
 def file_assign(tokens):
     if len(tokens) < 1:
@@ -2028,15 +2080,24 @@ def file_erase(void):
             pass
         return 0
 
-def file_read(void):
+def file_read(tokens):
+    if len(tokens) < 1:
+        print("\033[91merror: fread:\033[0m no content destination defined")
+        return 1
     if variables["fileInteraction"]["value"] == "void":
         print("\033[91merror: fread:\033[0m no file name has been assigned")
         return 1
     fread_filename = variables["fileInteraction"]["value"]
+    """
     if fread_filename.rfind(".") != -1:
         cleaned_filename = fread_filename[:fread_filename.rfind(".")]
     else:
         cleaned_filename = fread_filename
+    """
+    cont_destin = tokens[0]
+    if cont_destin in structs:
+        print(f"\033[91merror: fread:\033[0m{cont_destin} already exists")
+        return 1
     fread_contents = []
     try:
         with open(fread_filename,"r") as fread_filecontents:
@@ -2046,19 +2107,19 @@ def file_read(void):
         print(f"\033[91merror: fread missing:\033[0m {fread_filename} was not found")
         return 9
 
-    if cleaned_filename not in structs:
-        structs[cleaned_filename] = {}
-    structs[cleaned_filename]["contents"] = {
+    if  cont_destin not in structs:
+        structs[cont_destin] = {}
+    structs[cont_destin]["contents"] = {
                     "cat": "preset",
                     "type": "arr",
                     "value": fread_contents,
     }
-    structs[cleaned_filename]["len"] = {
+    structs[cont_destin]["len"] = {
                     "cat": "preset",
                     "type": "int",
                     "value": len(fread_contents),
     }
-    structs[cleaned_filename]["type"] = {
+    structs[cont_destin]["type"] = {
                     "cat": "preset",
                     "type": "str",
                     "value": fread_filename[fread_filename.rfind(".")+1:],
@@ -2066,6 +2127,7 @@ def file_read(void):
     return 0
 
 
+## --- user interation with the terminal --- 
 def help():
     RESET = "\033[0m"
     BOLD = "\033[1m"
@@ -2077,7 +2139,7 @@ def help():
     print(f"\n{BOLD}CARBONSCRIPT HELP{RESET}")
     print("─" * 50)
     print(f"\n{BOLD}{BLUE}DESCRIPTION{RESET}")
-    print(f"{RESET}CarbonScript is a toy interpretor built in Python3.\nDeveloped by {BRIGHT_GREEN}Saaim Japanwala{RESET} as a side project.\nBy no means is it the fastest,\nthe most effecient, or the greates interpretor to ever be created, \033[3m\033[90mthats what python is for :){RESET}\nPlease enjoy my work!")
+    print(f"{RESET}CarbonScript is a toy interpretor built in Python3.\nDeveloped by {BRIGHT_GREEN}Saaim Japanwala{RESET} as a side project.\nBy no means is it the fastest,\nthe most effecient, or the best interpretor to ever be created, \033[3m\033[90mthats what python is for :){RESET}\nPlease enjoy my work!")
     print(f"\n{BOLD}{BLUE}DOCUMENTATION{RESET}")
     print(f"  {BRIGHT_GREEN}WebDocs{RESET}       https://sjapanwala.github.io/carbonscript/")
     print(f"  {BRIGHT_GREEN}README{RESET}        https://github.com/sjapanwala/carbonscript")
@@ -2103,6 +2165,8 @@ def help():
     print(f"  {BRIGHT_GREEN}   5{RESET}          Incompleted Parameters")
     print(f"  {BRIGHT_GREEN}   8{RESET}          Logical Artithemitc Error")
     print(f"  {BRIGHT_GREEN}   9{RESET}          File Interaction Error")
+    print(f"  {BRIGHT_GREEN}   15{RESET}         Initialization Error")
+    print(f"  {BRIGHT_GREEN}   16{RESET}         Initialized")
     print(f"  {BRIGHT_GREEN}   17{RESET}         Ctrl+C Detected")
     print(f"  {BRIGHT_GREEN}   81{RESET}         Unknown Library Imported")
 
@@ -2281,28 +2345,37 @@ def main(returncode):
 
 
 if __name__ == "__main__":
-    global returncode
-    returncode = 0
-    global fi_code
-    fi_code = 0
-    global func_ignore
-    func_ignore = []
-    global func_allowance 
-    func_allowance = False
-    global loop_contents
-    loop_contents = []
-    global random_min
-    global random_max
-    random_min = 1
-    random_max = 100
-    global file_line
-    file_line = 0
+    ## starting components
+    try:
+        global returncode
+        returncode = 0
+        global fi_code
+        fi_code = 0
+        global func_ignore
+        func_ignore = []
+        global func_allowance 
+        func_allowance = False
+        global loop_contents
+        loop_contents = []
+        global random_min
+        global random_max
+        random_min = 1
+        random_max = 100
+        global file_line
+        file_line = 0
+        global imported_libraries
+        imported_libraries = []
+        variables['errorlevel']['value'] = 16
+    except:
+        variables['errorlevel']['value'] = 15
+        print("\033[1;91merror: internal\033[0m internal interpreter error")
+
 
     if len(sys.argv) > 1:
         get_args()
         TEST = False
         if sys.argv[1] == "--v":
-            print(f"CarbonScript Version: \033[92m{variables['version']['value']}\033[0m\nfrom: www.github.com/sjapanwala/CarbonScript")
+            print(f"CarbonScript Version: \033[92m{variables['version']['value']}\033[0m\nfrom: [www.github.com/sjapanwala/CarbonScript]")
             exit()
         elif "env:show-ec" in sys.argv:
             envriornment_config["print_error_code"] = True

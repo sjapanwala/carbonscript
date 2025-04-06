@@ -1,18 +1,43 @@
-───────────────────────────CARBONSCRIPT UPDATE - 03.1/25 - 03/3/2025─────────────────────────────
+───────────────────────────CARBONSCRIPT UPDATE - 04/25 - 04/05/2025─────────────────────────────
 Whats New?
-1. Added Command Line Arguments
-      - default 10 arg slots are generate, if more are used, more are generated.
-      - args are encrypted using the carbon-numbering system
-      - stored as an array "?args"
-      - "?args[0]" will always be the file name being ran
-2. Added Carbon-Numbering System
-      - strings are handleding by converting into a number, then converted using ascii codes
-      - 1181111051000004: 118111105100-> 'void'; 0004 -> length of 'void'
-      - strings can be converted to numbers using cnum()
-      - numbers can be converted to strings using ascii()
-3. Added Misc. Demo Programs
+1. Introducing Carbon Functions
+      - Use 'carbon' or '*' before a keyword to use it as a carbon function
+      - These functions are used to interpretor information or use
+            - Use '* funcs' instead of 'funclist'
+            - Use '* vars' instead of 'varlist'
+            - Use '* history' instead of 'stdout ?errorlevel_history'
+            - Use '* quit' instead of 'exit'
+
+2. FREAD Smart Name Assigning
+      - Previously FREAD would assign the file contents based of the filename
+      - Assign the file contents in a chosen struct name
+      - 'fread hello   // this will store the contents in the struct hello'
+      - 'stdout ?hello.contents'
+
+3. Struct Read-Ability
+      - Previously structs were hard to find...
+      - Use '* structs' to list all structs defined
+      - Use 'struct {structname}' to show a struct pretty printed
+
+4. Added Elevated Permissions
+      - Variables that are not fully immutable
+      - Can be changed, require elevated circumstances
+            - error Level
+            - iteration
+            - rand
+            - pop 
+            - len
+            - sorted
+      - As of now, Users cannot write elevated variables
+
+5. Minor Additions
+      - New Error Code (initialization (16,17))
+      - Changed UI for listing
+      - [/programs/todo.car] - Todo list demo with file I/O
+
+6. Minor Bug Fixes and Code Cleanup
+...
 ──────────────────────────────────────────DOCUMENTATION─────────────────────────────────────────────
                                       For More Information
                   [WebDocs][https://sjapanwala.github.io/carbonscript/#introduction]
                   [ReadME] [https://github.com/sjapanwala/carbonscript]
-

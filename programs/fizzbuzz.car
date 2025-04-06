@@ -1,3 +1,4 @@
+// how does fiz buzz workd?
 // i / 3 and 5 == fizzbuzz
 // i / 3 == fizz
 // i / 5 == buzz
@@ -13,9 +14,9 @@ func;void fizzBuzz $n;int {
     ifelse ( ?repetition % 5 == 0 ) push resultArray "buzz"
     else push resultArray ?repetition
   }
-  stdout "FizzBuzz - Iterations: $n"
   stdout ?resultArray
 }
 if ( ?args[1] != cnum("void") ) set runIterations = ?args[1]
 else set runIterations = 10;int
+stdout "FizzBuzz - Iterations:" ?runIterations
 @fizzBuzz ?runIterations

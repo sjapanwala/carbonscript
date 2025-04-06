@@ -1,0 +1,14 @@
+// this is a demo program written in carbon script
+// this demos creating a random array
+
+rand 1 10
+let array;arr
+repeat ?rand {
+ rand -1000 1000
+ push array ?rand
+}
+stdout ?array
+
+// we can then sort the array using `sort`
+sort ?array
+stdout ?sorted

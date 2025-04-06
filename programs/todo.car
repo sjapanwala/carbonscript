@@ -1,0 +1,26 @@
+func;str get_filename {
+  stdout "Welcome To Task Viewer"
+  stdout "Please Enter A Filename To Read"
+  stdout "(for the demo enter 'todo' )"
+  stdin filename;str ">"
+  return ?filename
+}
+
+fset @get_filename
+// set filename = "filename.txt"
+// fset ?filename
+fread items
+set filecont = ?items.contents
+length ?filecont
+set x = 0;int
+stdout "----------"
+stdout "To Do List"
+stdout "----------"
+repeat ?len {
+ stdout ?filecont[?x]
+ increm ?x
+}
+set newline_num = ( ?len + 1 )
+stdout ?newline_num
+stdin newline;str "Adding New Line> "
+fwrite ?newline_num  | ?newline

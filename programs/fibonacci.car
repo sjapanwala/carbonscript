@@ -27,4 +27,5 @@ func;void generateFibonacci $n;int {
 }
 if ( ?args[1] != cnum("void") ) set runIterations = ?args[1]
 else set runIterations = 10;int
+stdout "Fibonacci Sequence - Iterations:" ?runIterations
 @generateFibonacci ?runIterations

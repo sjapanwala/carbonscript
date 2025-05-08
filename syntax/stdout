@@ -1,0 +1,27 @@
+STDOUT - I/O - Keyword
+
+Description:
+  Writes outputs the terminal emulator, uses the standard output protocol
+  printing to screen.
+
+  Flags can be used to change the output
+  -ds     Printing Structs
+  -t      Printing Types
+  <none>  Standard Printing
+
+  Color codes can be used as well:
+  -r     Red
+  -g     Green
+  -y     Yellow
+  -b     Blue
+  -m     Magenta
+  -c     Cyan
+  -w     White
+  -d     Dark Gray
+  -n     Reset
+
+Usage:
+  
+  stdout "Hello World"
+
+

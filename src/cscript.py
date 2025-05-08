@@ -996,6 +996,15 @@ def fi(tokens):
     global fi_code
     fi_code = 0
     if tokens[0] == True:
+        if tokens[-1] != "{":
+            print("\033[91mif:params error: \033[0mno opening found")
+            return 1
+        if file_mode:
+            instructions = []
+            fi_header = f"if {tokens[0]} {{"
+            print(fi_header)
+
+
         returncode = func_caller(tokens[1:])
         if returncode not in (0,2):
             return returncode
@@ -1846,13 +1855,26 @@ def length(tokens):
     return 0
 
 
-def std_operations(tokens):
-    print("standard ops")
-    return 0
+def stdload(tokens):
+    """
+    loads an output to a stream; can be accessed later
+    """
+    pass
     
 
     
 def stdout(tokens):
+    colormap = {
+    "-r": "\033[91m",  
+    "-g": "\033[92m",  
+    "-y": "\033[93m",  
+    "-b": "\033[94m",  
+    "-m": "\033[95m",  
+    "-c": "\033[96m", 
+    "-w": "\033[97m",  
+    "-d": "\033[90m",  
+    "-n": "\033[0m"  
+}
     """
     stdout aggregates everything in the list, so no use for quotes
     to add a space you need to add a "_", this is done in the tokenizer
@@ -1862,7 +1884,7 @@ def stdout(tokens):
     """
     phrase = ""
     if len(tokens) < 1:
-        return 1
+        return 0
     if tokens[0] == "-t":
         try:
             for i in tokens:
@@ -1875,19 +1897,28 @@ def stdout(tokens):
         except:
             return 1
     elif tokens[0] == "-ds":
-        if len(tokens) > 1:  # First check if there's a second token
+        if len(tokens) > 1:  
             struct_name = tokens[1][1:]  # Get the struct name by slicing
             if struct_name in structs:
                 print_structs(struct_name)
                 return 0
         return 1
     try:
+        phrase = ""
+        prev_was_text = False
+
         for i in tokens:
-            if len(phrase) > 1:
-                phrase += " "
-            phrase += str(i)
-        print(f"\033[0m{phrase}")
-        #print(type(phrase))
+            if i.lower() in colormap:
+                phrase += colormap[i.lower()]
+                prev_was_text = False
+            else:
+                if prev_was_text:
+                    phrase += " "
+                phrase += str(i)
+                prev_was_text = True
+
+        phrase += "\033[0m"
+        print(phrase)
         return 0
     except:
         return 1
@@ -1983,6 +2014,10 @@ def stdin(tokens):
             return 1
     except:
         return 17
+
+
+def std_operations(tokens):
+    pass
 
 def clear(void):
     try:
@@ -2250,7 +2285,7 @@ def update():
         time.sleep(0.1)
     
     try:
-        subprocess.run(["curl", "-s", "-o", temp_file, "https://raw.githubusercontent.com/sjapanwala/carbonscript/refs/heads/define/cscript.py"])
+        subprocess.run(["curl", "-s", "-o", temp_file, "https://raw.githubusercontent.com/sjapanwala/carbonscript/refs/heads/define/src/cscript.py"])
         print(f"{clear_line()}{BRIGHT_GREEN}✓{RESET} Update file downloaded successfully")
     except Exception as e:
         print(f"{clear_line()}{RED}✗{RESET} Failed to download update file")

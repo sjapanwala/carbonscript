@@ -1,0 +1,12 @@
+STDIN – I/O – Keyword
+
+Description:
+  Prompts the user for input through the terminal and stores it into a defined variable. stdin is used for gathering input at runtime, and it supports inline typing via flags.
+
+  Each use of stdin expects a variable name, followed optionally by a type declaration and a prompt string.
+
+Usage:
+
+  stdin x;int "Value: "
+  
+

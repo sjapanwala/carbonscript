@@ -1,0 +1,13 @@
+Welcome To Developer Logs For Carbon Script.
+
+these are to keep track of carbon script development, bugs, features, etc...
+please follow the formats given below.
+
+-----------------------------------------------------------------------------
+
+BUG #1
+USER: sjapanwala
+FEATURE: Conditionals (if, ifelse, else)
+ISSUE: conditionals are not being followed properly, will not exit once conditionals are completed
+
+

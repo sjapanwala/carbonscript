@@ -179,7 +179,6 @@ remap_keywords = {
     "fclear": "file_erase",
     "fread": "file_read",
     "struct": "print_structs",
-    "~": "carbon"
 }
 
 def print_structs(structname):
@@ -2287,7 +2286,7 @@ def update():
         time.sleep(0.1)
     
     try:
-        subprocess.run(["curl", "-s", "-o", temp_file, "https://raw.githubusercontent.com/sjapanwala/carbonscript/refs/heads/define/src/cscript.py"])
+        subprocess.run(["curl", "-s", "-o", temp_file, "https://raw.githubusercontent.com/sjapanwala/carbonscript/refs/heads/define/cscript.py"])
         print(f"{clear_line()}{BRIGHT_GREEN}✓{RESET} Update file downloaded successfully")
     except Exception as e:
         print(f"{clear_line()}{RED}✗{RESET} Failed to download update file")

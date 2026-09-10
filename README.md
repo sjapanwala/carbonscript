@@ -1,10 +1,3 @@
-
-<img align=center src="./assets/logo.png" height="250" length="250">
-
-# Learn All This From ChatGPT!
-[CarbonScript GPT](https://chatgpt.com/g/g-67fc603dc40c81918bdda3e738cbd70d-carbon-script-debugger)
-
-
 # CarbonScript
 
 A lightweight, statically-typed programming language inspired by C, designed for simplicity, readability, and efficiency.

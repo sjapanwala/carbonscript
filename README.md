@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <img align=center src="./assets/logo.png" height="250" length="250">
 
@@ -8,6 +9,8 @@
 [CarbonScript GPT](https://chatgpt.com/g/g-67fc603dc40c81918bdda3e738cbd70d-carbon-script-debugger)
 
 
+=======
+>>>>>>> ca55f6d3139bc3785f30f52c61af5c9c1d292fdd
 # CarbonScript
 
 A lightweight, statically-typed programming language inspired by C, designed for simplicity, readability, and efficiency.

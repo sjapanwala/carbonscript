@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CarbonScript Sandbox</title>
+  <meta name="description" content="Run CarbonScript in your browser. The real interpreter, running on Pyodide.">
+  <link rel="icon" href="./assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f0f0eb;
+      --panel: #e4e4dd;
+      --ink: #161616;
+      --rule: #c4c4bb;
+      --muted: #5a5a54;
+      --accent: #d9480f;
+      --code-bg: #161616;
+      --code-text: #deded8;
+      --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+      --top: 3rem;
+      color-scheme: light;
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #131313;
+      --panel: #1d1d1d;
+      --ink: #dcdcd6;
+      --rule: #333330;
+      --muted: #8c8c86;
+      --accent: #ff8a3d;
+      --code-bg: #0a0a0a;
+      color-scheme: dark;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #131313;
+        --panel: #1d1d1d;
+        --ink: #dcdcd6;
+        --rule: #333330;
+        --muted: #8c8c86;
+        --accent: #ff8a3d;
+        --code-bg: #0a0a0a;
+        color-scheme: dark;
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font: 16px/1.6 "IBM Plex Sans", system-ui, sans-serif; background: var(--bg); color: var(--ink); }
+    a { color: inherit; text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 2px; }
+    a:hover { color: var(--accent); }
+    code, pre, kbd, button, input, textarea, select { font-family: var(--mono); }
+    kbd { font-size: .75rem; border: 1px solid var(--rule); padding: 0 .3rem; color: var(--muted); }
+
+    .topbar {
+      position: sticky; top: 0; height: var(--top); z-index: 50;
+      display: flex; align-items: center; gap: 1rem; padding: 0 1rem;
+      background: var(--bg); border-bottom: 2px solid var(--ink);
+    }
+    .brand { display: flex; align-items: center; gap: .5rem; font-family: var(--mono); font-weight: 600; text-decoration: none; text-transform: uppercase; letter-spacing: .05em; }
+    .brand img { width: 22px; height: 22px; }
+    .badge { font-family: var(--mono); font-size: .7rem; font-weight: 400; color: var(--muted); border: 1px solid var(--rule); padding: 0 .35rem; text-transform: none; letter-spacing: 0; }
+    .spacer { margin-left: auto; }
+    .tbtn { font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; color: var(--ink); background: none; border: 1px solid var(--ink); padding: .25rem .6rem; cursor: pointer; text-decoration: none; }
+    .tbtn:hover { background: var(--ink); color: var(--bg); }
+    .tbtn:disabled { opacity: .4; cursor: default; background: none; color: var(--ink); }
+    .tbtn.primary { background: var(--ink); color: var(--bg); }
+    .tbtn.primary:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); }
+
+    main { max-width: 80rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+    .label { font: .7rem var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+    h1 { font: 600 1.6rem/1.2 var(--mono); margin: .25rem 0 .4rem; }
+    .intro { color: var(--muted); max-width: 46rem; font-size: .95rem; }
+
+    .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin: 1.25rem 0 .75rem; padding-bottom: .75rem; border-bottom: 1px solid var(--rule); }
+    .status { margin-left: auto; font: .75rem var(--mono); color: var(--muted); }
+    .status.busy::before { content: "■ "; color: var(--accent); }
+
+    .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; }
+    .pane { display: flex; flex-direction: column; min-width: 0; }
+    .pane-head { display: flex; justify-content: space-between; align-items: center; font: .7rem var(--mono); text-transform: uppercase; letter-spacing: .08em; color: #8a8a84; background: var(--code-bg); padding: .3rem .75rem; border: 1px solid var(--ink); border-bottom-color: #333; }
+    textarea, .field input { width: 100%; font-size: .85rem; line-height: 1.6; color: var(--ink); background: var(--bg); border: 1px solid var(--ink); padding: .6rem .75rem; outline: none; resize: vertical; tab-size: 2; }
+    textarea:focus, .field input:focus { border-color: var(--accent); }
+    #code { min-height: 26rem; flex: 1; background: var(--code-bg); color: var(--code-text); border-top: 0; white-space: pre; caret-color: #ff8a3d; }
+    #stdin { min-height: 5.5rem; }
+    .field { margin-top: .75rem; }
+    .field label { display: block; margin-bottom: .2rem; }
+    .field .hint { font-size: .8rem; color: var(--muted); margin-top: .2rem; }
+
+    #out { flex: 1; min-height: 26rem; max-height: 48rem; overflow: auto; margin: 0; padding: .6rem .75rem; font-size: .85rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; background: var(--code-bg); color: var(--code-text); border: 1px solid var(--ink); border-top: 0; }
+    #out .sys { color: #85857f; }
+    #out .fail { color: #ff6b6b; }
+    #out .b { font-weight: 600; }
+
+    footer { margin-top: 2rem; padding-top: .75rem; border-top: 2px solid var(--ink); font: .8rem var(--mono); color: var(--muted); }
+
+    @media (max-width: 50rem) {
+      .grid { grid-template-columns: minmax(0, 1fr); }
+      #code, #out { min-height: 18rem; }
+      .brand .badge { display: none; }
+      .status { width: 100%; margin-left: 0; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">
+      <img src="./assets/logo.png" alt="">
+      CarbonScript
+      <span class="badge">sandbox</span>
+    </a>
+    <a class="tbtn spacer" href="./index.html">Docs</a>
+    <button class="tbtn" id="theme-btn" aria-label="Toggle color theme">Dark</button>
+    <a class="tbtn" href="https://github.com/sjapanwala/carbonscript">GitHub</a>
+  </header>
+
+  <main>
+    <p class="label">Sandbox / runs cscript.py in your browser</p>
+    <h1>Try CarbonScript</h1>
+    <p class="intro">This is the real interpreter running on <a href="https://pyodide.org">Pyodide</a>, not a
+      JavaScript copy. Python loads the first time you press Run (about 10&nbsp;MB, cached after that). Files made
+      with <code>fset</code> / <code>fwrite</code> exist only until the next run.</p>
+
+    <div class="toolbar">
+      <button class="tbtn primary" id="run" type="button">Run</button>
+      <button class="tbtn" id="stop" type="button" disabled>Stop</button>
+      <button class="tbtn" id="clear" type="button">Clear output</button>
+      <button class="tbtn" id="reset" type="button">Reset code</button>
+      <span class="status" id="status">idle · <kbd>Ctrl</kbd>+<kbd>Enter</kbd> to run</span>
+    </div>
+
+    <div class="grid">
+      <div class="pane">
+        <div class="pane-head"><span>main.car</span><span>editor</span></div>
+        <textarea id="code" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="CarbonScript source"></textarea>
+        <div class="field">
+          <label class="label" for="stdin">Program input</label>
+          <textarea id="stdin" spellcheck="false" placeholder="one line per stdin call"></textarea>
+          <p class="hint">There is no live terminal, so each <code>stdin</code> call reads the next line from this box.</p>
+        </div>
+        <div class="field">
+          <label class="label" for="args">Arguments</label>
+          <input id="args" type="text" spellcheck="false" placeholder="e.g. 15" autocomplete="off">
+          <p class="hint">Same as <code>car main.car …</code>. Available as <code>?args[1]</code>, <code>?args[2]</code>, …</p>
+        </div>
+      </div>
+      <div class="pane">
+        <div class="pane-head"><span>output</span><span id="exit-code"></span></div>
+        <pre id="out" aria-live="polite"></pre>
+      </div>
+    </div>
+
+    <footer>Loops that never end can be killed with Stop. Commands that need a real machine (<code>--update</code>,
+      <code>--libutil</code>) aren't available here.</footer>
+  </main>
+
+  <!-- Runs inside a Web Worker so a runaway loop can't freeze the page -->
+  <script type="text/plain" id="worker-src">
+    let pyReady = null;
+
+    const RUNNER = `
+import sys, os, builtins, getpass, runpy, shutil
+
+def _clear():
+    import js
+    from pyodide.ffi import to_js
+    js.postMessage(to_js({"type": "clear"}, dict_converter=js.Object.fromEntries))
+
+def sandbox_run(code, stdin_lines, args):
+    os.chdir("/")
+    shutil.rmtree("/sandbox", ignore_errors=True)
+    os.makedirs("/sandbox")
+    os.chdir("/sandbox")
+    with open("main.car", "w") as f:
+        f.write(code)
+
+    pending = list(stdin_lines)
+
+    def fake_input(prompt=""):
+        sys.stdout.write(str(prompt))
+        if not pending:
+            print()
+            print("\\x1b[91msandbox:\\x1b[0m stdin wanted a line, but the Program input box has run out")
+            raise EOFError
+        line = pending.pop(0)
+        print(line)
+        return line
+
+    builtins.input = fake_input
+    builtins.exit = builtins.quit = sys.exit
+    getpass.getuser = lambda: "sandbox"
+    os.system = lambda cmd: _clear() or 0 if cmd.strip() == "clear" else 1
+    sys.argv = ["car", "main.car", *args]
+
+    try:
+        runpy.run_path("/cscript.py", run_name="__main__")
+        return 0
+    except SystemExit as e:
+        if e.code is None:
+            return 0
+        return int(e.code) if str(e.code).lstrip("-").isdigit() else 1
+    except EOFError:
+        return 1
+    except RecursionError:
+        print("\\x1b[91msandbox:\\x1b[0m maximum recursion depth reached")
+        return 1
+    finally:
+        sys.stdout.flush()
+`;
+
+    async function boot(srcUrl) {
+      post("status", "loading Python…");
+      importScripts("https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js");
+      const py = await loadPyodide();
+      py.setStdout({ batched: function (s) { post("out", s); } });
+      py.setStderr({ batched: function (s) { post("err", s); } });
+      post("status", "loading interpreter…");
+      const res = await fetch(srcUrl, { cache: "no-cache" });
+      if (!res.ok) throw new Error("could not fetch cscript.py (" + res.status + ")");
+      py.FS.writeFile("/cscript.py", await res.text());
+      py.runPython(RUNNER);
+      return py;
+    }
+
+    function post(type, text) { postMessage({ type: type, text: text }); }
+
+    onmessage = async function (e) {
+      const msg = e.data;
+      try {
+        if (!pyReady) pyReady = boot(msg.src);
+        const py = await pyReady;
+        post("status", "running…");
+        const run = py.globals.get("sandbox_run");
+        const code = run(msg.code, py.toPy(msg.stdin), py.toPy(msg.args));
+        run.destroy();
+        postMessage({ type: "done", code: code });
+      } catch (err) {
+        pyReady = null;
+        postMessage({ type: "fail", text: String(err && err.message || err) });
+      }
+    };
+  </script>
+
+  <script>
+    (function () {
+      /* ---------------- theme ---------------- */
+      const root = document.documentElement;
+      const themeBtn = document.getElementById("theme-btn");
+      function isDark() {
+        const t = root.getAttribute("data-theme");
+        if (t) return t === "dark";
+        return window.matchMedia("(prefers-color-scheme: dark)").matches;
+      }
+      function syncTheme() { themeBtn.textContent = isDark() ? "Light" : "Dark"; }
+      try { const s = localStorage.getItem("cs-theme"); if (s) root.setAttribute("data-theme", s); } catch (e) { }
+      syncTheme();
+      themeBtn.addEventListener("click", function () {
+        const next = isDark() ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        try { localStorage.setItem("cs-theme", next); } catch (e) { }
+        syncTheme();
+      });
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", syncTheme);
+
+      /* ---------------- editor ---------------- */
+      const STARTER = [
+        "// edit me, then press Run",
+        "func;int triple $n;int {",
+        "  return ( $n * 3 )",
+        "}",
+        "",
+        "set name = \"CarbonScript\";str",
+        "stdout \"Hello from\" ?name",
+        "",
+        "set i = 1;int",
+        "repeat 4 {",
+        "  set t = @triple ?i",
+        "  stdout ?i \" times three =\" ?t",
+        "  increm ?i",
+        "}",
+        "",
+        "stdin who;str \"What's your name?\"",
+        "stdout \"Nice to meet you,\" ?who"
+      ].join("\n");
+      const STARTER_INPUT = "Ada";
+
+      const codeEl = document.getElementById("code");
+      const stdinEl = document.getElementById("stdin");
+      const argsEl = document.getElementById("args");
+
+      function save() {
+        try { localStorage.setItem("cs-sandbox", JSON.stringify({ code: codeEl.value, stdin: stdinEl.value, args: argsEl.value })); } catch (e) { }
+      }
+      function load() {
+        const m = location.hash.match(/^#code=(.*)$/);
+        if (m) {
+          codeEl.value = decodeURIComponent(m[1]);
+          stdinEl.value = "";
+          history.replaceState(null, "", location.pathname);
+          save();
+          return;
+        }
+        let saved = null;
+        try { saved = JSON.parse(localStorage.getItem("cs-sandbox")); } catch (e) { }
+        codeEl.value = saved ? saved.code : STARTER;
+        stdinEl.value = saved ? saved.stdin : STARTER_INPUT;
+        argsEl.value = saved ? saved.args : "";
+      }
+      load();
+      [codeEl, stdinEl, argsEl].forEach(function (el) { el.addEventListener("input", save); });
+
+      codeEl.addEventListener("keydown", function (e) {
+        if (e.key !== "Tab" || e.shiftKey) return;
+        e.preventDefault();
+        const s = codeEl.selectionStart, end = codeEl.selectionEnd;
+        codeEl.setRangeText("  ", s, end, "end");
+        save();
+      });
+
+      document.getElementById("reset").addEventListener("click", function () {
+        codeEl.value = STARTER;
+        stdinEl.value = STARTER_INPUT;
+        argsEl.value = "";
+        save();
+      });
+
+      /* ---------------- output ---------------- */
+      const out = document.getElementById("out");
+      const statusEl = document.getElementById("status");
+      const exitEl = document.getElementById("exit-code");
+
+      // xterm 256-colour index -> css colour
+      function xterm(n) {
+        const base = ["#1a1a1a", "#e05252", "#7fbf5a", "#e0b04a", "#5a8fd8", "#b36ad8", "#4ab8b8", "#cfcfcf",
+          "#6a6a6a", "#ff6b6b", "#9fe07a", "#ffd866", "#7fb2ff", "#d49bff", "#7fe0e0", "#ffffff"];
+        if (n < 16) return base[n];
+        if (n < 232) {
+          n -= 16;
+          const v = [0, 95, 135, 175, 215, 255];
+          return "rgb(" + v[Math.floor(n / 36)] + "," + v[Math.floor(n / 6) % 6] + "," + v[n % 6] + ")";
+        }
+        const g = 8 + (n - 232) * 10;
+        return "rgb(" + g + "," + g + "," + g + ")";
+      }
+
+      // turn the interpreter's ANSI escape codes into styled spans
+      function ansiLine(text) {
+        const frag = document.createDocumentFragment();
+        let color = null, bold = false;
+        const parts = text.split(/\x1b\[([\d;]*)m/);
+        parts.forEach(function (part, i) {
+          if (i % 2 === 1) {
+            const codes = part === "" ? [0] : part.split(";").map(Number);
+            for (let k = 0; k < codes.length; k++) {
+              const c = codes[k];
+              if (c === 0) { color = null; bold = false; }
+              else if (c === 1) bold = true;
+              else if (c >= 30 && c <= 37) color = xterm(c - 30);
+              else if (c >= 90 && c <= 97) color = xterm(c - 90 + 8);
+              else if (c === 39) color = null;
+              else if (c === 38 && codes[k + 1] === 5) { color = xterm(codes[k + 2]); k += 2; }
+            }
+            return;
+          }
+          if (!part) return;
+          if (!color && !bold) { frag.appendChild(document.createTextNode(part)); return; }
+          const s = document.createElement("span");
+          if (color) s.style.color = color;
+          if (bold) s.className = "b";
+          s.textContent = part;
+          frag.appendChild(s);
+        });
+        return frag;
+      }
+
+      function write(text, cls) {
+        const line = document.createElement("span");
+        if (cls) line.className = cls;
+        line.appendChild(cls ? document.createTextNode(text) : ansiLine(text));
+        line.appendChild(document.createTextNode("\n"));
+        out.appendChild(line);
+        out.scrollTop = out.scrollHeight;
+      }
+
+      function setStatus(text, busy) {
+        statusEl.textContent = text;
+        statusEl.classList.toggle("busy", !!busy);
+      }
+
+      document.getElementById("clear").addEventListener("click", function () { out.textContent = ""; exitEl.textContent = ""; });
+
+      /* ---------------- worker ---------------- */
+      const runBtn = document.getElementById("run");
+      const stopBtn = document.getElementById("stop");
+      const SRC_URL = new URL("cscript.py", location.href).href;
+      let worker = null;
+      let running = false;
+
+      function makeWorker() {
+        const blob = new Blob([document.getElementById("worker-src").textContent], { type: "text/javascript" });
+        const w = new Worker(URL.createObjectURL(blob));
+        w.onmessage = function (e) {
+          const m = e.data;
+          if (m.type === "out") write(m.text);
+          else if (m.type === "err") write(m.text, "fail");
+          else if (m.type === "clear") out.textContent = "";
+          else if (m.type === "status") setStatus(m.text, true);
+          else if (m.type === "done") finish("exit " + m.code, m.code);
+          else if (m.type === "fail") {
+            write("sandbox: " + m.text, "fail");
+            if (location.protocol === "file:") {
+              write("sandbox: open this page through a web server, e.g. `python3 -m http.server` in the repo", "sys");
+            }
+            finish("failed", 1);
+          }
+        };
+        return w;
+      }
+
+      function finish(text, code) {
+        running = false;
+        runBtn.disabled = false;
+        stopBtn.disabled = true;
+        exitEl.textContent = text;
+        exitEl.style.color = code === 0 ? "" : "#ff6b6b";
+        setStatus("ready · Ctrl+Enter to run", false);
+      }
+
+      function run() {
+        if (running) return;
+        running = true;
+        runBtn.disabled = true;
+        stopBtn.disabled = false;
+        exitEl.textContent = "";
+        if (out.textContent) write("", "sys");
+        write("$ car main.car" + (argsEl.value.trim() ? " " + argsEl.value.trim() : ""), "sys");
+        if (!worker) worker = makeWorker();
+        const stdin = stdinEl.value === "" ? [] : stdinEl.value.replace(/\n$/, "").split("\n");
+        const args = argsEl.value.trim() ? argsEl.value.trim().split(/\s+/) : [];
+        worker.postMessage({ code: codeEl.value, stdin: stdin, args: args, src: SRC_URL });
+      }
+
+      function stop() {
+        if (!running || !worker) return;
+        worker.terminate();
+        worker = null;
+        write("^C stopped by user", "fail");
+        finish("stopped", 17);
+      }
+
+      runBtn.addEventListener("click", run);
+      stopBtn.addEventListener("click", stop);
+      document.addEventListener("keydown", function (e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); run(); }
+        if (e.key === "Escape" && running) stop();
+      });
+    })();
+  </script>
+</body>
+
+</html>

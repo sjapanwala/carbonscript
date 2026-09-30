@@ -4,618 +4,1283 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CarbonScript Webdocs</title>
+  <title>CarbonScript Docs</title>
+  <meta name="description" content="Documentation for CarbonScript, a lightweight, statically-typed scripting language with a clean, token-based syntax.">
+  <link rel="icon" href="./assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root {
+      --bg: #f0f0eb;
+      --panel: #e4e4dd;
+      --ink: #161616;
+      --rule: #c4c4bb;
+      --muted: #5a5a54;
+      --accent: #d9480f;
+      --code-bg: #161616;
+      --code-text: #deded8;
+      --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+      --top: 3rem;
+      color-scheme: light;
     }
 
-    html {
-      font-size: 16px;
+    :root[data-theme="dark"] {
+      --bg: #131313;
+      --panel: #1d1d1d;
+      --ink: #dcdcd6;
+      --rule: #333330;
+      --muted: #8c8c86;
+      --accent: #ff8a3d;
+      --code-bg: #0a0a0a;
+      color-scheme: dark;
     }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      line-height: 1.6;
-      color: #333;
-      max-width: 75rem;
-      min-width: 20rem;
-      margin: 0 auto;
-      display: flex;
-    }
-
-    #sidebar {
-      width: 15.625rem;
-      background-color: #f4f4f4;
-      padding: 1.25rem;
-      height: 100vh;
-      position: sticky;
-      top: 0;
-      overflow-y: auto;
-    }
-
-    #sidebar h2 {
-      border-bottom: 0.125rem solid #333;
-      padding-bottom: 0;
-      margin-bottom: 0.9375rem;
-    }
-
-    #sidebar #logo {
-      width: 3.125rem;
-      height: 3.125rem;
-      margin-right: 0;
-    }
-
-    #sidebar nav ul {
-      list-style-type: none;
-    }
-
-    #sidebar nav ul li {
-      margin-bottom: 0.625rem;
-    }
-
-    #sidebar nav ul li a {
-      text-decoration: none;
-      color: #333;
-      font-weight: 500;
-      transition: color 0.3s ease;
-    }
-
-    #sidebar nav ul li a:hover {
-      color: #0066cc;
-    }
-
-    #main-content {
-      flex-grow: 1;
-      padding: 1.25rem;
-      background-color: white;
-      max-width: 60rem;
-    }
-
-    pre {
-      background-color: #f4f4f4;
-      padding: 0.9375rem;
-      border-radius: 0.3125rem;
-      overflow-x: auto;
-      margin: 0.9375rem 0;
-    }
-
-    code {
-      font-family: 'Courier New', Courier, monospace;
-      background-color: #f1f1f1;
-      padding: 0.125rem 0.25rem;
-      border-radius: 0.1875rem;
-    }
-
-    .syntax-comparison {
-      display: flex;
-      margin: 1.25rem 0;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .syntax-comparison>div {
-      flex: 1;
-      min-width: 15rem;
-      padding: 0.625rem;
-      background-color: #f4f4f4;
-      border-radius: 0.3125rem;
-    }
-
-    #syntax-playground {
-      margin-top: 1.875rem;
-      border: 0.0625rem solid #ddd;
-      padding: 1.25rem;
-      border-radius: 0.3125rem;
-    }
-
-    #custom-syntax-input,
-    #transpiled-output {
-      width: 100%;
-      min-height: 12.5rem;
-      margin-bottom: 0.9375rem;
-      padding: 0.625rem;
-      font-family: monospace;
-    }
-
-    @media (max-width: 48rem) {
-
-      body {
-        flex-direction: column;
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #131313;
+        --panel: #1d1d1d;
+        --ink: #dcdcd6;
+        --rule: #333330;
+        --muted: #8c8c86;
+        --accent: #ff8a3d;
+        --code-bg: #0a0a0a;
+        color-scheme: dark;
       }
+    }
 
-      #sidebar {
-        width: 100%;
-        height: auto;
-        position: static;
-      }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-padding-top: calc(var(--top) + 1rem); }
+    body { font: 16px/1.6 "IBM Plex Sans", system-ui, sans-serif; background: var(--bg); color: var(--ink); }
+    a { color: inherit; text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 2px; }
+    a:hover { color: var(--accent); }
+    code, pre, kbd, button, input { font-family: var(--mono); }
+    :not(pre)>code { font-size: .85em; background: var(--panel); padding: 0 .3em; white-space: nowrap; }
+    kbd { font-size: .75rem; border: 1px solid var(--rule); padding: 0 .3rem; color: var(--muted); }
 
-      #main-content {
-        width: 100%;
-      }
+    /* top bar */
+    .topbar {
+      position: fixed; inset: 0 0 auto 0; height: var(--top); z-index: 50;
+      display: flex; align-items: center; gap: 1rem; padding: 0 1rem;
+      background: var(--bg); border-bottom: 2px solid var(--ink);
+    }
+    .brand { display: flex; align-items: center; gap: .5rem; font-family: var(--mono); font-weight: 600; text-decoration: none; text-transform: uppercase; letter-spacing: .05em; }
+    .brand img { width: 22px; height: 22px; }
+    .badge { font-family: var(--mono); font-size: .7rem; font-weight: 400; color: var(--muted); border: 1px solid var(--rule); padding: 0 .35rem; text-transform: none; letter-spacing: 0; }
+    .search { position: relative; margin-left: auto; width: min(16rem, 40vw); }
+    .search input { width: 100%; font-size: .85rem; color: var(--ink); background: var(--bg); border: 1px solid var(--ink); padding: .3rem 2rem .3rem .5rem; outline: none; }
+    .search input:focus { border-color: var(--accent); }
+    .search kbd { position: absolute; right: .4rem; top: .35rem; pointer-events: none; }
+    .tbtn { font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; color: var(--ink); background: none; border: 1px solid var(--ink); padding: .25rem .5rem; cursor: pointer; text-decoration: none; }
+    .tbtn:hover { background: var(--ink); color: var(--bg); }
+    #menu-btn { display: none; }
 
-      table {
-            width: 50%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 18px;
-            text-align: left;
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
+    /* layout */
+    .layout { display: grid; grid-template-columns: 15rem minmax(0, 1fr); max-width: 80rem; margin: 0 auto; padding-top: var(--top); }
+    .sidebar { position: sticky; top: var(--top); height: calc(100vh - var(--top)); overflow-y: auto; padding: 1.25rem 0 3rem; border-right: 1px solid var(--rule); }
+    .nav-group+.nav-group { margin-top: 1.25rem; }
+    .nav-group h4 { font: 600 .7rem var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); padding: 0 1rem .3rem; }
+    .nav-group ul { list-style: none; }
+    .nav-group a { display: block; padding: .15rem 1rem; font-size: .9rem; text-decoration: none; border-left: 3px solid transparent; }
+    .nav-group a:hover { background: var(--panel); color: var(--ink); }
+    .nav-group a.active { border-left-color: var(--accent); font-weight: 600; background: var(--panel); }
+    .nav-empty { display: none; font-size: .85rem; color: var(--muted); padding: 0 1rem; }
+    main { padding: 2rem clamp(1rem, 4vw, 3rem) 5rem; min-width: 0; counter-reset: sec; }
+    .content { max-width: 48rem; }
 
-      footer {
-        padding: 15px 0;
-        text-align: center;
-        border-top: 1px solid #eaeaea;
-        font-size: 14px;
-        color: #333;
-      }
+    /* hero */
+    .hero { padding-bottom: 2rem; }
+    .label { font: .75rem var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+    .hero h1 { font: 600 2.5rem/1.1 var(--mono); letter-spacing: -.02em; margin: .5rem 0 1rem; }
+    .hero .lede { font-size: 1.1rem; max-width: 38rem; margin-bottom: 1.5rem; }
+    .cta { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.5rem; }
+    .cta .tbtn { font-size: .8rem; padding: .45rem .8rem; }
+    .cta .tbtn.primary { background: var(--ink); color: var(--bg); }
+    .cta .tbtn.primary:hover { background: var(--accent); border-color: var(--accent); }
+
+    /* prose */
+    section.doc { padding-top: 2.5rem; }
+    section.doc>h2 { counter-increment: sec; font-size: 1.5rem; line-height: 1.3; padding-top: .6rem; margin-bottom: .75rem; border-top: 2px solid var(--ink); }
+    section.doc>h2::before { content: counter(sec, decimal-leading-zero); font: 400 .9rem var(--mono); color: var(--accent); margin-right: .75rem; vertical-align: .15em; }
+    .doc h3 { font-size: 1.1rem; margin: 1.75rem 0 .4rem; }
+    .doc p, .doc ul, .doc ol { margin: .75rem 0; }
+    .doc ul, .doc ol { padding-left: 1.4rem; }
+    .doc li+li { margin-top: .25rem; }
+    .anchor { margin-left: .4rem; color: var(--muted); text-decoration: none; visibility: hidden; font-weight: 400; }
+    h2:hover .anchor { visibility: visible; }
+    .callout { border: 1px solid var(--ink); border-left: 4px solid var(--accent); padding: .6rem .9rem; margin: 1rem 0; font-size: .94rem; }
+    .callout.warn { border-left-width: 1px; padding-left: 1.5rem; background: repeating-linear-gradient(45deg, #f5b700 0 5px, #161616 5px 10px) left / 8px 100% no-repeat; }
+    .callout strong:first-child { display: block; font: 600 .75rem var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+
+    /* code */
+    .codeblock { margin: 1rem 0 1.25rem; background: var(--code-bg); border: 1px solid var(--ink); }
+    .cb-head { display: flex; justify-content: flex-end; align-items: center; padding: .2rem .2rem .2rem .75rem; font: .7rem var(--mono); text-transform: uppercase; letter-spacing: .08em; color: #8a8a84; border-bottom: 1px solid #333; }
+    .copy { font-size: .7rem; text-decoration: none; margin-left: .3rem; text-transform: uppercase; color: #bbb; background: none; border: 1px solid #444; padding: .1rem .5rem; cursor: pointer; }
+    .copy:hover { color: #fff; border-color: #888; }
+    .copy.done { color: #ff8a3d; border-color: #ff8a3d; }
+    pre { padding: .85rem 1rem; overflow-x: auto; font-size: .85rem; line-height: 1.65; color: var(--code-text); }
+    pre code { background: none; padding: 0; }
+    .tk-kw, .tk-rule { color: #ff8a3d; }
+    .tk-type, .tk-op, .tk-com { color: #85857f; }
+    .tk-var { color: #9cc3de; }
+    .tk-param { color: #e0b48a; }
+    .tk-fn { color: #fff; font-weight: 600; }
+    .tk-str { color: #aecb8e; }
+    .tk-num { color: #deded8; }
+    .tk-err { color: #ff6b6b; font-weight: 600; }
+    .tk-caret { color: #f5b700; }
+    .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .compare .codeblock { margin-top: .25rem; }
+    .compare-label { font: .75rem var(--mono); text-transform: uppercase; color: var(--muted); }
+
+    /* tables */
+    .table-wrap { overflow-x: auto; margin: 1rem 0 1.25rem; }
+    table { width: 100%; border-collapse: collapse; font-size: .9rem; border: 1px solid var(--ink); }
+    th, td { text-align: left; padding: .4rem .75rem; border: 1px solid var(--rule); vertical-align: top; }
+    th { font: 600 .7rem var(--mono); text-transform: uppercase; letter-spacing: .08em; background: var(--panel); border-bottom: 1px solid var(--ink); }
+    td:first-child { white-space: nowrap; }
+    .code-num { font-family: var(--mono); font-weight: 600; }
+    .pill { font: .72rem var(--mono); text-transform: uppercase; color: var(--muted); }
+    .pill.ok { color: var(--ink); }
+    .pill.bad { color: var(--accent); font-weight: 600; }
+    .spec td:first-child { font: .75rem var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); width: 9rem; }
+
+    /* examples */
+    .tabs { display: flex; flex-wrap: wrap; margin-top: 1rem; border-bottom: 1px solid var(--ink); }
+    .tab { font-size: .8rem; color: var(--muted); background: none; border: 1px solid transparent; border-bottom: 0; padding: .35rem .7rem; cursor: pointer; }
+    .tab:hover { color: var(--ink); }
+    .tab[aria-selected="true"] { color: var(--bg); background: var(--ink); }
+    .example-desc { font-size: .92rem; color: var(--muted); margin: .75rem 0 0; }
+
+    /* changelog */
+    .release { padding: .75rem 0 .5rem; border-bottom: 1px dashed var(--rule); }
+    .release h3 { margin-top: 0; font-family: var(--mono); display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; }
+    .release.latest .badge { color: var(--accent); border-color: var(--accent); }
+    .release time { font-size: .8rem; font-weight: 400; color: var(--muted); }
+
+    footer.site-foot { margin-top: 4rem; padding-top: .75rem; border-top: 2px solid var(--ink); font: .8rem var(--mono); color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; }
+    .hidden-by-search { display: none !important; }
+    .scrim { display: none; }
+
+    @media (max-width: 60rem) {
+      .layout { grid-template-columns: minmax(0, 1fr); }
+      #menu-btn { display: inline-block; }
+      .sidebar { position: fixed; top: var(--top); left: 0; bottom: 0; height: auto; width: min(17rem, 85vw); background: var(--bg); z-index: 40; border-right: 2px solid var(--ink); display: none; }
+      body.nav-open .sidebar { display: block; }
+      body.nav-open .scrim { display: block; position: fixed; inset: var(--top) 0 0 0; background: rgba(0, 0, 0, .4); z-index: 30; }
+      .search kbd { display: none; }
+    }
+
+    @media (max-width: 40rem) {
+      .compare { grid-template-columns: 1fr; }
+      .brand .badge, .topbar a.tbtn { display: none; }
+      .topbar { padding: 0 .75rem; gap: .5rem; }
+      .search { width: auto; flex: 1; }
+      main { padding: 1.5rem 1rem 4rem; }
+      .hero h1 { font-size: 2rem; }
     }
   </style>
 </head>
 
 <body>
-  <aside id="sidebar">
-    <h2><img src="./assets/logo.png" alt="CarbonScript Logo" id="logo"> CarbonScript</h2>
-    <nav>
-      <ul>
-        <li><a href="#introduction">Introduction</a></li>
-        <li><a href="#Installation">Installation</a></li>
-        <li><a href="#overview">Overview</a></li>
-        <li><a href="#getting-started">Getting Started</a></li>
-        <li><a href="#file-rules">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;File Rules</a></li>
-        <li><a href="#standard-outputs">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Standard Outputs</a></li>
-        <li><a href="#data-types">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Data Types</a></li>
-        <li><a href="#assign-vars">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Assigning Variables</a></li>
-        <li><a href="#standard-inputs">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Standard Inputs</a></li>
-        <li><a href="#calling-vars">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Calling Variables</a></li>
-        <li><a href="#math-logic">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Math & Logic</a></li>
-        <li><a href="#conditions">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Conditionals</a></li>
-        <li><a href="#loops">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Loops</a></li>
-        <li><a href="#arrays">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Arrays</a></li>
-        <li><a href="#creating-functions">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Creating Functions</a></li>
-        <li><a href="#calling-functions">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Calling Functions</a></li>
-        <li><a href="#carbon-nums">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;Carbon Numbers</a></li>
-        <li><a href="#args">&nbsp;&nbsp;&nbsp;&nbsp;├&nbsp;CLI Arguement</a></li>
-        <li><a href="#file-interactions">&nbsp;&nbsp;&nbsp;&nbsp;└&nbsp;File Interactions</a></li>
-        <li><a href="#understanding-diagnosis">Understanding The Diagnostics</a></li>
-        <li><a href="#error-codes">Error Codes</a></li>
-        <li><a href="#whats-new">Updates</a></li>
+  <header class="topbar">
+    <button class="tbtn" id="menu-btn" aria-label="Open navigation">Menu</button>
+    <a class="brand" href="#top">
+      <img src="./assets/logo.png" alt="">
+      CarbonScript
+      <span class="badge">v04.0/25</span>
+    </a>
+    <div class="search">
+      <input id="search" type="search" placeholder="Search" aria-label="Search documentation" autocomplete="off">
+      <kbd>/</kbd>
+    </div>
+    <a class="tbtn" href="./sandbox.html">Sandbox</a>
+    <button class="tbtn" id="theme-btn" aria-label="Toggle color theme">Dark</button>
+    <a class="tbtn" href="https://github.com/sjapanwala/carbonscript">GitHub</a>
+  </header>
 
+  <div class="scrim" id="scrim"></div>
 
-
-
-      </ul>
-    </nav>
-  </aside>
-
-  <main id="main-content">
-    <section id="introduction">
-      <h1>CarbonScript</h1>
-      <p>
-        Welcome to CarbonScript—a modern programming language designed with one goal in mind: simplicity without
-        sacrificing power. Whether you’re a beginner or an experienced developer, CarbonScript is built to help you get
-        things done quickly and clearly.
-        <br><br>
-        The syntax is clean and straightforward, making it easy to write code that’s easy to read. Forget about dealing
-        with cryptic syntax or complicated rules. With CarbonScript, you can focus on solving problems and building cool
-        stuff, not wrestling with your code.
-        <br><br>
-        At its core, CarbonScript combines the flexibility you need for complex tasks with a level of simplicity that
-        makes even large projects feel approachable. It's perfect for everything from small scripts to big applications,
-        and the best part? You’ll spend less time debugging and more time building.
-        <br><br>
-        If you're looking for a language that's powerful, readable, and fun to use, you're in the right place!
-      </p>
-    </section>
-    <section id="Installation">
-      <h2><br>Installation</h2>
-      <p>
-        Install the latest version of CarbonScript by pasting these commands into your terminal
-        <br>
-        <strong>Sudo Access Is Required</strong>
-      </p>
-      <h3><br>Latest Version: <a href="#whats-new" <span style="color: #2e8b57;">v03.1/25</span></a></h3>
-      <p>
-        Released 03/10/2025
-      <p>
-      <pre><code>git clone git@github.com:sjapanwala/carbonscript.git<br>cd carbonscript/<br>sudo ./install.sh
-        </code></pre>
-    </section>
-
-
-    <section id="overview">
-      <h2><br>Overview</h2>
-      <p>Syntax Difference Between <code>JavaScript</code> and <code>CarbonScript</code></p>
-
-      <div class="syntax-comparison">
-        <div>
-          <h3>JavaScript Syntax</h3>
-          <pre><code>function add(a, b) {<br>&nbsp;&nbsp;return a + b;<br>}</code></pre>
+  <div class="layout" id="top">
+    <aside class="sidebar" id="sidebar" aria-label="Documentation">
+      <nav id="nav">
+        <div class="nav-group">
+          <h4>Start here</h4>
+          <ul>
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#installation">Installation</a></li>
+            <li><a href="#running">Running code</a></li>
+            <li><a href="#first-program">Your first program</a></li>
+          </ul>
         </div>
-        <div>
-          <h3>CarbonScript Syntax</h3>
-          <pre><code>func;int function $a;int $b;int {<br>&nbsp;&nbsp;return ( $a + $b )<br>}</code></pre>
+        <div class="nav-group">
+          <h4>Language guide</h4>
+          <ul>
+            <li><a href="#syntax-basics">Syntax basics</a></li>
+            <li><a href="#output">Output</a></li>
+            <li><a href="#data-types">Data types</a></li>
+            <li><a href="#variables">Variables</a></li>
+            <li><a href="#input">Input</a></li>
+            <li><a href="#math-logic">Math &amp; logic</a></li>
+            <li><a href="#conditionals">Conditionals</a></li>
+            <li><a href="#loops">Loops</a></li>
+            <li><a href="#arrays">Arrays</a></li>
+            <li><a href="#structs">Structs</a></li>
+            <li><a href="#functions">Functions</a></li>
+            <li><a href="#carbon-numbers">Carbon numbers</a></li>
+            <li><a href="#cli-args">Command-line args</a></li>
+            <li><a href="#file-io">File I/O</a></li>
+            <li><a href="#random">Random numbers</a></li>
+            <li><a href="#file-rules">File rules</a></li>
+          </ul>
         </div>
+        <div class="nav-group">
+          <h4>Reference</h4>
+          <ul>
+            <li><a href="#builtins">Built-in variables</a></li>
+            <li><a href="#carbon-calls">Carbon system calls</a></li>
+            <li><a href="#cli-flags">CLI flags</a></li>
+            <li><a href="#diagnostics">Reading diagnostics</a></li>
+            <li><a href="#error-codes">Error codes</a></li>
+          </ul>
+        </div>
+        <div class="nav-group">
+          <h4>More</h4>
+          <ul>
+            <li><a href="#examples">Example programs</a></li>
+            <li><a href="#changelog">Changelog</a></li>
+            <li><a href="./sandbox.html">Sandbox ↗</a></li>
+          </ul>
+        </div>
+        <p class="nav-empty" id="nav-empty">No sections match.</p>
+      </nav>
+    </aside>
+
+    <main>
+      <div class="content">
+
+        <!-- ================= INTRO ================= -->
+        <section class="hero" id="introduction" data-search>
+          <p class="label">Documentation / v04.0/25</p>
+          <div class="callout warn"><strong>Not actively maintained</strong>This project is no longer actively
+            maintained as of 2025. It is provided as-is; issues and pull requests may not be addressed.</div>
+          <h1>CarbonScript</h1>
+          <p class="lede">
+            A lightweight, statically-typed scripting language inspired by C. One command per line, every value
+            carries its type, and the interpreter points at the exact line that failed.
+          </p>
+          <div class="table-wrap">
+            <table class="spec">
+              <tr><td>Types</td><td>Annotated inline with a suffix: <code>;int</code>, <code>;str</code>, <code>;arr</code>, …</td></tr>
+              <tr><td>Sigils</td><td><code>?var</code> reads a variable, <code>$param</code> a parameter, <code>@fn</code> calls a function</td></tr>
+              <tr><td>Errors</td><td>Every statement returns a numbered code, with a pointer to the failing line</td></tr>
+              <tr><td>Built in</td><td>Arrays, structs, file I/O, random numbers, sorting, CLI args</td></tr>
+              <tr><td>Latest</td><td>v04.0/25: carbon functions, named <code>fread</code>, struct inspection</td></tr>
+            </table>
+          </div>
+          <div class="cta">
+            <a class="tbtn primary" href="#installation">Install</a>
+            <a class="tbtn" href="./sandbox.html">Try it in the browser</a>
+            <a class="tbtn" href="#examples">Examples</a>
+            <a class="tbtn" href="https://chatgpt.com/g/g-67fc603dc40c81918bdda3e738cbd70d-carbon-script-debugger">CarbonScript GPT ↗</a>
+          </div>
+        </section>
+
+        <!-- ================= INSTALL ================= -->
+        <section class="doc" id="installation" data-search>
+          <h2>Installation<a class="anchor" href="#installation">#</a></h2>
+          <p>CarbonScript runs on Python. Clone the repository and run the installer, which puts the <code>car</code>
+            command on your path.</p>
+          <div class="callout warn"><strong>Requirements</strong>Python 3.10 or newer. The installer needs
+            <code>sudo</code> access.</div>
+          <pre data-lang="shell">git clone git@github.com:sjapanwala/carbonscript.git
+cd carbonscript/
+chmod +x install.sh &amp;&amp; sudo ./install.sh</pre>
+          <p>To update later, run <code>car --update</code>. Check the installed version with <code>car --v</code>.</p>
+          <div class="callout"><strong>Vim / Neovim</strong>Syntax highlighting is available in
+            <a href="https://github.com/sjapanwala/carbonscript/tree/main/syntax/vim_syntax"><code>syntax/vim_syntax</code></a>.</div>
+        </section>
+
+        <section class="doc" id="running" data-search>
+          <h2>Running code<a class="anchor" href="#running">#</a></h2>
+          <p>There are two ways to run CarbonScript.</p>
+          <h3>Run a file</h3>
+          <p>Save your code in a file ending in <code>.car</code> and pass it to <code>car</code>. Everything after
+            the filename becomes a <a href="#cli-args">command-line argument</a>.</p>
+          <pre data-lang="shell">car fizzbuzz.car 20</pre>
+          <h3>Interactive REPL</h3>
+          <p>Run <code>car</code> with no arguments to open the live interpreter. Each line runs as soon as you
+            press enter. Type <code>carbon quit</code> to leave.</p>
+          <pre data-lang="shell">$ car
+?? &gt;&gt; set name = "Ada";str
+?? &gt;&gt; stdout "Hello" ?name
+Hello Ada</pre>
+        </section>
+
+        <section class="doc" id="first-program" data-search>
+          <h2>Your first program<a class="anchor" href="#first-program">#</a></h2>
+          <p>Here is a function that adds two numbers, next to the same thing in JavaScript.</p>
+          <div class="compare">
+            <div>
+              <div class="compare-label">JavaScript</div>
+              <pre data-lang="javascript">function add(a, b) {
+  return a + b;
+}
+console.log(add(2, 3));</pre>
+            </div>
+            <div>
+              <div class="compare-label">CarbonScript</div>
+              <pre>func;int add $a;int $b;int {
+  return ( $a + $b )
+}
+set total = @add 2 3
+stdout ?total</pre>
+            </div>
+          </div>
+          <p>The function declares its return type (<code>func;int</code>) and a type for each parameter
+            (<code>$a;int</code>). Math goes inside parentheses, and you call a function by prefixing its name
+            with <code>@</code>.</p>
+        </section>
+
+        <!-- ================= LANGUAGE ================= -->
+        <section class="doc" id="syntax-basics" data-search>
+          <h2>Syntax basics<a class="anchor" href="#syntax-basics">#</a></h2>
+          <p>CarbonScript runs <strong>one line at a time</strong>. The interpreter splits each line on spaces into
+            tokens and resolves them: it substitutes variables, evaluates math and runs function calls. It then
+            passes the result to the command named by the first token. Text inside double quotes stays together
+            as a single token.</p>
+          <p>Most of the syntax comes from a few prefixes and suffixes:</p>
+          <div class="table-wrap">
+            <table>
+              <tr><th>Syntax</th><th>Meaning</th><th>Example</th></tr>
+              <tr><td><code>?name</code></td><td>Read a variable's value</td><td><code>stdout ?name</code></td></tr>
+              <tr><td><code>$name</code></td><td>Read a function parameter (inside a function body)</td><td><code>return ( $a + $b )</code></td></tr>
+              <tr><td><code>@name</code></td><td>Call a function</td><td><code>set x = @square 4</code></td></tr>
+              <tr><td><code>value;type</code></td><td>Annotate a value's type</td><td><code>set age = 25;int</code></td></tr>
+              <tr><td><code>( … )</code></td><td>Math or logic expression</td><td><code>( ?a * 2 )</code></td></tr>
+              <tr><td><code>name:field</code></td><td>Target a struct field for assignment</td><td><code>set user:age = 30</code></td></tr>
+              <tr><td><code>?name.field</code></td><td>Read a struct field</td><td><code>stdout ?user.age</code></td></tr>
+              <tr><td><code>?arr[i]</code></td><td>Index into an array or string</td><td><code>?args[?iteration]</code></td></tr>
+              <tr><td><code>//</code></td><td>Comment (whole line, or the rest of the line)</td><td><code>// hello</code></td></tr>
+            </table>
+          </div>
+        </section>
+
+        <section class="doc" id="output" data-search>
+          <h2>Output<a class="anchor" href="#output">#</a></h2>
+          <p>CarbonScript uses standard I/O. <code>stdout</code> prints all of its tokens to the console, joined by
+            spaces. You can mix strings, variables, math and function calls freely.</p>
+          <pre>stdout "Hello World"
+stdout "Sum:" ( 2 + 3 )
+stdout "Hi" ?uname</pre>
+          <p>Use <code>clear</code> to clear the terminal.</p>
+        </section>
+
+        <section class="doc" id="data-types" data-search>
+          <h2>Data types<a class="anchor" href="#data-types">#</a></h2>
+          <p>Add a type to a value with a semicolon suffix. If you leave it off, <code>set</code> and
+            <code>const</code> work out the type from the value.</p>
+          <div class="table-wrap">
+            <table>
+              <tr><th>Type</th><th>Description</th><th>Example</th></tr>
+              <tr><td><code>int</code></td><td>Whole numbers, positive or negative</td><td><code>set x = 10;int</code></td></tr>
+              <tr><td><code>flt</code></td><td>Numbers with a decimal point</td><td><code>set x = 10.5;flt</code></td></tr>
+              <tr><td><code>str</code></td><td>A sequence of characters</td><td><code>set x = "Hello";str</code></td></tr>
+              <tr><td><code>bool</code></td><td><code>true</code> / <code>false</code>, stored as <code>1</code> / <code>0</code></td><td><code>set ok = true;bool</code></td></tr>
+              <tr><td><code>arr</code></td><td>An ordered list of values</td><td><code>set x = 1,2,3;arr</code></td></tr>
+              <tr><td><code>struct</code></td><td>A named group of fields</td><td><code>let user;struct</code></td></tr>
+              <tr><td><code>void</code></td><td>No value; the default for an empty declaration</td><td><code>let x;void</code></td></tr>
+              <tr><td><code>cstr</code></td><td>A string stored as its <a href="#carbon-numbers">carbon number</a></td><td><code>set c = "hi";cstr</code></td></tr>
+            </table>
+          </div>
+          <div class="callout"><strong>Array literals</strong>Write array literals as comma-separated values with
+            <em>no spaces</em>, e.g. <code>1,2,3;arr</code>. To store values of different types, declare an empty
+            array and <a href="#arrays"><code>push</code></a> typed values into it.</div>
+          <p>Use <code>type(x)</code> to get the name of a value's type as a string.</p>
+          <pre>set pi = 3.14;flt
+stdout type(?pi)   // flt</pre>
+        </section>
+
+        <section class="doc" id="variables" data-search>
+          <h2>Variables<a class="anchor" href="#variables">#</a></h2>
+          <p>There are three keywords for declaring variables:</p>
+          <div class="table-wrap">
+            <table>
+              <tr><th>Keyword</th><th>Mutable</th><th>Use it for</th></tr>
+              <tr><td><code>set</code></td><td><span class="pill ok">yes</span></td><td>Normal variables. Running <code>set</code> again overwrites the value.</td></tr>
+              <tr><td><code>const</code></td><td><span class="pill bad">no</span></td><td>Values that must never change. Reassigning one is an error.</td></tr>
+              <tr><td><code>let</code></td><td><span class="pill ok">yes</span></td><td>Declaring a name with a type but no value yet, such as an empty array or struct.</td></tr>
+            </table>
+          </div>
+          <pre>const name = "John Doe";str
+set age = 25;int
+set graduated = false;bool
+let scores;arr
+
+stdout ?name "is" ?age</pre>
+          <h3>Increment &amp; decrement</h3>
+          <p><code>increm</code> and <code>decrem</code> add or subtract 1 from a mutable <code>int</code> variable
+            in place.</p>
+          <pre>set i = 0;int
+increm ?i
+stdout ?i   // 1</pre>
+        </section>
+
+        <section class="doc" id="input" data-search>
+          <h2>Input<a class="anchor" href="#input">#</a></h2>
+          <p><code>stdin</code> shows a prompt, reads a line from the user, checks it against the type you
+            declared, and stores it in a new variable.</p>
+          <pre>stdin name;str "What's your name?"
+stdin age;int "How old are you?"
+stdout "Hi" ?name</pre>
+          <p>Supported input types are <code>str</code>, <code>int</code>, <code>flt</code> and <code>bool</code>.</p>
+        </section>
+
+        <section class="doc" id="math-logic" data-search>
+          <h2>Math &amp; logic<a class="anchor" href="#math-logic">#</a></h2>
+          <p>Every math or logic expression goes inside parentheses, with spaces between tokens. Nested
+            parentheses are supported.</p>
+          <pre>set x = 10;int
+stdout ( 100 + ?x )
+stdout ( ( ?x * 2 ) - 5 )
+set even = ( ?x % 2 == 0 )</pre>
+          <div class="table-wrap">
+            <table>
+              <tr><th>Kind</th><th>Operators</th></tr>
+              <tr><td>Arithmetic</td><td><code>+</code> <code>-</code> <code>*</code> <code>/</code> <code>%</code> <code>**</code></td></tr>
+              <tr><td>Comparison</td><td><code>==</code> <code>!=</code> <code>&gt;</code> <code>&lt;</code> <code>&gt;=</code> <code>&lt;=</code></td></tr>
+            </table>
+          </div>
+          <div class="callout warn"><strong>No operator precedence</strong>Expressions are evaluated left to
+            right. Use nested parentheses to control the order. There are no logical operators (<code>&amp;&amp;</code>,
+            <code>||</code>), so combine conditions by chaining <code>if</code> / <code>ifelse</code>.</div>
+          <h3>Rounding</h3>
+          <p><code>ceil()</code> rounds up and <code>floor()</code> rounds down.</p>
+          <pre>set x = 3.14;flt
+stdout ceil(?x)    // 4
+stdout floor(?x)   // 3</pre>
+          <p>The constants <code>?pi</code> (3.14) and <code>?eu</code> (2.72) are built in, as are
+            <code>?true</code> and <code>?false</code>.</p>
+        </section>
+
+        <section class="doc" id="conditionals" data-search>
+          <h2>Conditionals<a class="anchor" href="#conditionals">#</a></h2>
+          <p>Each conditional fits on one line: a condition in parentheses, followed by <strong>one</strong>
+            statement to run.</p>
+          <ul>
+            <li><code>if</code> starts a chain.</li>
+            <li><code>ifelse</code> is checked only if nothing earlier in the chain matched.</li>
+            <li><code>else</code> runs if nothing in the chain matched.</li>
+          </ul>
+          <pre>set x = 10;int
+set y = 5;int
+if ( ?x &gt; ?y ) stdout "x is larger than y"
+ifelse ( ?x &lt; ?y ) stdout "x is smaller than y"
+else stdout "x and y are equal"</pre>
+          <div class="callout"><strong>Aliases</strong><code>fi</code>, <code>elsefi</code> and
+            <code>default</code> are the interpreter's internal names for <code>if</code>, <code>ifelse</code> and
+            <code>else</code>. Either spelling works.</div>
+        </section>
+
+        <section class="doc" id="loops" data-search>
+          <h2>Loops<a class="anchor" href="#loops">#</a></h2>
+          <p>Loop bodies go inside braces. Inside a loop, <code>?iteration</code> holds the current pass number,
+            starting at 0.</p>
+          <h3><code>repeat</code>: fixed count</h3>
+          <p>Runs the body a fixed number of times. The count can be a number or a variable.</p>
+          <pre>repeat 5 {
+  stdout "pass" ?iteration
+}</pre>
+          <h3><code>do</code>: counting condition</h3>
+          <p>Starts at a value and adds 1 after each pass. The loop keeps going while the comparison is true.
+            Supported comparisons: <code>&lt;</code> <code>&gt;</code> <code>==</code> <code>&lt;=</code>
+            <code>&gt;=</code>.</p>
+          <pre>do 0 &lt; 5 {
+  // runs 5 times
+  stdout ?iteration
+}</pre>
+          <h3><code>until</code>: run until a value</h3>
+          <p>Runs the body until a variable equals a target value.</p>
+          <pre>set n = 0;int
+until n = 3 {
+  increm ?n
+}</pre>
+          <div class="callout warn"><strong>File mode</strong>Loops and functions read their bodies from the
+            source file, so use them in <code>.car</code> files rather than the REPL.</div>
+        </section>
+
+        <section class="doc" id="arrays" data-search>
+          <h2>Arrays<a class="anchor" href="#arrays">#</a></h2>
+          <p>Arrays work like stacks: <code>push</code> adds to the end and <code>pop</code> removes from the end.</p>
+          <h3>Creating &amp; pushing</h3>
+          <pre>set nums = 1,2,3;arr          // literal: no spaces
+
+let mixed;arr                   // empty array
+push mixed 1;int "hello";str 3.14;flt</pre>
+          <h3>Popping</h3>
+          <p><code>pop</code> removes the last item and stores it in <code>?pop</code>.</p>
+          <pre>pop nums
+stdout ?pop    // 3</pre>
+          <h3>Indexing</h3>
+          <p>Indexes start at 0 and can be computed.</p>
+          <pre>stdout ?nums[1]            // 2
+stdout ?args[?iteration]</pre>
+          <h3>Length</h3>
+          <p><code>length</code> stores the size of an array or string in <code>?len</code>.</p>
+          <pre>length ?nums
+stdout ?len</pre>
+          <h3>Sorting</h3>
+          <p><code>sort</code> puts a sorted copy in <code>?sorted</code> and leaves the original array
+            unchanged.</p>
+          <pre>let x;arr
+push x 89 1 45 -120 12
+sort ?x
+stdout ?sorted   // [-120, 1, 12, 45, 89]</pre>
+        </section>
+
+        <section class="doc" id="structs" data-search>
+          <h2>Structs<a class="anchor" href="#structs">#</a></h2>
+          <p>A struct groups named fields under one name. Declare it with <code>let</code>, then assign fields
+            with <code>name:field</code>.</p>
+          <pre>let profile;struct
+const profile:name = "John Doe";str
+set profile:age = 45;int
+set profile:graduated = true;bool
+
+stdout ?profile.name
+stdout ?profile.age
+
+struct profile     // pretty-print every field</pre>
+          <p>Fields assigned with <code>const</code> can't be changed later. Run <code>carbon structs</code> to
+            list every struct you've defined.</p>
+        </section>
+
+        <section class="doc" id="functions" data-search>
+          <h2>Functions<a class="anchor" href="#functions">#</a></h2>
+          <p>As in C, you declare the return type up front, or <code>void</code> if the function returns nothing.
+            Parameters start with <code>$</code> and each one needs a type.</p>
+          <pre>func;&lt;return_type&gt; &lt;name&gt; $param;type … {
+  // body
+  return &lt;value&gt;
+}</pre>
+          <h3>Defining</h3>
+          <pre>func;int addition $x;int $y;int {
+  return ( $x + $y )
+}
+
+func;void greet {
+  stdout "Hello!"
+}</pre>
+          <h3>Calling</h3>
+          <p>Call a function with <code>@</code> followed by its arguments. If it returns a value, store the
+            result in a variable.</p>
+          <pre>set result = @addition 10 20
+stdout ?result     // 30
+@greet</pre>
+          <h3>Built-in functions</h3>
+          <p>These are available without defining them:</p>
+          <div class="table-wrap">
+            <table>
+              <tr><th>Function</th><th>Returns</th><th>Description</th></tr>
+              <tr><td><code>@add a b</code></td><td><code>int</code></td><td>a + b</td></tr>
+              <tr><td><code>@subtract a b</code></td><td><code>int</code></td><td>a − b</td></tr>
+              <tr><td><code>@multiply a b</code></td><td><code>int</code></td><td>a × b</td></tr>
+              <tr><td><code>@divide a b</code></td><td><code>int</code></td><td>a ÷ b</td></tr>
+              <tr><td><code>@square a</code></td><td><code>int</code></td><td>a²</td></tr>
+              <tr><td><code>@cube a</code></td><td><code>int</code></td><td>a³</td></tr>
+              <tr><td><code>@reverse a</code></td><td><code>arr</code></td><td>The array reversed</td></tr>
+              <tr><td><code>@status</code></td><td><code>void</code></td><td>Prints the last exit status code</td></tr>
+            </table>
+          </div>
+        </section>
+
+        <section class="doc" id="carbon-numbers" data-search>
+          <h2>Carbon numbers<a class="anchor" href="#carbon-numbers">#</a></h2>
+          <p>A carbon number encodes a string as one large integer. Each character becomes its 3-digit ASCII
+            code, and a 4-digit length is added at the end. Because the result is a plain number, you can compare
+            it with any other value, whatever its type.</p>
+          <ul>
+            <li><code>cnum(x)</code> converts a string to a carbon number.</li>
+            <li><code>ascii(x)</code> converts a carbon number back to a string.</li>
+          </ul>
+          <pre>set x = "CarbonScript";str
+set c = cnum(?x)    // 670971140981111100830991141051121160012
+set s = ascii(?c)   // CarbonScript</pre>
+        </section>
+
+        <section class="doc" id="cli-args" data-search>
+          <h2>Command-line arguments<a class="anchor" href="#cli-args">#</a></h2>
+          <p>Arguments passed after the filename are stored in the <code>?args</code> array. Unfilled slots
+            contain the carbon number for <code>"void"</code>, so you can check whether an argument was given by
+            comparing with <code>cnum("void")</code>.</p>
+          <pre>if ( ?args[1] != cnum("void") ) set runIterations = ?args[1]
+else set runIterations = 10;int
+@generateFibonacci ?runIterations</pre>
+          <p>This uses the argument if one was given and falls back to 10 otherwise.</p>
+        </section>
+
+        <section class="doc" id="file-io" data-search>
+          <h2>File I/O<a class="anchor" href="#file-io">#</a></h2>
+          <p>First pick a file with <code>fset</code>. Later file commands all act on that file.</p>
+          <div class="table-wrap">
+            <table>
+              <tr><th>Command</th><th>Description</th></tr>
+              <tr><td><code>fset &lt;path&gt;</code></td><td>Choose the file to work with</td></tr>
+              <tr><td><code>fwrite &lt;tokens…&gt;</code></td><td>Append a line to the file</td></tr>
+              <tr><td><code>fread &lt;name&gt;</code></td><td>Read the file into a struct called <code>name</code></td></tr>
+              <tr><td><code>fclear</code></td><td>Erase the file's contents</td></tr>
+            </table>
+          </div>
+          <pre>fset notes.txt
+fwrite "Buy milk"
+fwrite "Ship v5"
+
+fread notes
+stdout ?notes.contents   // array of lines
+stdout ?notes.len        // number of lines
+stdout ?notes.type       // file extension
+
+fclear</pre>
+        </section>
+
+        <section class="doc" id="random" data-search>
+          <h2>Random numbers<a class="anchor" href="#random">#</a></h2>
+          <p><code>rand min max</code> stores a random integer between min and max, inclusive, in
+            <code>?rand</code>.</p>
+          <pre>rand 1 100
+stdout "You rolled" ?rand</pre>
+        </section>
+
+        <section class="doc" id="file-rules" data-search>
+          <h2>File rules<a class="anchor" href="#file-rules">#</a></h2>
+          <p>Put <code>RULE</code> lines at the top of a <code>.car</code> file to change how the interpreter runs
+            it.</p>
+          <div class="table-wrap">
+            <table>
+              <tr><th>Rule</th><th>Effect</th></tr>
+              <tr><td><code>RULE hide-errors</code></td><td>Suppress formatted error output</td></tr>
+              <tr><td><code>RULE show-ec</code></td><td>Print the error code after every statement</td></tr>
+              <tr><td><code>RULE show-tk</code></td><td>Print the token array for every statement (debugging)</td></tr>
+              <tr><td><code>RULE force-run</code></td><td>Keep running after an error instead of stopping</td></tr>
+              <tr><td><code>RULE force-dontrun</code></td><td>Refuse to run the file at all</td></tr>
+            </table>
+          </div>
+          <pre>RULE hide-errors
+RULE show-ec
+
+stdout "rules applied"</pre>
+        </section>
+
+        <!-- ================= REFERENCE ================= -->
+        <section class="doc" id="builtins" data-search>
+          <h2>Built-in variables<a class="anchor" href="#builtins">#</a></h2>
+          <p>The interpreter sets these for you. <em>Elevated</em> variables are updated by the runtime and can't be
+            written by your code.</p>
+          <div class="table-wrap">
+            <table>
+              <tr><th>Variable</th><th>Kind</th><th>Holds</th></tr>
+              <tr><td><code>?errorlevel</code></td><td><span class="pill">elevated</span></td><td>Exit code of the last statement</td></tr>
+              <tr><td><code>?iteration</code></td><td><span class="pill">elevated</span></td><td>Current loop pass</td></tr>
+              <tr><td><code>?rand</code></td><td><span class="pill">elevated</span></td><td>Last value from <code>rand</code></td></tr>
+              <tr><td><code>?pop</code></td><td><span class="pill">elevated</span></td><td>Last value removed by <code>pop</code></td></tr>
+              <tr><td><code>?len</code></td><td><span class="pill">elevated</span></td><td>Last value from <code>length</code></td></tr>
+              <tr><td><code>?sorted</code></td><td><span class="pill">elevated</span></td><td>Last array from <code>sort</code></td></tr>
+              <tr><td><code>?args</code></td><td><span class="pill">preset</span></td><td>Command-line arguments</td></tr>
+              <tr><td><code>?uname</code></td><td><span class="pill">preset</span></td><td>Current OS username</td></tr>
+              <tr><td><code>?version</code></td><td><span class="pill">preset</span></td><td>Interpreter version string</td></tr>
+              <tr><td><code>?pi</code> / <code>?eu</code></td><td><span class="pill">preset</span></td><td>3.14 / 2.72</td></tr>
+              <tr><td><code>?true</code> / <code>?false</code></td><td><span class="pill">preset</span></td><td>1 / 0</td></tr>
+              <tr><td><code>?void</code></td><td><span class="pill">preset</span></td><td>The null value</td></tr>
+            </table>
+          </div>
+        </section>
+
+        <section class="doc" id="carbon-calls" data-search>
+          <h2>Carbon system calls<a class="anchor" href="#carbon-calls">#</a></h2>
+          <p>Commands that start with <code>carbon</code> (or <code>*</code> for short) inspect the interpreter's
+            state. They're most useful in the REPL.</p>
+          <div class="table-wrap">
+            <table>
+              <tr><th>Command</th><th>Description</th></tr>
+              <tr><td><code>carbon vars</code></td><td>List all variables with their types and whether they can change</td></tr>
+              <tr><td><code>carbon funcs</code></td><td>List all functions with return types and parameter counts</td></tr>
+              <tr><td><code>carbon structs</code></td><td>List all structs</td></tr>
+              <tr><td><code>carbon history</code></td><td>Table of every error code produced in this run</td></tr>
+              <tr><td><code>carbon quit [code]</code></td><td>Exit the interpreter</td></tr>
+              <tr><td><code>run &lt;file.car&gt;</code></td><td>Run another <code>.car</code> file from inside a script</td></tr>
+            </table>
+          </div>
+        </section>
+
+        <section class="doc" id="cli-flags" data-search>
+          <h2>CLI flags<a class="anchor" href="#cli-flags">#</a></h2>
+          <div class="table-wrap">
+            <table>
+              <tr><th>Command</th><th>Description</th></tr>
+              <tr><td><code>car</code></td><td>Start the interactive REPL</td></tr>
+              <tr><td><code>car file.car</code></td><td>Run a file</td></tr>
+              <tr><td><code>car --v</code></td><td>Print the interpreter version</td></tr>
+              <tr><td><code>car --help</code></td><td>Show usage and the error code table</td></tr>
+              <tr><td><code>car --update</code></td><td>Update the interpreter from GitHub</td></tr>
+              <tr><td><code>car --logs</code></td><td>Print the latest changelog</td></tr>
+              <tr><td><code>car --libutil &lt;lib&gt;</code></td><td>Download an approved library</td></tr>
+              <tr><td><code>car file.car env:show-ec</code></td><td>Run with error codes shown after each statement</td></tr>
+              <tr><td><code>car file.car env:show-tk</code></td><td>Run with the token array shown for each statement</td></tr>
+            </table>
+          </div>
+        </section>
+
+        <section class="doc" id="diagnostics" data-search>
+          <h2>Reading diagnostics<a class="anchor" href="#diagnostics">#</a></h2>
+          <p>When a statement fails, CarbonScript stops and prints a diagnostic. This one comes from a function
+            header where <code>$a</code> has no type:</p>
+          <pre data-lang="output" class="diag">function:type error: no function intake type specified for $a
+main.car:1:3
+ |
+1| func;int addNums $a $b;int {
+ | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unexpected type interaction.
+error: aborting due to status code 3</pre>
+          <ol>
+            <li><strong>What went wrong.</strong> The part of the interpreter that raised the error
+              (<code>function</code>), the kind of error (<code>type error</code>), and a hint.</li>
+            <li><strong>Where.</strong> <code>file:line:code</code>. Here that's <code>main.car</code>, line 1,
+              error code 3.</li>
+            <li><strong>The code.</strong> The failing line, with carets under the problem. In a terminal, each
+              error code has its own color.</li>
+            <li><strong>The result.</strong> The run was aborted with the status code shown. To keep going after
+              errors, use <a href="#file-rules"><code>RULE force-run</code></a>.</li>
+          </ol>
+        </section>
+
+        <section class="doc" id="error-codes" data-search>
+          <h2>Error codes<a class="anchor" href="#error-codes">#</a></h2>
+          <p>Every statement returns a code, which is stored in <code>?errorlevel</code>. Any code other than
+            <code>0</code> or <code>2</code> stops the file, unless the file uses <code>RULE force-run</code>.</p>
+          <div class="table-wrap">
+            <table>
+              <tr><th>Code</th><th>Meaning</th><th>Stops the run?</th></tr>
+              <tr><td class="code-num">-1</td><td>Unexpected error; cause could not be identified</td><td><span class="pill bad">yes</span></td></tr>
+              <tr><td class="code-num">0</td><td>OK, nothing abnormal</td><td><span class="pill ok">no</span></td></tr>
+              <tr><td class="code-num">1</td><td>Ambiguous error, e.g. reassigning a <code>const</code></td><td><span class="pill bad">yes</span></td></tr>
+              <tr><td class="code-num">2</td><td>Comment line (no-op)</td><td><span class="pill ok">no</span></td></tr>
+              <tr><td class="code-num">3</td><td>Type error: values of incompatible types used together</td><td><span class="pill bad">yes</span></td></tr>
+              <tr><td class="code-num">4</td><td>Syntax error or undefined statement</td><td><span class="pill bad">yes</span></td></tr>
+              <tr><td class="code-num">5</td><td>Incomplete parameters</td><td><span class="pill bad">yes</span></td></tr>
+              <tr><td class="code-num">8</td><td>Math or logic error</td><td><span class="pill bad">yes</span></td></tr>
+              <tr><td class="code-num">9</td><td>File interaction error</td><td><span class="pill bad">yes</span></td></tr>
+              <tr><td class="code-num">15</td><td>Couldn't initialize essential interpreter items</td><td><span class="pill bad">yes</span></td></tr>
+              <tr><td class="code-num">16</td><td>Interpreter initialized (startup default)</td><td><span class="pill">—</span></td></tr>
+              <tr><td class="code-num">17</td><td>Ctrl+C detected</td><td><span class="pill bad">yes</span></td></tr>
+              <tr><td class="code-num">81</td><td>Unknown library</td><td><span class="pill bad">yes</span></td></tr>
+              <tr><td class="code-num">404</td><td>Forbidden call to an internal interpreter function</td><td><span class="pill bad">yes</span></td></tr>
+            </table>
+          </div>
+        </section>
+
+        <!-- ================= EXAMPLES ================= -->
+        <section class="doc" id="examples" data-search>
+          <h2>Example programs<a class="anchor" href="#examples">#</a></h2>
+          <p>Complete programs from the <a href="https://github.com/sjapanwala/carbonscript/tree/main/programs"><code>programs/</code></a>
+            folder. Run any of them with <code>car programs/&lt;name&gt;.car</code>.</p>
+          <div class="tabs" role="tablist" id="example-tabs"></div>
+          <p class="example-desc" id="example-desc"></p>
+          <div id="example-code"></div>
+        </section>
+
+        <!-- ================= CHANGELOG ================= -->
+        <section class="doc" id="changelog" data-search>
+          <h2>Changelog<a class="anchor" href="#changelog">#</a></h2>
+          <div class="release latest">
+            <h3>v04.0/25 <span class="badge">latest</span> <time datetime="2025-04-05">April 5, 2025</time></h3>
+            <ul>
+              <li><strong>Carbon functions.</strong> Prefix a keyword with <code>carbon</code> or <code>*</code> to
+                call an interpreter function: <code>* funcs</code>, <code>* vars</code>, <code>* history</code>,
+                <code>* quit</code>.</li>
+              <li><strong>Named <code>fread</code>.</strong> Choose the struct that file contents are read into:
+                <code>fread hello</code>, then <code>?hello.contents</code>.</li>
+              <li><strong>Struct inspection.</strong> <code>* structs</code> lists all structs, and
+                <code>struct name</code> pretty-prints one.</li>
+              <li><strong>Elevated variables.</strong> <code>errorlevel</code>, <code>iteration</code>,
+                <code>rand</code>, <code>pop</code>, <code>len</code> and <code>sorted</code> are now updated by
+                the runtime only.</li>
+              <li>New error codes 16 and 17 (initialization), a refreshed listing UI, and a to-do list demo that
+                uses file I/O.</li>
+              <li>Bug fixes and code cleanup.</li>
+            </ul>
+          </div>
+          <div class="release">
+            <h3>v03.1/25 <time datetime="2025-03-11">March 11, 2025</time></h3>
+            <ul>
+              <li>Added command-line arguments (<code>?args</code>).</li>
+              <li>Added carbon numbers (<code>cnum()</code> / <code>ascii()</code>).</li>
+            </ul>
+          </div>
+        </section>
+
+        <footer class="site-foot">
+          <span>CarbonScript is released under the <a href="https://github.com/sjapanwala/carbonscript/blob/main/LICENSE">MIT License</a>.</span>
+          <span>Happy hacking.</span>
+        </footer>
       </div>
-    </section>
+    </main>
+  </div>
 
-    <section id="getting-started">
-      <h2><br>Getting Started With CarbonScript</h2>
-      <p>
-        The syntax of CarbonScript is designed to be intuitive and approachable. If you're already familiar with other
-        programming languages, you'll find that the learning curve is pretty shallow.
-        <br><br>CarbonScript borrows familiar
-        concepts from languages you might know, but it simplifies them to make coding faster and less error-prone.
-        Whether you're coming from Python, JavaScript, or another language, you'll feel right at home as you start
-        writing code in CarbonScript.
-      </p>
-      <section id="file-rules">
-        <h3><br>File Rules</h3>
-        <p>
-          When creating a file in CarbonScript using the <code>.car</code> file extention, you can add rules to the top of the file Using the <code>RULE</code> command. These dictate certain enviornments and how the file will perform
-        </p>
-        <h4><br>hide-errors<br></h4>
-        <p>
-          using <code>RULE hide-errors</code> hiding any errors that emerge in the file.
-        </p>
-        <h4>show-ec</h4>
-        <p>
-          using <code>RULE show-ec</code> shows the error codes in the file.
-        </p>
-        <h4>show-tk</h4>
-        <p>
-          using <code>RULE show-tk</code> shows the tokens in the file.
-        </p>
-        <h4>force-run</h4>
-        <p>
-          using <code>RULE force-run</code> forces the file to run.
-        </p>
-        <h4>force-dontrun</h4>
-        <p>
-          using <code>RULE force-dontrun</code> forces the file to not run.
-        </p>
-          <br>
-      </section>
-      <section id="standard-outputs">
-        <h3><br>Standard Outputs</h3>
-        <p>
-          CarbonScript follows <code>Standard I/O</code> protocols to input and output to the console. Use
-          <code>stdout</code> to output to the console.
-        </p>
-        <pre><code>stdout "Hello World"</code></pre>
-      </section>
-      <section id="data-types">
-        <h3><br>Data Types</h3>
-        <p>
-          As of <a href="#whats-new" <span style="color: #2e8b57;">v03.1/25</span></a></h3>, CarbonScript has 7
-          Datatypes,
-        </p>
-        <h4><br>Intigers</h4>
-        <p>
-          Intigers are whole natural numbers, positive or negative including 0. Intigers do not contain fractions or
-          decimals
-          <br>
-          Intigers are known as <code>int</code>, define them by using this keyword.
-        </p>
-        <pre><code>set x = 10;int</code></pre>
-        <h4><br>Strings</h4>
-        <p>
-          Strings are words/charachers, sequence of characthers.
-          <br>
-          Strings are known as <code>str</code>, define them by using this keyword.
-        </p>
-        <pre><code>set x = "Hello World";str</code></pre>
-        <h4><br>Floats</h4>
-        <p>
-          Floats are numbers that can have decimal points.
-          <br>
-          Floats are known as <code>flt</code>, define them by using this keyword.
-        </p>
-        <pre><code>set x = 10.5;flt</code></pre>
-        <h4><br>Arrays</h4>
-        <p>
-          Arrays are collections of multiple values stored together.
-          <br>
-          Arrays are defined using the <code>arr</code> keyword, followed by a list of values.
-        </p>
-        <pre><code><i>// arrays can be set in 2 ways, defining an array right away, or pushing into it</i><br>set x = "Hello","World";arr <i>// anything assigned this way, will be types as a string</i><br><br><i>// use <code>push</code> to accuratly type the contents of the array</i><br>let y;arr<br>push y 1;int "hello";str 3.14;flt</code></pre>
-        <h4><br>Void</h4>
-        <p>
-          The <code>void</code> type is used for functions that do not return a value.
-          <br>
-          Functions with the <code>void</code> return type are used when no result is needed from the function.
-        </p>
-        <pre><code>let x;void <i>// this funtion returns code 2, so it has no value</i></code></pre>
+  <!-- Example program sources, kept as plain text so they can be highlighted -->
+  <script type="text/plain" data-example="fizzbuzz.car" data-title="FizzBuzz"
+    data-desc="Builds the classic FizzBuzz sequence into an array. The count comes from the first CLI argument and defaults to 10. Run: car programs/fizzbuzz.car 15">
+func;void fizzBuzz $n;int {
+  let resultArray;arr
+  set interLen = ceil($n)
+  set repetition = 0;int
+  repeat ?interLen {
+    set repetition = ( ?repetition + 1 )
+    if ( ?repetition % 15 == 0 ) push resultArray "fizzbuzz"
+    ifelse ( ?repetition % 3 == 0 ) push resultArray "fizz"
+    ifelse ( ?repetition % 5 == 0 ) push resultArray "buzz"
+    else push resultArray ?repetition
+  }
+  stdout ?resultArray
+}
+if ( ?args[1] != cnum("void") ) set runIterations = ?args[1]
+else set runIterations = 10;int
+stdout "FizzBuzz - Iterations:" ?runIterations
+@fizzBuzz ?runIterations
+</script>
+  <script type="text/plain" data-example="fibonacci.car" data-title="Fibonacci"
+    data-desc="Generates a Fibonacci sequence of any length by pushing each term onto an array.">
+// generating a fibonacci sequence
 
-        <h4><br>Booleans</h4>
-        <p>
-          Booleans represent true or false values.
-          <br>
-          Booleans are known as <code>bool</code>, define them by using this keyword.<br>
-          Booleans can also be assigned with 1 or 0. 1 = true, 0 = false.
-        </p>
-        <pre><code>set x == true;bool</code></pre>
-        <h4><br>Structs</h4>
-        <p>
-          Structs are a collection of multipls datatypes and variables stored inside a bunch.
-          <br>
-          structs are known as <code>structs</code>, define them by using this keyword.
-        </p>
-        <pre><code>let profile;struct <i>// assiging the variable profile as a struct</i><br>const profile:name = "John Doe";str<br>const profile:age = 45;int<br>const profile:graduatued = true;bool<br><br><i>// now we have configered the struct, now we need to call it</i><br>stdout profile.name<br>stdout profile.age<br>stdout profile.graduated
-        </code></pre>
-      </section>
-      <section id="assign-vars">
-        <h3><br>Assigning Variables</h3>
-        <p>Varibles are Assigned with one of 3 assignemnet keywords. <code>set</code>, <code>const</code> and
-          <code>let</code>.
-          <br>
-          <br>
-          <strong><code>set</code></strong> is used to define mutable variables. You can change the value of a
-          variable once it's assigned.
-          <br>
-          <strong><code>const</code></strong> is used for immutable variables. Once a value is assigned to a
-          <code>const</code> variable, it cannot be changed.
-          <br>
-          <strong><code>let</code></strong> is used for temporary mutable variables, typically used in short-term calculations or loops.
-        </p>
-        <pre><code>const name = "John Doe";str<br>set age = 25;int<br>set graduated = false;bool</code></pre>
-      </section>
-      <section id="standard-inputs">
-        <h3><br>Standard Inputs</h3>
-        <p>
-          CarbonScript follows <code>Standard I/O</code> protocols to input and output to the console. Use
-          <code>stdin</code> to read a value from the console, and store it in a variable.
-        </p>
-        <pre><code>stdin name;str "Whats Users Name?"</code></pre>
-        <p>In the code block above, we ask the user thier name, storing into the variable <code>name</code>, expecting
-          the user to submit a <code>str</code>.
-      </section>
-      <section id="calling-vars">
-        <h3><br>Calling Variables</h3>
-        <p>Variables are called with the prefix <code>?</code>.</p>
-        <pre><code>stdout ?name</code></pre>
-      </section>
-      <section id="math-logic">
-        <h3><br>Math And Logic</h3>
-        <p>
-          All mathematical and logical expressions need to be encased inside of parenthesis.
-          <br>
-          True and False statements are expressed as boolean values <code>0 = false</code>,<code>1 = true</code>. Or use
-          the provided variables <code>?true, ?false</code> to help navigate in a more readable way.
-          <br>
-        </p>
-        <pre><code>stdout ( 100 + ?x )<br><i>// assuming x is already a preset variable</i></code></pre>
-        <h3><br>Ceil and Floor</h3>
-        <p>
-          Use the <code>ceil</code> and <code>floor</code> functions to round values up or down.
-        </p>
-        <pre><code>set x = 3.14;flt<br>stdout ?x<br>stdout ceil(?x)<br>stdout floor(?x)</code></pre>
-      </section>
-      <section id="conditions">
-        <h3><br>Conditional Statements</h3>
-        <p>Conditional statements are used to observe according to conditions.
-          <br><br>
-          Use <code>if</code> statement to open you conditional analysis<br>
-          Use <code>ifelse</code> statements as a response to the initial statement<br>
-          Use <code>else</code> statement to respond if no condition is reached
-        </p>
-        <pre><code>set x = 10;int<br>set y = 5;int<br>if ( ?x > ?y ) stdout x is larger than y<br>ifelse ( ?x < ?y ) stdout x is smaller than y<br>else stdout x and y are the same value</code></pre>
-      </section>
-      <section id="loops">
-        <h3><br>Loops</h3>
-        <p>
-          As of <a href="#whats-new" <span style="color: #2e8b57;">v03.1/25</span></a></h3>, CarbonScript has 2 loops.
-          <code>repeat</code> and <code>do</code>
-          <br>
-          <br>
-        <h4>Repeat Loops</h4>
-        Repeat loops are very similiar to for loops, they will iterate a given number of times, not until a codition is met (do loops)
-        <br>
-        Use <code>?iteration</code> to keep track of the iterations of the loop
-        <pre><code>repeat 5 {<br><i>// code will loop 5 times</i><br>}</code></pre>
-        <h4>Do Loop</h4>
-        Do loops run until a condition is met, comparing 2 values together, if the first one less than or equal to the second one (respectively). Values are incremented themselfs
-        <br>
-        Use <code>?iteration</code> to keep track of the loop iteration
-        <pre><code>do 0 < 5 {<br><i>// code will loop 5 times, or unless the first values incrementation is interrupted</i><br>}</code></pre>
-      </section>
-      <section id="arrays">
-        <h3><br>Arrays</h3>
-        <p>
-          Arrays are used as like stacks (follow a FILO order). items can be <code>push</code>ed into the stack and
-          <code>pop</code>ped out of the stack.
-          <br>
-        <h4>Pushing Into The Array</h4>
-        Using the keyword <code>push</code> followed by the name of the array, then assigning the values, we can add to
-        the array.
-        <pre><code><i>// assuming x is an array</i><br>push a 1 2 3</code></pre>
-        <h4>Popping Out of The Array</h4>
-        Using the keyword <code>pop</code> followed by the name of the array, we can remove the last item of the array,
-        and store it in an immutable (for the user) variable called <code>?pop</code> which contains the item that was popped.
-        <pre><code><i>// assuming x is the same array as last example</i><br>pop x<br>stdout ?pop<br><i>// output of 3</i></code></pre>
-        <h4>Indexing The Array</h4>
-        Using indexing brackets <code>[]</code> followed by the index of the item you want to access, we can access the item at that index.
-        <pre><code><i>// assuming x is the same array as last example</i><br>stdout x[1]<br><i>// output of 2</i></code></pre>
-        <h4>Array Length</h4>
-        Using the keyword <code>length</code> followed by the name of the array, we can get the length of the array.
-        <pre><code><i>// assuming x is the same array as last example</i><br>stdout ?length x<br><i>// output of 3</i></code></pre>
-        </p>
-      </section>
-      <section id="creating-functions">
-        <h3><br>Creating Functions</h3>
-        <p>Functions follow a similiar approach to C, where you need to define in the header, what type of value will be returned, void if none.
-          <br>
-        <pre><code> func;{return_type} {function_name} {variables;type} {<br><i>// function code</i> <br>return statement if needed<br>}</code></pre>
-        </p>
-        <h4>Example Function</h4>
-        <pre><code><i>// creating a simple function that add's two numbers</i><br>func;int addition $x;int $y;int {<br>&nbsp;&nbsp;return ( $x + $y ) <br>}</code></pre>
-      </section>
-      <section id="calling-functions">
-        <h3><br>Calling Functions</h3>
-        <p>calling a functions requires the prefix <code>@</code> followed by the function name, before function
-          arguement (if required).<br>If a function returns a value, the value will have to be stored in a variable.</p>
-        <h4>Calling The Example Function Defined Earlier</h4>
-        <pre><code>set result = @addition 10 20<br>stdout ?result<br><i>// output of 30</i></code></pre>
-      </section>
-      <section id="carbon-nums">
-        <h3><br>Carbon Numbers</h3>
-        <p>
-          Carbon Numbers are essentially just decimal numbers of ascii values, padded so they are all divisible by 3. Containing 4 digits at the end symbolizing the values lenght.
-          <br>
-          <br>
-          They are used to represent universal understanding of chars and strings in CarbonScript.
-          <br>
-          <br>
-          Use the keyword <code>cnum()</code> to convert a string into a CarbonNumber
-          <br>
-          Use the keyword <code>ascii()</code> to convert a CarbonNumber into a string
-        </p>
-        <pre><code>set x = "CarbonScript";str<br>set c = cnum(?x)<i>// The cnum = 670971140981111100830991141051121160012</i><br>set s = ascii(?c)<i>// The string = CarbonScript</i></code></pre>
-      </section>
-      <section id="args">
-        <h3><br>Command Line Arguments</h3>
-        <p>Arguments are stored in an array called <code>?args</code>. The first index of the array is always the file name being ran. If there are less than 10 arguements provided, the remaining arguemments will be filled with the carbon number for "void" (<code>1181111051000004</code>) <a href="#carbon-nums">Read About Carbon Numbers</a>
-        <br>
-        <br>
-        A base template to follow for command line args being used inside a program
-        </p>
-        <pre><code>if ( ?args[1] != cnum("void") ) set runIterations = ?args[1]<br>else set runIterations = 10;int<br>@generateFibonacci ?runIterations</code></pre>
-        <p>
-          This is checking the second index of the args array; if the value is not equal to the carbon number value of void, it will we the iterations to how many are provided.
-          If not then it will set the default to the value of 10
-        </p>
-      </section>
-      <section id="file-interactions">
-        <h3><br>Interacting With Files</h3>
-        <p>You can interact with other files and intergrate it with your carbon script code</p>
-        <h4><br>Assiging files</h4>
-        <p>
-          To interact with a file, you need to make sure it is defined
-          <br>
-          <br>
-          To define a file you need to use the keyword <code>fset</code> followed by the file path
-        </p>
-        <pre><code>fset /path/to/file  <i>// now we have defined the file path and can interact with the file</i></code></pre>
-        <h4><br>Writing files</h4>
-        <p>
-          To write to a file, we have to make sure a file is defined
-          <br>
-          <br>
-          To write to a file we have to use the keyword <code>fwrite "{content}"</code>; when the line is finished, there is a newline escape code so next line typed will be placed on a newline
-        </p>
-        <pre><code>fwrite "Hello World!" <i>// we write "Hello World!" to the file path we defined earlier</i></code></pre>
-        <h4><br>Reading Files</h4>
-        <p>
-          reading a file, will be stored inside a struct, alongside with other types in the struct. All the content from reading the file is stored inside an array; and content can be accessed from indexing the array content
-          <br>
-          <br>
-          To read a file, we use the keyword <code>fread</code>; the contents are stored inside a struct with the name of the file, without the extention (notes.txt -> notes)
-        </p>
-        <pre><code>fread <i>// reading notes.txt </i><br>stdout ?notes.contents <i>// prints the array of the contents</i><br>stdout ?notes.len <i>// prints the length of contents</i><br>stdout ?notes.type <i>// prints the file type</i></code></pre>
-        <h4><br>Clearing A File</h4>
-        <p>
-          You can Clear a file using <code>fclear</code>; it will clear the file assigned previously
-        </p>
-        <pre><code>fclear<i>// this will clear the file</i></code></pre><br>
-      </section>
+func;void generateFibonacci $n;int {
+    set a = 0;int
+    set b = 1;int
+    let sequence;arr
 
-      <section id="understanding-diagnosis">
-        <h2>Understanding The Error Diagnosis</h2>
-        <p>CarbonScript has an intuitive and helpful error diagnosis system, similiar to other diagnosis tools. Heres how to understand it<br><br>Suppose we run a file with a faulty function header; where we have not defined the type of the variables we are passing through. We would get an output like this...</p>
-        <pre><code>function:type error: no function intake type specified for $a<br>main.car:1:3<br>&nbsp;|<br>1| func;int addNums $a $b;int {<br>&nbsp;| ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unexpected type interaction.<br>error: aborting due to status code 3</code></pre>
-        <h3><br>Understanding The Error Diagnosis</h3>
-        <p>
-          The first line will always show us the error we have recieved; what we have done wrong, and what function gave it to us. In this case we got an error from <code>function</code> and it gave us a type error, it also provides us with textual hints on what we did wrong.
-          <br>
-          <br>
-          The second line provides us with some information we need to decipher a little bit. The text before the first colon will be our filename/path. the second will always be a number, this is the line number where your error occured, the third is the error code we were given. Every code has its own meaning; in this case, we got error code <code>3</code> which means there was a <code>type error</code> this means, there was a faulty interaction between the function and the variable type. read more about <strong><a href="#error-codes">Error Codes</a></strong> here.
-          <br>
-          <br>
-          Then we get some a text editor based design of the faulty code. we get to the see line, the code, and a caret pointing to the place where the error occured alongside what we did wrong. while we cannot see a color here; each error code has its own color to make ease of understanding!
-          <br><br>
-          Finally the last line tells us the runtime was aborted, with the error code that was returned.
-        </p>
-        <br>
-      </section>
+    push sequence ?a
+    push sequence ?b
+    set fibIt = ( $n - 2 )
 
-      <section id="error-codes">
-        <h2>Error Codes</h2>
-        <p>CarbonScript handles internal and external errors using error codes; following its own error code system. Follow these codes to make your CarbonScripting experience seamless<br><br></p>
-        <table>
-          <tr>
-              <th>Error Code&nbsp;&nbsp;</th>
-              <th>Description</th>
-          </tr>
-          <tr>
-            <td>-1</td>
-            <td>Unexpected Error; No Set Reason</td>
-        </tr>
-        <tr>
-            <td>0</td>
-            <td>Void; Nothing Abnormal</td>
-        </tr>
-        <tr>
-            <td>1</td>
-            <td>Ambiguous Error</td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>Comment Code</td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>Type Error</td>
-        </tr>
-        <tr>
-            <td>4</td>
-            <td>Syntax Error</td>
-        </tr>
-        <tr>
-            <td>5</td>
-            <td>Incomplete Parameters</td>
-        </tr>
-        <tr>
-            <td>8</td>
-            <td>Logical Arithmetic Error</td>
-        </tr>
-        <tr>
-            <td>9</td>
-            <td>File Interaction Error</td>
-        </tr>
-        <tr>
-            <td>17</td>
-            <td>Ctrl+C Detected</td>
-        </tr>
-        <tr>
-            <td>81</td>
-            <td>Unknown Library Imported</td>
-        </tr>
-      </table>
-      </section>
+    repeat ?fibIt {
+        set next = ( ?a + ?b )
+        push sequence ?next
+        set a = ?b
+        set b = ?next
+    }
 
-      <section id="whats-new">
-        <h2><br>What's New</h2>
-        <h3>
-          Version Release <span style="color: #2e8b57;">v03.1/25</span>. March 11th, 2025
-        </h3>
-        <br>
-        <p>
-        ✅ &nbsp;&nbsp;Added Command Line Args
-        <br>
-        ✅ &nbsp;&nbsp;Added CarbonNumbers
-        </p>
-      </section>
-      <br>
-      <h1 align="center"> Happy Hacking!</h1>
-  </main>
+    stdout "Fibonacci Sequence:" ?sequence
+}
+if ( ?args[1] != cnum("void") ) set runIterations = ?args[1]
+else set runIterations = 10;int
+stdout "Fibonacci Sequence - Iterations:" ?runIterations
+@generateFibonacci ?runIterations
+</script>
+  <script type="text/plain" data-example="guessing_game.car" data-title="Guessing game"
+    data-desc="An interactive number-guessing game with three difficulty levels. Uses stdin, rand and conditionals.">
+// Play A game where you have to guess a random number
+RULE hide-errors
+
+func;int prompt {
+  stdout "Welcome To Guessing Game!"
+  stdout "---"
+  stdout "1) Easy   1-10"
+  stdout "2) Medium 1-100"
+  stdout "3) Hard   1-1000"
+  stdout "---"
+  stdin option;int "Please Choose An Option"
+  set choice = 0;int
+  fi ( ?option < 0 || ?option > 3 ) set choice = 0;int
+  default set choice = ?option
+  return ?choice
+}
+
+func;void setRandoms $choice;int {
+  set randmin = 1;int
+  fi ( $choice == 1 ) set randmax = 10;int
+  elsefi ( $choice == 2 ) set randmax = 100;int
+  elsefi ( $choice == 3 ) set randmax = 1000;int
+}
+
+func;int startGame {
+  rand ?randmin ?randmax
+  set ai = ?rand
+  stdout --- Guess Between ?randmin and ?randmax ---
+  stdin usr;int "Please Make Your Guess"
+  fi ( ?usr > ?ai ) stdout "Your Guess Was Larger Than The Actual Guess!"
+  elsefi ( ?usr < ?ai ) stdout "Your Guess Was Smaller Than The Actual Guess!"
+  default stdout "Your Guess Was Correct!"
+  return ?ai
+}
+
+set prchoice = @prompt
+@setRandoms ?prchoice
+set aiGuess = @startGame
+stdout "The Actual Guess Was:" ?aiGuess
+</script>
+  <script type="text/plain" data-example="calculator.car" data-title="Calculator"
+    data-desc="A menu-driven, four-operation calculator built on the built-in @add, @subtract, @multiply and @divide functions.">
+// Simple calculator for 4 operators (+,-,*,/)
+RULE hide-errors
+
+func;int prompt {
+  stdout "Welcome To Calculator, Please Choose Your Operation"
+  stdout "---------------------------------------------------"
+  stdout "1)  +    Addition"
+  stdout "2)  -    Subtraction"
+  stdout "3)  *    Multiplication"
+  stdout "4)  /    Division"
+  stdin c;int "Choose Your Operation (1-4)"
+  set x = 9;int
+  fi ( ?c > 4 or ?c < 1 ) stdout Invalid Option
+  default set x = ?c
+  return ?x
+}
+
+func;int do_operations $op;int {
+  stdin num1;int Num1:
+  stdin num2;int Num2:
+  set ans = 0;int
+  if ( $op == 1 ) set ans = @add ?num1 ?num2
+  ifelse ( $op == 2 ) set ans = @subtract ?num1 ?num2
+  ifelse ( $op == 3 ) set ans = @multiply ?num1 ?num2
+  ifelse ( $op == 4 ) set ans = @divide ?num1 ?num2
+  else set ans = 0
+  return ?ans
+}
+
+set ch = @prompt
+set answer = @do_operations ?ch
+stdout ?answer
+</script>
+  <script type="text/plain" data-example="todo.car" data-title="To-do list"
+    data-desc="Reads a to-do file into a struct with fread, lists each line, then appends a new item with fwrite.">
+func;str get_filename {
+  stdout "Welcome To Task Viewer"
+  stdout "Please Enter A Filename To Read"
+  stdin filename;str ">"
+  return ?filename
+}
+
+fset @get_filename
+fread items
+set filecont = ?items.contents
+length ?filecont
+set x = 0;int
+stdout "----------"
+stdout "To Do List"
+stdout "----------"
+repeat ?len {
+ stdout ?filecont[?x]
+ increm ?x
+}
+set newline_num = ( ?len + 1 )
+stdin newline;str "Adding New Line> "
+fwrite ?newline_num  | ?newline
+</script>
+  <script type="text/plain" data-example="sort.car" data-title="Sort"
+    data-desc="The smallest useful program: push some numbers, sort them, print both arrays.">
+let x;arr
+push x 1 89 1 45 -120 12 4 5
+sort ?x
+stdout "Unsorted Array: " ?x
+stdout "Sorted Array:   " ?sorted
+</script>
+
+  <script>
+    (function () {
+      /* ---------------- theme ---------------- */
+      const root = document.documentElement;
+      const themeBtn = document.getElementById("theme-btn");
+      function stored() { try { return localStorage.getItem("cs-theme"); } catch (e) { return null; } }
+      function isDark() {
+        const t = root.getAttribute("data-theme");
+        if (t) return t === "dark";
+        return window.matchMedia("(prefers-color-scheme: dark)").matches;
+      }
+      function syncIcon() {
+        themeBtn.textContent = isDark() ? "Light" : "Dark";
+      }
+      const s = stored();
+      if (s) root.setAttribute("data-theme", s);
+      syncIcon();
+      themeBtn.addEventListener("click", function () {
+        const next = isDark() ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        try { localStorage.setItem("cs-theme", next); } catch (e) { }
+        syncIcon();
+      });
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", syncIcon);
+
+      /* ---------------- highlighter ---------------- */
+      const KEYWORDS = new Set(("set const let func return if ifelse else fi elsefi default repeat do until " +
+        "push pop length sort stdout stdin fset fwrite fread fclear rand increm decrem carbon struct clear run " +
+        "libutils and or").split(" "));
+      const TYPES = "int|str|flt|bool|arr|void|struct|cstr|cint";
+      const BUILTIN_FNS = /^(cnum|ascii|ceil|floor|type)(?=\()/;
+
+      function esc(s) {
+        return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+      function span(cls, text) { return '<span class="' + cls + '">' + esc(text) + "</span>"; }
+
+      function highlightCar(src) {
+        let out = "";
+        let i = 0;
+        const n = src.length;
+        while (i < n) {
+          const rest = src.slice(i);
+          let m;
+          if (rest.startsWith("//")) {
+            const end = rest.indexOf("\n");
+            const c = end === -1 ? rest : rest.slice(0, end);
+            out += span("tk-com", c); i += c.length; continue;
+          }
+          if (rest[0] === '"') {
+            const end = rest.indexOf('"', 1);
+            const c = end === -1 ? rest : rest.slice(0, end + 1);
+            out += span("tk-str", c); i += c.length; continue;
+          }
+          if ((m = rest.match(/^RULE\b[^\n]*/))) { out += span("tk-rule", m[0]); i += m[0].length; continue; }
+          if ((m = rest.match(new RegExp("^;(" + TYPES + ")\\b")))) {
+            out += span("tk-op", ";") + span("tk-type", m[1]); i += m[0].length; continue;
+          }
+          if ((m = rest.match(/^\?[A-Za-z_][\w.]*/))) { out += span("tk-var", m[0]); i += m[0].length; continue; }
+          if ((m = rest.match(/^\$[A-Za-z_]\w*/))) { out += span("tk-param", m[0]); i += m[0].length; continue; }
+          if ((m = rest.match(/^@[A-Za-z_]\w*/))) { out += span("tk-fn", m[0]); i += m[0].length; continue; }
+          if ((m = rest.match(BUILTIN_FNS))) { out += span("tk-fn", m[0]); i += m[0].length; continue; }
+          if ((m = rest.match(/^\*(?= [a-z])/)) && /(^|\n)\s*$/.test(src.slice(0, i))) {
+            out += span("tk-kw", "*"); i += 1; continue;
+          }
+          if ((m = rest.match(/^-?\d+(\.\d+)?\b/)) && !/[\w]$/.test(src.slice(0, i))) {
+            out += span("tk-num", m[0]); i += m[0].length; continue;
+          }
+          if ((m = rest.match(/^[A-Za-z_]\w*/))) {
+            const w = m[0];
+            if (KEYWORDS.has(w)) out += span("tk-kw", w);
+            else if (w === "true" || w === "false") out += span("tk-num", w);
+            else out += esc(w);
+            i += w.length; continue;
+          }
+          if ((m = rest.match(/^(==|!=|>=|<=|\|\||&&|\*\*|[+\-*/%<>=(){}\[\],:|])/))) {
+            out += span("tk-op", m[0]); i += m[0].length; continue;
+          }
+          out += esc(rest[0]); i += 1;
+        }
+        return out;
+      }
+
+      function highlightShell(src) {
+        return src.split("\n").map(function (line) {
+          if (/^\$ /.test(line)) return span("tk-op", "$ ") + span("tk-kw", line.slice(2));
+          if (/^\?\? >> /.test(line)) return span("tk-op", "?? >> ") + highlightCar(line.slice(6));
+          if (/^(git|cd|chmod|sudo|car)\b/.test(line)) {
+            return line.split(" ").map(function (w, idx) {
+              if (idx === 0) return span("tk-kw", w);
+              if (/^--?/.test(w)) return span("tk-type", w);
+              if (w === "&&") return span("tk-op", w);
+              if (w === "sudo") return span("tk-kw", w);
+              return esc(w);
+            }).join(" ");
+          }
+          return esc(line);
+        }).join("\n");
+      }
+
+      function highlightJs(src) {
+        return esc(src)
+          .replace(/\b(function|return|const|let)\b/g, '<span class="tk-kw">$1</span>')
+          .replace(/\b(\d+)\b/g, '<span class="tk-num">$1</span>')
+          .replace(/\b(add|console|log)\b/g, '<span class="tk-fn">$1</span>');
+      }
+
+      function highlightDiag(src) {
+        return src.split("\n").map(function (line, idx) {
+          if (idx === 0) return span("tk-err", line);
+          if (/^error:/.test(line)) return span("tk-err", line);
+          if (/^ \| \^/.test(line)) {
+            const m = line.match(/^( \| )(\^+)(.*)$/);
+            return span("tk-op", m[1]) + span("tk-caret", m[2]) + esc(m[3]);
+          }
+          if (/^\d+\|/.test(line)) {
+            const m = line.match(/^(\d+\|)(.*)$/);
+            return span("tk-op", m[1]) + highlightCar(m[2]);
+          }
+          if (/^ \|/.test(line)) return span("tk-op", line);
+          return span("tk-var", line);
+        }).join("\n");
+      }
+
+      const LANG_LABEL = { car: "carbonscript", shell: "shell", javascript: "javascript", output: "output" };
+
+      function makeCodeBlock(pre, filename) {
+        const lang = pre.getAttribute("data-lang") || "car";
+        const raw = pre.textContent.replace(/^\n+|\s+$/g, "");
+        let html;
+        if (lang === "shell") html = highlightShell(raw);
+        else if (lang === "javascript") html = highlightJs(raw);
+        else if (lang === "output") html = highlightDiag(raw);
+        else html = highlightCar(raw);
+
+        const wrap = document.createElement("div");
+        wrap.className = "codeblock";
+        const head = document.createElement("div");
+        head.className = "cb-head";
+        const label = document.createElement("span");
+        label.textContent = filename || LANG_LABEL[lang] || lang;
+        const btn = document.createElement("button");
+        btn.className = "copy";
+        btn.type = "button";
+        btn.textContent = "Copy";
+        btn.addEventListener("click", function () {
+          const text = lang === "shell"
+            ? raw.split("\n").filter(function (l) { return !/^(\?\? >>|[A-Z][a-z]+ [A-Z])/.test(l); })
+              .map(function (l) { return l.replace(/^\$ /, ""); }).join("\n")
+            : raw;
+          const done = function () {
+            btn.textContent = "Copied";
+            btn.classList.add("done");
+            setTimeout(function () { btn.textContent = "Copy"; btn.classList.remove("done"); }, 1400);
+          };
+          if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, function () { });
+        });
+        label.style.marginRight = "auto";
+        head.appendChild(label);
+        head.appendChild(btn);
+
+        const newPre = document.createElement("pre");
+        const code = document.createElement("code");
+        code.innerHTML = html;
+        newPre.appendChild(code);
+        wrap.appendChild(head);
+        wrap.appendChild(newPre);
+        return wrap;
+      }
+
+      document.querySelectorAll("main pre").forEach(function (pre) {
+        pre.replaceWith(makeCodeBlock(pre));
+      });
+
+      /* ---------------- examples ---------------- */
+      const examples = Array.from(document.querySelectorAll('script[data-example]'));
+      const tabBar = document.getElementById("example-tabs");
+      const descEl = document.getElementById("example-desc");
+      const codeEl = document.getElementById("example-code");
+
+      function showExample(idx) {
+        const ex = examples[idx];
+        tabBar.querySelectorAll(".tab").forEach(function (t, j) {
+          t.setAttribute("aria-selected", j === idx ? "true" : "false");
+          t.tabIndex = j === idx ? 0 : -1;
+        });
+        const desc = ex.getAttribute("data-desc");
+        const runIdx = desc.indexOf("Run: ");
+        descEl.textContent = runIdx === -1 ? desc : desc.slice(0, runIdx);
+        if (runIdx !== -1) {
+          const c = document.createElement("code");
+          c.textContent = desc.slice(runIdx + 5);
+          descEl.appendChild(c);
+        }
+        const pre = document.createElement("pre");
+        pre.textContent = ex.textContent;
+        const block = makeCodeBlock(pre, "programs/" + ex.getAttribute("data-example"));
+        const open = document.createElement("a");
+        open.className = "copy";
+        open.href = "./sandbox.html#code=" + encodeURIComponent(ex.textContent.replace(/^\n+|\s+$/g, ""));
+        open.textContent = "Open in sandbox";
+        block.querySelector(".cb-head").lastChild.before(open);
+        codeEl.replaceChildren(block);
+      }
+
+      examples.forEach(function (ex, idx) {
+        const b = document.createElement("button");
+        b.className = "tab";
+        b.type = "button";
+        b.setAttribute("role", "tab");
+        b.textContent = ex.getAttribute("data-title");
+        b.addEventListener("click", function () { showExample(idx); });
+        b.addEventListener("keydown", function (e) {
+          if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+          const next = (idx + (e.key === "ArrowRight" ? 1 : -1) + examples.length) % examples.length;
+          showExample(next);
+          tabBar.children[next].focus();
+        });
+        tabBar.appendChild(b);
+      });
+      if (examples.length) showExample(0);
+
+      /* ---------------- scrollspy ---------------- */
+      const links = Array.from(document.querySelectorAll("#nav a"));
+      const byId = {};
+      links.forEach(function (a) { byId[a.getAttribute("href").slice(1)] = a; });
+      const sections = Array.from(document.querySelectorAll("section[id]")).filter(function (s) { return byId[s.id]; });
+
+      function updateActive() {
+        const y = window.scrollY + 120;
+        let current = sections[0];
+        for (const s of sections) { if (s.offsetTop <= y) current = s; }
+        if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) current = sections[sections.length - 1];
+        links.forEach(function (a) { a.classList.remove("active"); });
+        const a = byId[current.id];
+        if (a) {
+          a.classList.add("active");
+          const sb = document.getElementById("sidebar");
+          const r = a.getBoundingClientRect(), sr = sb.getBoundingClientRect();
+          if (r.top < sr.top + 40 || r.bottom > sr.bottom - 40) a.scrollIntoView({ block: "nearest" });
+        }
+      }
+      let ticking = false;
+      window.addEventListener("scroll", function () {
+        if (!ticking) { requestAnimationFrame(function () { updateActive(); ticking = false; }); ticking = true; }
+      }, { passive: true });
+      updateActive();
+
+      /* ---------------- search ---------------- */
+      const search = document.getElementById("search");
+      const navEmpty = document.getElementById("nav-empty");
+      const textOf = {};
+      sections.forEach(function (s) { textOf[s.id] = s.textContent.toLowerCase(); });
+
+      function runSearch() {
+        const q = search.value.trim().toLowerCase();
+        let shown = 0;
+        sections.forEach(function (s) {
+          const hit = !q || textOf[s.id].indexOf(q) !== -1;
+          s.classList.toggle("hidden-by-search", !hit);
+          byId[s.id].parentElement.classList.toggle("hidden-by-search", !hit);
+          if (hit) shown++;
+        });
+        document.querySelectorAll(".nav-group").forEach(function (g) {
+          const any = g.querySelector("li:not(.hidden-by-search)");
+          g.classList.toggle("hidden-by-search", !any);
+        });
+        navEmpty.style.display = shown ? "none" : "block";
+        if (q) window.scrollTo({ top: 0 });
+        updateActive();
+      }
+      search.addEventListener("input", runSearch);
+      search.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") { search.value = ""; runSearch(); search.blur(); }
+        if (e.key === "Enter") {
+          const first = sections.find(function (s) { return !s.classList.contains("hidden-by-search"); });
+          if (first) {
+            const q = search.value;
+            search.value = ""; runSearch(); search.blur();
+            location.hash = first.id;
+            if (q) first.scrollIntoView();
+          }
+        }
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "/" && document.activeElement !== search && !/input|textarea/i.test(document.activeElement.tagName)) {
+          e.preventDefault(); search.focus();
+        }
+      });
+
+      /* ---------------- mobile nav ---------------- */
+      const body = document.body;
+      document.getElementById("menu-btn").addEventListener("click", function () { body.classList.toggle("nav-open"); });
+      document.getElementById("scrim").addEventListener("click", function () { body.classList.remove("nav-open"); });
+      links.forEach(function (a) { a.addEventListener("click", function () { body.classList.remove("nav-open"); }); });
+    })();
+  </script>
 </body>
+
 </html>

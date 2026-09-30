@@ -1,0 +1,16 @@
+----- Job Application Created For Applicant 1  -----
+ ----- Applicant Personal Information ----- 
+Applicant Name:         1
+Applicant Age:          1
+Email Address:          1
+Phone Number:           1
+ ----- Applicant Occupational Information ----- 
+Desired Role:           1
+Years of Experience:    1
+Expected Salary:      $ 1
+Willing to Relocate:    1
+ ----- Applicant Education Information ----- 
+Highest Education       1
+Education Institution   1
+Year of Graduation      1
+      ----- End of Application -----

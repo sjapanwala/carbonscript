@@ -33,9 +33,12 @@ func;int generateFibonacci $n;int {
         pop evenarr
         set sum = ( ?pop + ?sum )
     }
-    stdout "Sum of Even Fibonacci Numbers - Iterations: $n "
+    stdout "Sum of Even Fibonacci Numbers - Iterations: ?n "
     return ?sum
 }
 
-set ans = @generateFibonacci 50
+
+if ( ?args[1] != cnum("void") ) set runIterations = ?args[1]
+else set runIterations = 10;int
+set ans = @generateFibonacci ?runIterations
 stdout ?ans
